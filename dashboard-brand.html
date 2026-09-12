@@ -46,6 +46,7 @@
         <a href="messages.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Messages</a>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
+        <button onClick="{{ openBrandForm }}" style="background:none;border:2px solid #000;font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;">Edit company profile</button>
         <button onClick="{{ openForm }}" data-magnetic="8" style="display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;padding:12px 22px;border:2px solid #FF3300;background:#FF3300;color:#fff;cursor:pointer;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Post a campaign<span style="font-family:Anton,sans-serif;">+</span></button>
         <button onClick="{{ logout }}" style="background:none;border:2px solid #000;font-size:12.5px;font-weight:600;padding:12px;cursor:pointer;">Log out</button>
       </div>
@@ -174,6 +175,38 @@
     </sc-if>
   </section>
 
+  <sc-if value="{{ bOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto;">
+      <form onSubmit="{{ submitBrandForm }}" style="width:100%;max-width:560px;background:#fff;border:2px solid #000;padding:34px;animation:ctzRise .45s cubic-bezier(.16,1,.3,1) both;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;">
+          <div>
+            <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Company profile</div>
+            <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:28px;margin:10px 0 0;line-height:1;">Edit your brand</h2>
+          </div>
+          <button type="button" onClick="{{ closeBrandForm }}" style="border:2px solid #000;background:#fff;font-family:Anton,sans-serif;font-size:18px;width:40px;height:40px;cursor:pointer;">×</button>
+        </div>
+        <div style="margin-top:26px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Company name</label>
+          <input value="{{ bName }}" onInput="{{ onBName }}" style="width:100%;border:none;border-bottom:2px solid #DCD8D1;font-size:16.5px;padding:12px 0;outline:none;">
+        </div>
+        <div style="margin-top:20px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Category / industry</label>
+          <input value="{{ bIndustry }}" onInput="{{ onBIndustry }}" style="width:100%;border:none;border-bottom:2px solid #DCD8D1;font-size:16.5px;padding:12px 0;outline:none;">
+        </div>
+        <div style="margin-top:20px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Logo</label>
+          <input type="file" accept="image/*" onChange="{{ onBLogo }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;">
+        </div>
+        <div style="margin-top:20px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Bio</label>
+          <textarea value="{{ bBio }}" onInput="{{ onBBio }}" rows="3" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;resize:vertical;"></textarea>
+        </div>
+        <div style="font-size:13.5px;color:#FF3300;min-height:20px;margin-top:16px;">{{ bError }}</div>
+        <button type="submit" data-magnetic="8" style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;">{{ bSaveLabel }}<span style="font-family:Anton,sans-serif;">→</span></button>
+      </form>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto;">
       <form onSubmit="{{ submitForm }}" style="width:100%;max-width:620px;background:#fff;border:2px solid #000;padding:34px;animation:ctzRise .45s cubic-bezier(.16,1,.3,1) both;">
@@ -244,7 +277,8 @@ class Component extends DCLogic {
   state = {
     tab: "campaigns", loading: true, brand: null, campaigns: [], applicants: [], selectedCampaignId: null,
     formOpen: false, formSaving: false, fTitle: "", fBudget: "", fDeliverables: "", fCloses: "In 7 days", fNiche: "Beauty",
-    formError: "", toast: ""
+    formError: "", toast: "",
+    bOpen: false, bSaving: false, bName: "", bIndustry: "", bBio: "", bLogoFile: null, bError: ""
   };
   rootRef = React.createRef();
   glowRef = React.createRef();
@@ -304,8 +338,36 @@ class Component extends DCLogic {
     this.flash("Brief published — creators can apply now");
   };
 
+  submitBrandForm = async (e) => {
+    e.preventDefault();
+    const { bName, bIndustry, bBio, bLogoFile, brand } = this.state;
+    if (!bName.trim()) return this.setState({ bError: "Company name is required." });
+    if (!brand) return this.setState({ bError: "Your brand profile isn't ready yet." });
+    this.setState({ bSaving: true, bError: "" });
+    let logoUrl = brand.logo_url || null;
+    if (bLogoFile) {
+      if (bLogoFile.size > 5 * 1024 * 1024 || !bLogoFile.type.startsWith("image/")) {
+        this.setState({ bSaving: false, bError: "Logo must be an image under 5MB." });
+        return;
+      }
+      const ext = (bLogoFile.name.split(".").pop() || "jpg").toLowerCase();
+      const path = brand.user_id + "/logo." + ext;
+      const { error: upErr } = await supabaseClient.storage.from("brand-logos").upload(path, bLogoFile, { upsert: true });
+      if (upErr) { this.setState({ bSaving: false, bError: "Logo upload failed: " + upErr.message }); return; }
+      const { data: pub } = supabaseClient.storage.from("brand-logos").getPublicUrl(path);
+      logoUrl = pub.publicUrl + "?t=" + Date.now();
+    }
+    const { data: updated, error } = await supabaseClient.from("brands")
+      .update({ company_name: bName.trim(), industry: bIndustry.trim() || null, description: bBio.trim() || null, logo_url: logoUrl })
+      .eq("user_id", brand.user_id).select().single();
+    this.setState({ bSaving: false });
+    if (error) return this.setState({ bError: error.message });
+    this.setState({ brand: updated, bOpen: false });
+    this.flash("Company profile saved");
+  };
+
   renderVals() {
-    const { tab, campaigns, applicants, formOpen, formSaving, fTitle, fBudget, fDeliverables, fCloses, fNiche, formError, toast, brand, loading, selectedCampaignId } = this.state;
+    const { tab, campaigns, applicants, formOpen, formSaving, fTitle, fBudget, fDeliverables, fCloses, fNiche, formError, toast, brand, loading, selectedCampaignId, bOpen, bSaving, bName, bIndustry, bBio, bError } = this.state;
 
     const live = campaigns.filter((c) => c.status === "open").length;
     const shortlisted = applicants.filter((p) => p.status === "shortlisted");
@@ -400,6 +462,19 @@ class Component extends DCLogic {
       }),
       formError,
       submitForm: this.submitForm,
+      bOpen, bSaving,
+      bName, bIndustry, bBio, bError,
+      bSaveLabel: bSaving ? "Saving…" : "Save company profile",
+      openBrandForm: () => this.setState({
+        bOpen: true, bError: "",
+        bName: brand?.company_name || "", bIndustry: brand?.industry || "", bBio: brand?.description || ""
+      }),
+      closeBrandForm: () => this.setState({ bOpen: false, bError: "" }),
+      onBName: (e) => this.setState({ bName: e.target.value }),
+      onBIndustry: (e) => this.setState({ bIndustry: e.target.value }),
+      onBBio: (e) => this.setState({ bBio: e.target.value }),
+      onBLogo: (e) => this.setState({ bLogoFile: e.target.files && e.target.files[0] }),
+      submitBrandForm: this.submitBrandForm,
       hasToast: !!toast,
       toast
     };

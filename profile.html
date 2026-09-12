@@ -43,7 +43,9 @@
         <a href="directory.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Directory</a>
         <a href="play.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Play</a>
       </div>
-      <button onClick="{{ toggleEdit }}" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:2px solid #000;background:{{ editBg }};color:{{ editFg }};cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ editLabel }}</button>
+      <sc-if value="{{ isOwn }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ toggleEdit }}" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:2px solid #000;background:{{ editBg }};color:{{ editFg }};cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ editLabel }}</button>
+      </sc-if>
     </nav>
   </header>
 
@@ -52,26 +54,33 @@
     <img src="assets/logo.png" alt="" style="position:absolute;right:-60px;top:20px;width:340px;opacity:.06;filter:invert(1);animation:ctzFloat 11s ease-in-out infinite;">
     <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;">
       <div style="display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;">
-        <div style="width:132px;height:132px;flex:0 0 132px;background:#FF3300;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:52px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">AR</div>
+        <div style="width:132px;height:132px;flex:0 0 132px;background:#FF3300;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:52px;overflow:hidden;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
+          <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
+            <img src="{{ avatarUrl }}" alt="" style="width:100%;height:100%;object-fit:cover;">
+          </sc-if>
+          <sc-if value="{{ noAvatar }}" hint-placeholder-val="{{ true }}">
+            <span>{{ initials }}</span>
+          </sc-if>
+        </div>
         <div>
           <div style="display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:7px 13px;margin-bottom:16px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) .06s both;">
-            <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Verified · open to briefs
+            <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>{{ statusTag }}
           </div>
-          <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(38px,5vw,64px);line-height:.96;margin:0;">
-            <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .12s both;">Aanya&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .2s both;">Rathore</span></span>
-          </h1>
+          <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(38px,5vw,64px);line-height:.96;margin:0;">{{ displayName }}</h1>
           <div style="display:flex;gap:16px;flex-wrap:wrap;color:#9a9a9a;font-size:14.5px;margin-top:14px;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .28s both;">
-            <span>Beauty &amp; skincare</span><span style="color:#333;">/</span><span>Jodhpur, Rajasthan</span><span style="color:#333;">/</span><span>Hindi · English</span>
+            <span>{{ nicheLabel }}</span><span style="color:#333;">/</span><span>{{ cityLabel }}</span>
           </div>
         </div>
       </div>
 
-      <p style="color:#c9c9c9;font-size:18px;line-height:1.65;max-width:620px;margin:32px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .34s both;">Skin-first beauty reviews and honest GRWM edits. I shoot long-form carousels that people actually read, and I only take briefs I'd use myself.</p>
+      <p style="color:#c9c9c9;font-size:18px;line-height:1.65;max-width:620px;margin:32px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .34s both;">{{ bioText }}</p>
 
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .42s both;">
-        <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:Anton,sans-serif;">→</span></a>
-        <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
-      </div>
+      <sc-if value="{{ isPublicView }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .42s both;">
+          <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:Anton,sans-serif;">→</span></a>
+          <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
+        </div>
+      </sc-if>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;margin-top:48px;">
         <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="5">
@@ -84,87 +93,153 @@
       </div>
     </div>
 
-    <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;">
-      <div style="display:flex;border-bottom:2px solid #1e1e1e;flex-wrap:wrap;">
-        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
-          <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:3px solid {{ t.rule }};color:{{ t.fg }};font-size:14.5px;font-weight:600;padding:16px 22px;margin-bottom:-2px;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }}</button>
-        </sc-for>
+    <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;"></div>
+    </sc-if>
+    <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;">
+        <div style="display:flex;border-bottom:2px solid #1e1e1e;flex-wrap:wrap;">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:3px solid {{ t.rule }};color:{{ t.fg }};font-size:14.5px;font-weight:600;padding:16px 22px;margin-bottom:-2px;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }}</button>
+          </sc-for>
+        </div>
       </div>
-    </div>
+    </sc-if>
   </section>
 
   <section style="max-width:1180px;margin:0 auto;padding:40px 32px 80px;">
     <sc-if value="{{ showWork }}" hint-placeholder-val="{{ true }}">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px;background:#E2DFD8;border:2px solid #000;">
-        <sc-for list="{{ work }}" as="w" hint-placeholder-count="6">
-          <article style="background:#fff;padding:0;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ w.delay }} both;transition:transform .45s cubic-bezier(.16,1,.3,1);" style-hover="transform:translateY(-5px)">
-            <div style="position:relative;aspect-ratio:4/5;background:#EFEDE8;overflow:hidden;display:flex;align-items:flex-end;padding:18px;">
-              <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px);background-size:26px 26px;"></div>
-              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><span style="font-family:Anton,sans-serif;font-size:58px;color:rgba(0,0,0,.14);">{{ w.tagShort }}</span></div>
-              <div style="position:relative;font-family:Anton,sans-serif;font-size:19px;line-height:1.05;">{{ w.title }}</div>
-            </div>
-            <div style="padding:18px 20px 22px;">
-              <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8a8a8a;">
-                <span>{{ w.platform }}</span><span>{{ w.date }}</span>
-              </div>
-              <div style="display:flex;gap:20px;margin-top:14px;">
-                <div><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Views</div><div style="font-family:Anton,sans-serif;font-size:20px;margin-top:3px;">{{ w.views }}</div></div>
-                <div><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Saves</div><div style="font-family:Anton,sans-serif;font-size:20px;margin-top:3px;">{{ w.saves }}</div></div>
-              </div>
-            </div>
-          </article>
-        </sc-for>
+      <div>
+        <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 18px;">Brand collaborations</h3>
+        <sc-if value="{{ collabsEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="border:2px solid #000;padding:48px 28px;color:#5C5C5C;">No past brand collaborations listed yet.</div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <sc-for list="{{ work }}" as="w" hint-placeholder-count="6">
+            <div style="border:2px solid #000;padding:14px 20px;font-weight:600;font-size:14.5px;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ w.delay }} both;">{{ w.title }}</div>
+          </sc-for>
+        </div>
       </div>
     </sc-if>
 
     <sc-if value="{{ showAudience }}" hint-placeholder-val="{{ false }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;">
         <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Age split</h3>
-          <div style="display:flex;align-items:flex-end;gap:12px;height:220px;border-bottom:2px solid #000;">
-            <sc-for list="{{ ages }}" as="a" hint-placeholder-count="5">
-              <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;height:100%;">
-                <div style="font-family:Anton,sans-serif;font-size:15px;">{{ a.pct }}</div>
-                <div style="width:100%;background:{{ a.color }};height:{{ a.h }};transform-origin:50% 100%;animation:ctzGrowY .9s cubic-bezier(.16,1,.3,1) {{ a.delay }} both;"></div>
-              </div>
-            </sc-for>
-          </div>
-          <div style="display:flex;gap:12px;margin-top:12px;">
-            <sc-for list="{{ ages }}" as="a" hint-placeholder-count="5">
-              <div style="flex:1;text-align:center;font-size:12.5px;color:#5C5C5C;">{{ a.label }}</div>
+          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Base city</h3>
+          <p style="font-size:15px;color:#5C5C5C;">{{ cityLabel }}</p>
+          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:30px 0 16px;">Audience cities</h3>
+          <sc-if value="{{ audienceCitiesEmpty }}" hint-placeholder-val="{{ false }}">
+            <p style="font-size:14.5px;color:#8a8a8a;">Not shared yet.</p>
+          </sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <sc-for list="{{ audienceCities }}" as="c" hint-placeholder-count="5">
+              <span style="border:2px solid #000;padding:8px 14px;font-size:13.5px;font-weight:600;">{{ c.label }}</span>
             </sc-for>
           </div>
         </div>
         <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Where they watch from</h3>
-          <sc-for list="{{ cities }}" as="c" hint-placeholder-count="5">
-            <div style="padding:14px 0;border-bottom:1px solid #E2DFD8;">
-              <div style="display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:8px;"><span>{{ c.label }}</span><span style="font-family:Anton,sans-serif;">{{ c.pct }}</span></div>
-              <div style="height:5px;background:#EFEDE8;overflow:hidden;"><div style="height:100%;background:#FF3300;transform-origin:0 50%;transform:scaleX({{ c.fill }});transition:transform 1s cubic-bezier(.16,1,.3,1);"></div></div>
-            </div>
-          </sc-for>
-          <div style="display:flex;gap:2px;background:#E2DFD8;border:2px solid #000;margin-top:26px;">
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">71%</div></div>
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">29%</div></div>
+          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Audience gender split</h3>
+          <div style="display:flex;gap:2px;background:#E2DFD8;border:2px solid #000;">
+            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ femalePct }}</div></div>
+            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ malePct }}</div></div>
           </div>
         </div>
       </div>
     </sc-if>
 
     <sc-if value="{{ showRates }}" hint-placeholder-val="{{ false }}">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;background:#E2DFD8;border:2px solid #000;">
-        <sc-for list="{{ rates }}" as="r" hint-placeholder-count="4">
-          <div style="background:#fff;padding:30px 28px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ r.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#000;color:#fff;transform:translateY(-5px)">
-            <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">{{ r.kind }}</div>
-            <div style="font-family:Anton,sans-serif;font-size:38px;margin:14px 0 10px;line-height:1;">{{ r.price }}</div>
-            <div style="font-size:14px;line-height:1.6;opacity:.72;">{{ r.detail }}</div>
-          </div>
-        </sc-for>
+      <div style="border:2px solid #000;padding:30px 28px;">
+        <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">Rate per collab</div>
+        <div style="font-family:Anton,sans-serif;font-size:44px;margin:14px 0 10px;line-height:1;">{{ rateLabel }}</div>
+        <div style="font-size:14px;line-height:1.6;color:#5C5C5C;">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</div>
       </div>
       <div style="border:2px solid #000;border-top:none;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
         <div style="font-size:14.5px;color:#5C5C5C;max-width:560px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</div>
         <a href="auth.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-weight:600;font-size:14.5px;padding:14px 24px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#FF3300">Request a quote<span style="font-family:Anton,sans-serif;">→</span></a>
       </div>
+    </sc-if>
+
+    <sc-if value="{{ showEdit }}" hint-placeholder-val="{{ false }}">
+      <form onSubmit="{{ saveProfile }}" style="max-width:720px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;">
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Avatar</label>
+            <input type="file" accept="image/*" onChange="{{ onAvatarFile }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;font-size:13.5px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Full name *</label>
+            <input value="{{ fName }}" onInput="{{ onFName }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Niche / category</label>
+            <input value="{{ fCategory }}" onInput="{{ onFCategory }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Base city</label>
+            <input value="{{ fCity }}" onInput="{{ onFCity }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram username <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private — admin + you only)</span></label>
+            <input value="{{ fUsername }}" onInput="{{ onFUsername }}" placeholder="@yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram URL <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private)</span></label>
+            <input type="url" value="{{ fInstagramUrl }}" onInput="{{ onFInstagramUrl }}" placeholder="https://instagram.com/yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Follower count</label>
+            <input type="number" min="0" value="{{ fFollowers }}" onInput="{{ onFFollowers }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Rate per collab (₹)</label>
+            <input type="number" min="0" value="{{ fRate }}" onInput="{{ onFRate }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — female %</label>
+            <input type="number" min="0" max="100" value="{{ fFemalePct }}" onInput="{{ onFFemalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — male %</label>
+            <input type="number" min="0" max="100" value="{{ fMalePct }}" onInput="{{ onFMalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience cities <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
+          <input value="{{ fAudienceCities }}" onInput="{{ onFAudienceCities }}" placeholder="Jodhpur, Jaipur, Delhi NCR" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+        </div>
+        <div style="margin-top:20px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Brand collaborations <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
+          <input value="{{ fCollabs }}" onInput="{{ onFCollabs }}" placeholder="Marwar Skincare, Kaapi Kind" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+        </div>
+        <div style="margin-top:20px;">
+          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Bio <span style="color:#8a8a8a;font-weight:400;text-transform:none;">({{ bioCount }}/150)</span></label>
+          <textarea value="{{ fBio }}" onInput="{{ onFBio }}" maxlength="150" rows="3" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;resize:vertical;"></textarea>
+        </div>
+
+        <div style="margin-top:30px;padding:24px;border:2px solid #000;">
+          <div style="font-family:Anton,sans-serif;font-size:19px;margin-bottom:6px;">Engagement rate calculator</div>
+          <p style="font-size:13px;color:#5C5C5C;margin:0 0 16px;">Enter your last 30 days on one typical post — the rate below is (likes + comments + shares + saves) ÷ reach.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;">
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Likes</label><input type="number" min="0" value="{{ calcLikes }}" onInput="{{ onCalcLikes }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Comments</label><input type="number" min="0" value="{{ calcComments }}" onInput="{{ onCalcComments }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Shares</label><input type="number" min="0" value="{{ calcShares }}" onInput="{{ onCalcShares }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Saves</label><input type="number" min="0" value="{{ calcSaves }}" onInput="{{ onCalcSaves }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Reach</label><input type="number" min="0" value="{{ calcReach }}" onInput="{{ onCalcReach }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:16px;">
+            <div style="font-family:Anton,sans-serif;font-size:28px;">{{ calcRate }}</div>
+            <button type="button" onClick="{{ applyCalc }}" style="border:2px solid #000;background:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Use this as my engagement rate</button>
+          </div>
+        </div>
+
+        <div style="font-size:13.5px;color:#FF3300;min-height:20px;margin-top:20px;">{{ formError }}</div>
+        <button type="submit" data-magnetic="8" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;width:100%;max-width:280px;transition:background .2s ease;" style-hover="background:#e62e00">{{ saveLabel2 }}<span style="font-family:Anton,sans-serif;">→</span></button>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:400;background:{{ toastBg }};color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;">{{ toast }}</div>
     </sc-if>
   </section>
 
@@ -177,88 +252,250 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{}">
-const WORK = [
-  { title: "14-day serum diary", platform: "Instagram · Reel", date: "Aug 2026", views: "182K", saves: "4.2K", tagShort: "01" },
-  { title: "Barrier repair, explained", platform: "Instagram · Carousel", date: "Jul 2026", views: "96K", saves: "8.1K", tagShort: "02" },
-  { title: "GRWM: wedding guest", platform: "Instagram · Reel", date: "Jul 2026", views: "241K", saves: "3.7K", tagShort: "03" },
-  { title: "Drugstore vs luxury SPF", platform: "YouTube · Short", date: "Jun 2026", views: "128K", saves: "2.4K", tagShort: "04" },
-  { title: "Scalp oiling routine", platform: "Instagram · Reel", date: "Jun 2026", views: "77K", saves: "1.9K", tagShort: "05" },
-  { title: "Monsoon skin reset", platform: "Instagram · Carousel", date: "May 2026", views: "64K", saves: "5.6K", tagShort: "06" }
-];
+function emptyForm() {
+  return {
+    fName: "", fCategory: "", fCity: "", fUsername: "", fInstagramUrl: "", fFollowers: "", fRate: "",
+    fFemalePct: "", fMalePct: "", fAudienceCities: "", fCollabs: "", fBio: "",
+    calcLikes: "", calcComments: "", calcShares: "", calcSaves: "", calcReach: "",
+    avatarFile: null
+  };
+}
 
 class Component extends DCLogic {
-  state = { tab: "work", saved: false, editing: false };
+  state = {
+    tab: "work", saved: false, editing: false, loading: true, saving: false,
+    mode: "loading", isOwn: false, creator: null, session: null, toast: "", toastKind: "ok",
+    formError: "", ...emptyForm()
+  };
   rootRef = React.createRef();
   glowRef = React.createRef();
   metricRefs = [React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef()];
 
+  flash(msg, kind) {
+    this.setState({ toast: msg, toastKind: kind || "ok" });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: "" }), 3200);
+  }
+
+  startEdit() {
+    const c = this.state.creator || {};
+    this.setState({
+      editing: true, tab: "work", formError: "",
+      fName: c.name || "", fCategory: c.category || "", fCity: (c.locations && c.locations[0]) || "",
+      fUsername: c.username || "", fInstagramUrl: c.instagram_url || "",
+      fFollowers: c.followers || "", fRate: c.rate_min || c.rate_max || "",
+      fFemalePct: c.audience_female_pct ?? "", fMalePct: c.audience_male_pct ?? "",
+      fAudienceCities: (c.audience_locations || []).join(", "),
+      fCollabs: (c.brand_partnerships || []).join(", "),
+      fBio: c.bio || "",
+      calcLikes: "", calcComments: "", calcShares: "", calcSaves: "", calcReach: "",
+      avatarFile: null
+    });
+  }
+
+  calcEngagement() {
+    const { calcLikes, calcComments, calcShares, calcSaves, calcReach } = this.state;
+    const reach = Number(calcReach) || 0;
+    if (!reach) return null;
+    const total = (Number(calcLikes) || 0) + (Number(calcComments) || 0) + (Number(calcShares) || 0) + (Number(calcSaves) || 0);
+    return Math.round((total / reach) * 10000) / 100;
+  }
+
+  validateForm() {
+    const { fName, fBio, fFollowers, fRate, fFemalePct, fMalePct } = this.state;
+    if (!fName.trim()) return "Full name is required.";
+    if (!fBio.trim()) return "Bio is required.";
+    if (fBio.length > 150) return "Bio must be 150 characters or fewer.";
+    if (fFollowers !== "" && !/^\d+$/.test(String(fFollowers))) return "Follower count must be a number.";
+    if (fRate !== "" && !/^\d+(\.\d+)?$/.test(String(fRate))) return "Rate must be a number.";
+    const fem = fFemalePct === "" ? 0 : Number(fFemalePct);
+    const male = fMalePct === "" ? 0 : Number(fMalePct);
+    if (fem < 0 || fem > 100 || male < 0 || male > 100) return "Gender split percentages must be between 0 and 100.";
+    if (fem + male > 100) return "Female % + male % can't exceed 100.";
+    return "";
+  }
+
+  saveProfile = async (e) => {
+    e.preventDefault();
+    const err = this.validateForm();
+    if (err) return this.setState({ formError: err });
+    const { session, avatarFile } = this.state;
+    if (!session) return;
+    this.setState({ saving: true, formError: "" });
+
+    let avatarUrl = this.state.creator?.profile_image || null;
+    if (avatarFile) {
+      if (avatarFile.size > 5 * 1024 * 1024) {
+        this.setState({ saving: false, formError: "Avatar image must be under 5MB." });
+        return;
+      }
+      if (!avatarFile.type.startsWith("image/")) {
+        this.setState({ saving: false, formError: "Avatar must be an image file." });
+        return;
+      }
+      const ext = (avatarFile.name.split(".").pop() || "jpg").toLowerCase();
+      const path = session.user.id + "/avatar." + ext;
+      const { error: upErr } = await supabaseClient.storage.from("creator-avatars").upload(path, avatarFile, { upsert: true });
+      if (upErr) {
+        this.setState({ saving: false, formError: "Avatar upload failed: " + upErr.message });
+        return;
+      }
+      const { data: pub } = supabaseClient.storage.from("creator-avatars").getPublicUrl(path);
+      avatarUrl = pub.publicUrl + "?t=" + Date.now();
+    }
+
+    const patch = {
+      name: this.state.fName.trim(),
+      category: this.state.fCategory.trim() || null,
+      locations: this.state.fCity.trim() ? [this.state.fCity.trim()] : [],
+      username: this.state.fUsername.trim() || null,
+      instagram_url: this.state.fInstagramUrl.trim() || null,
+      followers: this.state.fFollowers === "" ? 0 : parseInt(this.state.fFollowers, 10),
+      rate_min: this.state.fRate === "" ? null : Number(this.state.fRate),
+      rate_max: this.state.fRate === "" ? null : Number(this.state.fRate),
+      audience_female_pct: this.state.fFemalePct === "" ? null : Number(this.state.fFemalePct),
+      audience_male_pct: this.state.fMalePct === "" ? null : Number(this.state.fMalePct),
+      audience_locations: this.state.fAudienceCities.split(",").map((s) => s.trim()).filter(Boolean),
+      brand_partnerships: this.state.fCollabs.split(",").map((s) => s.trim()).filter(Boolean),
+      bio: this.state.fBio.trim(),
+      profile_image: avatarUrl
+    };
+    const calcRate = this.calcEngagement();
+    if (calcRate !== null) patch.engagement_rate = calcRate;
+
+    const { data: updated, error } = await supabaseClient.from("creators").update(patch).eq("user_id", session.user.id).select().single();
+    this.setState({ saving: false });
+    if (error) return this.setState({ formError: error.message });
+    this.setState({ creator: updated, editing: false });
+    this.flash("Profile saved");
+  };
+
   renderVals() {
-    const { tab, saved, editing } = this.state;
+    const {
+      tab, saved, editing, loading, creator, isOwn, mode, saving,
+      fName, fCategory, fCity, fUsername, fInstagramUrl, fFollowers, fRate,
+      fFemalePct, fMalePct, fAudienceCities, fCollabs, fBio,
+      calcLikes, calcComments, calcShares, calcSaves, calcReach,
+      formError, toast, toastKind
+    } = this.state;
     const mk = (label, on) => ({
       label,
       rule: tab === on ? "#FF3300" : "transparent",
       fg: tab === on ? "#fff" : "#8a8a8a",
       pick: () => this.setState({ tab: on })
     });
-    const ages = [
-      { label: "13-17", pct: "6%", h: "14%", delay: "0ms", color: "#DCD8D1" },
-      { label: "18-24", pct: "34%", h: "78%", delay: "80ms", color: "#FF3300" },
-      { label: "25-34", pct: "41%", h: "94%", delay: "160ms", color: "#FF3300" },
-      { label: "35-44", pct: "14%", h: "32%", delay: "240ms", color: "#DCD8D1" },
-      { label: "45+", pct: "5%", h: "12%", delay: "320ms", color: "#DCD8D1" }
-    ];
+    const c = creator || {};
+    const isPublicView = mode !== "loading" && !isOwn;
+    const calcRate = this.calcEngagement();
+
     return {
       rootRef: this.rootRef, glowRef: this.glowRef,
+      loading, mode,
+      isOwn, isPublicView,
+      statusTag: loading ? "Loading…" : (c.is_verified ? "Verified" : "Unverified") + (c.availability === "available" || !c.availability ? " · open to briefs" : ""),
+      displayName: loading ? "" : (c.name || "Unnamed creator"),
+      initials: (c.name || "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+      hasAvatar: !!c.profile_image,
+      noAvatar: !c.profile_image,
+      avatarUrl: c.profile_image || "",
+      nicheLabel: c.category || "Creator",
+      cityLabel: (c.locations && c.locations[0]) || "—",
+      bioText: c.bio || (loading ? "" : "No bio yet."),
       metrics: [
-        { label: "Followers", note: "Instagram", ref: this.metricRefs[0] },
-        { label: "Avg. reel views", note: "last 30 days", ref: this.metricRefs[1] },
-        { label: "Engagement", note: "above niche avg.", ref: this.metricRefs[2] },
-        { label: "Collabs", note: "100% delivered", ref: this.metricRefs[3] },
-        { label: "Reply time", note: "hours, median", ref: this.metricRefs[4] }
+        { label: "Followers", note: "Self-reported", ref: this.metricRefs[0] },
+        { label: "Engagement", note: "self-reported rate", ref: this.metricRefs[1] },
+        { label: "Collabs", note: "brand partnerships", ref: this.metricRefs[2] },
+        { label: "Audience", note: "% female", ref: this.metricRefs[3] },
+        { label: "Verified", note: c.is_verified ? "by Creatopz" : "not yet", ref: this.metricRefs[4] }
       ],
       tabs: [mk("Work", "work"), mk("Audience", "audience"), mk("Rates", "rates")],
-      showWork: tab === "work",
-      showAudience: tab === "audience",
-      showRates: tab === "rates",
-      work: WORK.map((w, i) => Object.assign({}, w, { delay: i * 70 + "ms" })),
-      ages,
-      cities: [
-        { label: "Jodhpur", pct: "28%", fill: 0.28 },
-        { label: "Jaipur", pct: "19%", fill: 0.19 },
-        { label: "Delhi NCR", pct: "14%", fill: 0.14 },
-        { label: "Mumbai", pct: "11%", fill: 0.11 },
-        { label: "Rest of India", pct: "28%", fill: 0.28 }
-      ],
-      rates: [
-        { kind: "Reel", price: "₹6,500", detail: "Up to 45s, one revision, 7-day story pin included.", delay: "0ms" },
-        { kind: "Carousel", price: "₹4,000", detail: "Up to 8 slides with written copy and captions.", delay: "70ms" },
-        { kind: "Story set", price: "₹2,500", detail: "Three frames with a swipe-up link and poll.", delay: "140ms" },
-        { kind: "Bundle", price: "₹11,000", detail: "One reel, one carousel, one story set. Best value.", delay: "210ms" }
-      ],
+      notEditing: !editing,
+      showWork: !editing && tab === "work",
+      showAudience: !editing && tab === "audience",
+      showRates: !editing && tab === "rates",
+      showEdit: editing,
+      work: (c.brand_partnerships || []).map((title, i) => ({ title, delay: i * 60 + "ms" })),
+      collabsEmpty: (c.brand_partnerships || []).length === 0,
+      audienceCities: (c.audience_locations || []).map((label) => ({ label })),
+      audienceCitiesEmpty: (c.audience_locations || []).length === 0,
+      femalePct: c.audience_female_pct != null ? c.audience_female_pct + "%" : "—",
+      malePct: c.audience_male_pct != null ? c.audience_male_pct + "%" : "—",
+      rateLabel: c.rate_min || c.rate_max ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Not published",
       saved,
       saveLabel: saved ? "Saved to shortlist ✓" : "Save to shortlist",
       saveBg: saved ? "#fff" : "transparent",
       saveFg: saved ? "#000" : "#fff",
       toggleSave: () => this.setState({ saved: !saved }),
       editing,
-      editLabel: editing ? "Done editing" : "Edit profile",
+      editLabel: editing ? "Cancel" : "Edit profile",
       editBg: editing ? "#FF3300" : "#fff",
       editFg: editing ? "#fff" : "#000",
-      toggleEdit: () => this.setState({ editing: !editing })
+      toggleEdit: () => { if (editing) this.setState({ editing: false }); else this.startEdit(); },
+      saveLabel2: saving ? "Saving…" : "Done editing",
+      formError,
+      fName, fCategory, fCity, fUsername, fInstagramUrl, fFollowers, fRate, fFemalePct, fMalePct, fAudienceCities, fCollabs, fBio,
+      bioCount: fBio.length,
+      onFName: (e) => this.setState({ fName: e.target.value }),
+      onFCategory: (e) => this.setState({ fCategory: e.target.value }),
+      onFCity: (e) => this.setState({ fCity: e.target.value }),
+      onFUsername: (e) => this.setState({ fUsername: e.target.value }),
+      onFInstagramUrl: (e) => this.setState({ fInstagramUrl: e.target.value }),
+      onFFollowers: (e) => this.setState({ fFollowers: e.target.value }),
+      onFRate: (e) => this.setState({ fRate: e.target.value }),
+      onFFemalePct: (e) => this.setState({ fFemalePct: e.target.value }),
+      onFMalePct: (e) => this.setState({ fMalePct: e.target.value }),
+      onFAudienceCities: (e) => this.setState({ fAudienceCities: e.target.value }),
+      onFCollabs: (e) => this.setState({ fCollabs: e.target.value }),
+      onFBio: (e) => this.setState({ fBio: e.target.value.slice(0, 150) }),
+      onAvatarFile: (e) => this.setState({ avatarFile: e.target.files && e.target.files[0] }),
+      calcLikes, calcComments, calcShares, calcSaves, calcReach,
+      onCalcLikes: (e) => this.setState({ calcLikes: e.target.value }),
+      onCalcComments: (e) => this.setState({ calcComments: e.target.value }),
+      onCalcShares: (e) => this.setState({ calcShares: e.target.value }),
+      onCalcSaves: (e) => this.setState({ calcSaves: e.target.value }),
+      onCalcReach: (e) => this.setState({ calcReach: e.target.value }),
+      calcRate: calcRate === null ? "—" : calcRate + "%",
+      applyCalc: () => { if (calcRate !== null) this.flash("Will save as " + calcRate + "% engagement when you submit"); },
+      saveProfile: this.saveProfile,
+      hasToast: !!toast,
+      toast,
+      toastBg: toastKind === "error" ? "#000" : "#FF3300"
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const vals = [
-      { t: 42000, fmt: (n) => (n / 1000).toFixed(1) + "K" },
-      { t: 128000, fmt: (n) => Math.round(n / 1000) + "K" },
-      { t: 74, fmt: (n) => (n / 10).toFixed(1) + "%" },
-      { t: 6, fmt: (n) => String(Math.round(n)) },
-      { t: 3, fmt: (n) => "<" + Math.max(1, Math.round(n)) + "h" }
-    ];
-    this.metricRefs.forEach((ref, i) => this.countTo(ref.current, vals[i].t, vals[i].fmt, i * 80));
+    const params = new URLSearchParams(location.search);
+    const idParam = params.get("id");
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const session = sessionData?.session || null;
+    this.setState({ session });
 
+    let ownCreator = null;
+    if (session) {
+      const { data } = await supabaseClient.from("creators").select("*").eq("user_id", session.user.id).maybeSingle();
+      ownCreator = data;
+    }
+
+    if (idParam) {
+      if (ownCreator && ownCreator.id === idParam) {
+        this.setState({ loading: false, mode: "own", isOwn: true, creator: ownCreator });
+      } else {
+        const { data } = await supabaseClient.from("creators_public").select("*").eq("id", idParam).maybeSingle();
+        this.setState({ loading: false, mode: "public", isOwn: false, creator: data });
+      }
+    } else if (ownCreator) {
+      this.setState({ loading: false, mode: "own", isOwn: true, creator: ownCreator });
+    } else if (session) {
+      // Logged in but not a creator (e.g. a brand) viewing profile.html with no id.
+      location.href = "dashboard-brand.html";
+      return;
+    } else {
+      location.href = "auth.html";
+      return;
+    }
+
+    this.animateMetrics();
     const glow = this.glowRef.current;
     if (glow && !this.reduced) {
       const host = glow.parentElement;
@@ -286,6 +523,18 @@ class Component extends DCLogic {
         if (el) el.style.transform = "translate(0,0)";
       });
     }
+  }
+
+  animateMetrics() {
+    const c = this.state.creator || {};
+    const vals = [
+      { t: c.followers || 0, fmt: (n) => n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(Math.round(n)) },
+      { t: Number(c.engagement_rate) || 0, fmt: (n) => n.toFixed(1) + "%" },
+      { t: (c.brand_partnerships || []).length, fmt: (n) => String(Math.round(n)) },
+      { t: Number(c.audience_female_pct) || 0, fmt: (n) => Math.round(n) + "%" },
+      { t: c.is_verified ? 1 : 0, fmt: (n) => (n ? "Yes" : "No") }
+    ];
+    this.metricRefs.forEach((ref, i) => this.countTo(ref.current, vals[i].t, vals[i].fmt, i * 80));
   }
 
   countTo(el, target, fmt, delay) {
