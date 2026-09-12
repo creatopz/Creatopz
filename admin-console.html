@@ -125,7 +125,7 @@
               <div style="font-family:Anton,sans-serif;font-size:18px;">{{ c.reachLabel }}</div>
               <button onClick="{{ c.togglePublic }}" style="border:none;background:none;font-size:12.5px;color:{{ c.publicColor }};font-weight:600;cursor:pointer;text-align:left;padding:0;">{{ c.publicLabel }}</button>
               <sc-if value="{{ c.flagged }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:11px;font-weight:700;color:#ffb199;border:1px solid #ffb199;padding:4px 8px;">⚠ Review</span>
+                <button onClick="{{ c.clearFlag }}" title="Auto-flagged: stats look implausible for the follower tier — hidden from the directory until cleared" style="font-size:11px;font-weight:700;color:#ffb199;border:1px solid #ffb199;background:none;padding:4px 8px;cursor:pointer;">⚠ Review</button>
               </sc-if>
               <button onClick="{{ c.toggle }}" style="border:2px solid {{ c.vBorder }};background:{{ c.vBg }};color:{{ c.vFg }};font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ c.vLabel }}</button>
             </div>
@@ -182,6 +182,46 @@
           <button onClick="{{ clearQuery }}" style="border:2px solid #fff;background:transparent;color:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Clear search</button>
         </div>
       </sc-if>
+
+      <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;min-height:520px;">
+          <div style="background:#000;overflow-y:auto;max-height:640px;">
+            <sc-if value="{{ conversationsEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:24px;color:#7d7d7d;font-size:13.5px;">No conversations yet.</div>
+            </sc-if>
+            <sc-for list="{{ conversations }}" as="cv" hint-placeholder-count="4">
+              <button onClick="{{ cv.pick }}" style="display:block;width:100%;text-align:left;background:{{ cv.bg }};border:none;border-bottom:1px solid #1e1e1e;padding:16px 18px;cursor:pointer;">
+                <div style="display:flex;justify-content:space-between;gap:8px;">
+                  <span style="font-size:14.5px;font-weight:600;color:#fff;overflow-wrap:anywhere;">{{ cv.name }}</span>
+                  <sc-if value="{{ cv.hasUnread }}" hint-placeholder-val="{{ false }}">
+                    <span style="background:#FF3300;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;flex:0 0 auto;">{{ cv.unread }}</span>
+                  </sc-if>
+                </div>
+                <div style="font-size:12px;color:#7d7d7d;margin-top:4px;">{{ cv.role }}</div>
+              </button>
+            </sc-for>
+          </div>
+          <div style="background:#000;display:flex;flex-direction:column;">
+            <sc-if value="{{ hasActiveThread }}" hint-placeholder-val="{{ false }}">
+              <div style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:52vh;">
+                <sc-for list="{{ thread }}" as="m" hint-placeholder-count="4">
+                  <div style="align-self:{{ m.align }};max-width:78%;">
+                    <div style="font-size:11px;color:#7d7d7d;margin-bottom:4px;">{{ m.who }} · {{ m.when }}</div>
+                    <div style="background:{{ m.bg }};color:{{ m.fg }};border:1px solid #1e1e1e;padding:12px 16px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere;">{{ m.body }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <form onSubmit="{{ sendMsg }}" style="border-top:1px solid #1e1e1e;display:flex;gap:10px;padding:16px;">
+                <input value="{{ msgDraft }}" onInput="{{ onMsgDraft }}" placeholder="Reply as the Creatopz team…" style="flex:1;background:transparent;border:1px solid #333;color:#fff;padding:12px 14px;font-size:14.5px;outline:none;">
+                <button type="submit" style="background:#FF3300;color:#fff;border:none;font-weight:700;padding:12px 22px;cursor:pointer;">Send</button>
+              </form>
+            </sc-if>
+            <sc-if value="{{ noActiveThread }}" hint-placeholder-val="{{ true }}">
+              <div style="flex:1;display:flex;align-items:center;justify-content:center;color:#7d7d7d;font-size:14px;">Pick a conversation on the left.</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
     </section>
   </main>
 
@@ -201,25 +241,46 @@ function fmtRange(min, max) {
   if (min && max && min !== max) return fmtMoney(min) + "–" + fmtMoney(max);
   return fmtMoney(min || max);
 }
-// Simple heuristic flag: engagement rate wildly out of band for the follower
-// tier suggests bought followers (too low) or bot activity (implausibly high).
-function isFlagged(c) {
-  const followers = c.followers || 0;
-  const er = Number(c.engagement_rate) || 0;
-  if (followers < 500) return false;
-  if (er === 0) return true;
-  if (followers > 5000 && er < 0.5) return true;
-  if (er > 15) return true;
-  return false;
-}
-
 class Component extends DCLogic {
   state = {
     view: "apps", query: "", toast: "", loading: true,
-    apps: [], creators: [], campaigns: [], gallery: [], agreedDrafts: {}
+    apps: [], creators: [], campaigns: [], gallery: [], agreedDrafts: {},
+    session: null, conversations: [], activeConversationId: null, thread: [], msgDraft: "", unreadByConvo: {}
   };
   rootRef = React.createRef();
   kpiRefs = [React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+
+  async loadConversations() {
+    const { data: convos } = await supabaseClient.from("conversations").select("*, profiles(full_name, role)").order("updated_at", { ascending: false });
+    const { data: unreadMsgs } = await supabaseClient.from("messages").select("conversation_id, sender_id").is("read_at", null);
+    const unreadByConvo = {};
+    (unreadMsgs || []).forEach((m) => {
+      // Only count messages sent by the participant (not by admin themselves) as unread for admin.
+      unreadByConvo[m.conversation_id] = (unreadByConvo[m.conversation_id] || 0) + 1;
+    });
+    this.setState({ conversations: convos || [], unreadByConvo });
+  }
+
+  async openConversation(id) {
+    this.setState({ activeConversationId: id });
+    const { data } = await supabaseClient.from("messages").select("*").eq("conversation_id", id).order("sent_at", { ascending: true });
+    this.setState({ thread: data || [] });
+    const unreadIds = (data || []).filter((m) => !m.read_at && m.sender_id !== this.state.session.user.id).map((m) => m.id);
+    if (unreadIds.length) {
+      await supabaseClient.from("messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+      await this.loadConversations();
+    }
+  }
+
+  sendMsg = async (e) => {
+    e.preventDefault();
+    const { msgDraft, activeConversationId, session } = this.state;
+    if (!msgDraft.trim() || !activeConversationId) return;
+    const { error } = await supabaseClient.from("messages").insert({ conversation_id: activeConversationId, sender_id: session.user.id, body: msgDraft.trim() });
+    if (error) return this.flash("Couldn't send: " + error.message);
+    this.setState({ msgDraft: "" });
+    await this.openConversation(activeConversationId);
+  };
 
   flash(msg) {
     this.setState({ toast: msg });
@@ -278,6 +339,13 @@ class Component extends DCLogic {
     this.flash(next ? "Listed in the directory" : "Hidden from the directory");
   }
 
+  async clearFlag(id) {
+    const { error } = await supabaseClient.from("creators").update({ flagged_for_review: false, is_public: true }).eq("id", id);
+    if (error) return this.flash("Couldn't clear flag: " + error.message);
+    await this.loadAll();
+    this.flash("Cleared for review — listed in the directory");
+  }
+
   async toggleCampaignStatus(id, next) {
     const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
     if (error) return this.flash("Couldn't update: " + error.message);
@@ -329,7 +397,8 @@ class Component extends DCLogic {
       publicLabel: c.is_public ? "Listed" : "Hidden",
       publicColor: c.is_public ? "#c9c9c9" : "#6d6d6d",
       togglePublic: () => this.togglePublic(c.id, !c.is_public),
-      flagged: isFlagged(c),
+      flagged: !!c.flagged_for_review,
+      clearFlag: () => this.clearFlag(c.id),
       vLabel: c.is_verified ? "Verified ✓" : "Verify",
       vBg: c.is_verified ? "#FF3300" : "transparent",
       vFg: "#fff",
@@ -361,7 +430,9 @@ class Component extends DCLogic {
       toggle: () => this.toggleGallery(g.id, !g.is_published)
     }));
 
-    const counts = { apps: apps.length, creators: creators.length, campaigns: campaigns.length, gallery: gallery.length };
+    const { conversations, activeConversationId, thread, msgDraft, unreadByConvo, session } = this.state;
+    const totalUnread = Object.values(unreadByConvo || {}).reduce((a, b) => a + b, 0);
+    const counts = { apps: apps.length, creators: creators.length, campaigns: campaigns.length, gallery: gallery.length, messages: totalUnread };
     const mk = (label, on) => ({
       label,
       count: String(counts[on] || 0),
@@ -371,12 +442,38 @@ class Component extends DCLogic {
       pick: () => this.setState({ view: on })
     });
 
-    const current = { apps, creators, campaigns, gallery }[view] || [];
+    const current = { apps, creators, campaigns, gallery, messages: conversations }[view] || [];
 
     return {
       rootRef: this.rootRef,
-      nav: [mk("Applications", "apps"), mk("Creators", "creators"), mk("Campaigns", "campaigns"), mk("Gallery", "gallery")],
-      viewTitle: { apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery" }[view],
+      nav: [mk("Applications", "apps"), mk("Creators", "creators"), mk("Campaigns", "campaigns"), mk("Gallery", "gallery"), mk("Messages", "messages")],
+      viewTitle: { apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", messages: "Messages" }[view],
+      isMessages: view === "messages",
+      conversations: conversations.map((cv) => ({
+        pick: () => this.openConversation(cv.id),
+        bg: cv.id === activeConversationId ? "#151515" : "transparent",
+        name: cv.profiles?.full_name || "User",
+        role: cv.profiles?.role || "",
+        unread: (unreadByConvo || {})[cv.id] || 0,
+        hasUnread: !!(unreadByConvo || {})[cv.id]
+      })),
+      conversationsEmpty: conversations.length === 0,
+      hasActiveThread: !!activeConversationId,
+      noActiveThread: !activeConversationId,
+      thread: thread.map((m) => {
+        const mine = session && m.sender_id === session.user.id;
+        return {
+          align: mine ? "flex-end" : "flex-start",
+          bg: mine ? "#FF3300" : "#151515",
+          fg: "#fff",
+          who: mine ? "You (Creatopz)" : "User",
+          when: new Date(m.sent_at).toLocaleString(),
+          body: m.body
+        };
+      }),
+      msgDraft,
+      onMsgDraft: (e) => this.setState({ msgDraft: e.target.value }),
+      sendMsg: this.sendMsg,
       kpis: [
         { label: "Pending matches", fill: Math.min(1, appsRaw.filter((a) => a.status === "pending" || a.status === "shortlisted").length / 20), color: "#FF3300", ref: this.kpiRefs[0], target: appsRaw.filter((a) => a.status === "pending" || a.status === "shortlisted").length },
         { label: "Live campaigns", fill: Math.min(1, campaignsRaw.filter((c) => c.status === "open").length / 10), color: "#fff", ref: this.kpiRefs[1], target: campaignsRaw.filter((c) => c.status === "open").length },
@@ -388,7 +485,7 @@ class Component extends DCLogic {
       isCreators: view === "creators" && creators.length > 0,
       isCampaigns: view === "campaigns" && campaigns.length > 0,
       isGallery: view === "gallery" && gallery.length > 0,
-      isEmpty: !loading && current.length === 0,
+      isEmpty: !loading && view !== "messages" && current.length === 0,
       apps, creators, campaigns, gallery,
       query,
       onQuery: (e) => this.setState({ query: e.target.value }),
@@ -408,7 +505,16 @@ class Component extends DCLogic {
       location.href = profile?.role === "brand" ? "dashboard-brand.html" : "dashboard-creator.html";
       return;
     }
+    this.setState({ session });
     await this.loadAll();
+    await this.loadConversations();
+    this.msgChannel = supabaseClient
+      .channel("admin-messages")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => {
+        this.loadConversations();
+        if (this.state.activeConversationId) this.openConversation(this.state.activeConversationId);
+      })
+      .subscribe();
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const targets = this.renderVals().kpis.map((k) => k.target || 0);
     this.kpiRefs.forEach((ref, i) => this.countTo(ref.current, targets[i], i * 80));
@@ -428,7 +534,10 @@ class Component extends DCLogic {
     requestAnimationFrame(tick);
   }
 
-  componentWillUnmount() { clearTimeout(this._t); }
+  componentWillUnmount() {
+    clearTimeout(this._t);
+    if (this.msgChannel) supabaseClient.removeChannel(this.msgChannel);
+  }
 }
 </script>
 </body>

@@ -331,13 +331,20 @@ class Component extends DCLogic {
       apps = appsRaw || [];
     }
 
+    let unreadMessages = 0;
+    const { data: convo } = await supabaseClient.from("conversations").select("id").eq("participant_id", session.user.id).maybeSingle();
+    if (convo) {
+      const { count } = await supabaseClient.from("messages").select("id", { count: "exact", head: true }).eq("conversation_id", convo.id).is("read_at", null).neq("sender_id", session.user.id);
+      unreadMessages = count || 0;
+    }
+
     this.setState({
       loading: false,
       creator,
       apps,
       briefs: briefsRaw || [],
       notes: notes || [],
-      unreadCount: (notes || []).filter((n) => !n.read).length
+      unreadCount: unreadMessages
     });
 
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
