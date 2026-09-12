@@ -202,9 +202,14 @@ class Component extends DCLogic {
     if (glow && root && !this.reduced) {
       const hero = glow.parentElement;
       this.move = (ev) => {
-        const r = hero.getBoundingClientRect();
-        glow.style.setProperty("--mx", ev.clientX - r.left + "px");
-        glow.style.setProperty("--my", ev.clientY - r.top + "px");
+        this._lastGlowEv = ev;
+        if (this._glowRaf) return;
+        this._glowRaf = requestAnimationFrame(() => {
+          this._glowRaf = null;
+          const r = hero.getBoundingClientRect();
+          glow.style.setProperty("--mx", this._lastGlowEv.clientX - r.left + "px");
+          glow.style.setProperty("--my", this._lastGlowEv.clientY - r.top + "px");
+        });
       };
       hero.addEventListener("mousemove", this.move);
       this.hero = hero;
@@ -214,11 +219,12 @@ class Component extends DCLogic {
         const amt = parseFloat(el.dataset.magnetic) || 8;
         el.addEventListener("mousemove", (ev) => {
           const r = el.getBoundingClientRect();
+          el.style.transitionDuration = "0s";
           el.style.transform =
             "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
             (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
         });
-        el.addEventListener("mouseleave", () => { el.style.transform = "translate(0,0)"; });
+        el.addEventListener("mouseleave", () => { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; });
       });
     }
   }
@@ -302,6 +308,7 @@ class Component extends DCLogic {
 
   componentWillUnmount() {
     cancelAnimationFrame(this._cRaf);
+    cancelAnimationFrame(this._glowRaf);
     if (this.hero && this.move) this.hero.removeEventListener("mousemove", this.move);
   }
 }

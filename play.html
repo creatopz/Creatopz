@@ -277,13 +277,14 @@ class Component extends DCLogic {
         if (!el) return;
         const amt = parseFloat(el.dataset.magnetic) || 8;
         const r = el.getBoundingClientRect();
+        el.style.transitionDuration = "0s";
         el.style.transform =
           "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
           (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
       });
       root.addEventListener("mouseout", (ev) => {
         const el = ev.target.closest && ev.target.closest("[data-magnetic]");
-        if (el) el.style.transform = "translate(0,0)";
+        if (el) { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; }
       });
     }
   }

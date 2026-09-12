@@ -508,9 +508,14 @@ class Component extends DCLogic {
       const host = glow.parentElement;
       this.host = host;
       this.move = (ev) => {
-        const r = host.getBoundingClientRect();
-        glow.style.setProperty("--mx", ev.clientX - r.left + "px");
-        glow.style.setProperty("--my", ev.clientY - r.top + "px");
+        this._lastGlowEv = ev;
+        if (this._glowRaf) return;
+        this._glowRaf = requestAnimationFrame(() => {
+          this._glowRaf = null;
+          const r = host.getBoundingClientRect();
+          glow.style.setProperty("--mx", this._lastGlowEv.clientX - r.left + "px");
+          glow.style.setProperty("--my", this._lastGlowEv.clientY - r.top + "px");
+        });
       };
       host.addEventListener("mousemove", this.move);
     }
@@ -521,13 +526,14 @@ class Component extends DCLogic {
         if (!el) return;
         const amt = parseFloat(el.dataset.magnetic) || 8;
         const r = el.getBoundingClientRect();
+        el.style.transitionDuration = "0s";
         el.style.transform =
           "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
           (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
       });
       root.addEventListener("mouseout", (ev) => {
         const el = ev.target.closest && ev.target.closest("[data-magnetic]");
-        if (el) el.style.transform = "translate(0,0)";
+        if (el) { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; }
       });
     }
   }
@@ -559,6 +565,7 @@ class Component extends DCLogic {
   }
 
   componentWillUnmount() {
+    cancelAnimationFrame(this._glowRaf);
     if (this.host && this.move) this.host.removeEventListener("mousemove", this.move);
   }
 }

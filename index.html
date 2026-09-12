@@ -361,9 +361,10 @@ class Component extends DCLogic {
           const r = el.getBoundingClientRect();
           const dx = ((ev.clientX - r.left) / r.width - 0.5) * 2 * amt;
           const dy = ((ev.clientY - r.top) / r.height - 0.5) * 2 * amt;
+          el.style.transitionDuration = "0s";
           el.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px)";
         };
-        const leave = () => { el.style.transform = "translate(0,0)"; };
+        const leave = () => { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; };
         el.addEventListener("mousemove", enter);
         el.addEventListener("mouseleave", leave);
         this.cleanups.push(() => {
