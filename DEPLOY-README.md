@@ -3,59 +3,64 @@
 Upload the whole contents of this folder to any static host (Netlify drop,
 Vercel, GitHub Pages, Hostinger, cPanel public_html). No build step.
 
-## New animated pages (self-contained, mock data)
+## Live Supabase project
+`js/supabase-client.js` already points at the project this build was
+developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
+signups on it — **do not run `schema.sql` or `seed.sql` against it.**
+`supabase/migration_002` through `migration_008` are already applied there.
+If you're standing up a **new/empty** project instead, run in this order:
+`schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
+`008` → (optionally) `seed.sql` for sample rows on a dev project only.
+
+## Modernist pages (wired to live Supabase data)
 - index.html ................ animated landing page
-- directory.html ............ creator directory (search / filter / sort)
-- play.html ................. ASMR arcade (3 toys, WebAudio sound)
-- auth.html ................. log in + 3-step sign up
-- dashboard-creator.html .... creator dashboard
-- dashboard-brand.html ...... brand dashboard — post campaigns, review + shortlist applicants
-- profile.html .............. public creator profile
-- admin-console.html ........ admin console (applications, creators, campaigns, gallery)
+- directory.html ............ creator directory (search / filter / verified-only), reads creators_public
+- play.html ................. ASMR arcade (3 toys, WebAudio sound) — no marketplace data
+- auth.html .................. real signup/login (supabase auth), role-based redirect, session guard
+- dashboard-creator.html .... real applications/open-briefs/notifications, Apply wired to campaign_applications
+- dashboard-brand.html ...... real campaigns + applicants (get_campaign_applicants RPC), post/close campaigns, shortlist/pass, company profile editor
+- profile.html .............. public view (?id=<creator_id>, via creators_public) + the real Edit Profile form when it's your own
+- admin-console.html ........ applications (full mediation view), creators (verify/list/flag review), campaigns (close/reopen), gallery (publish/hide), Messages inbox
+- messages.html ............. creator/brand inbox — one thread with the Creatopz team, live via Supabase Realtime
 
-These require support.js (included, same folder). They ship with realistic
-sample data — no database calls yet.
+All eight load React/ReactDOM/Supabase from CDN + js/supabase-client.js
+before support.js boots the page (support.js is a Design-Canvas runtime —
+it needs window.React/ReactDOM present, which the CDN tags provide).
 
-## Your original Supabase-wired pages (unchanged)
-login.html, signup.html, forgot-password.html, reset-password.html,
-creators.html, campaigns.html, gallery.html, admin.html,
-creator-dashboard.html, brand-dashboard.html, creator-onboarding.html,
-brand-onboarding.html, terms.html, privacy.html, legacy-home.html
-(your previous landing page), plus css/, js/, assets/, supabase/,
-robots.txt, sitemap.xml, og-image.png, .env.example, README.md.
+## Legacy pages (Supabase logic untouched, visual pass applied)
+gallery.html, campaigns.html, creator-onboarding.html, brand-onboarding.html,
+forgot-password.html, reset-password.html, terms.html, privacy.html now pull
+their look from css/app.css, which was rewritten to the Modernist tokens
+(--color-bg/#f3f2f2, --color-surface/#eae9e9, --color-text/#201e1d,
+--color-accent/#ec3013, Archivo, zero corner radius). No markup/JS changed
+in these pages, so their existing Supabase calls are exactly as before.
 
-- dashboard-brand.html ...... brand dashboard — post campaigns, review + shortlist applicants
+login.html, signup.html, admin.html, creator-dashboard.html,
+brand-dashboard.html, creators.html, legacy-home.html are superseded by
+auth.html/admin-console.html/dashboard-creator.html/dashboard-brand.html/
+directory.html/index.html respectively — safe to delete once you've
+confirmed the new pages against your live data.
 
-## Going live with real data
-1. In the Supabase SQL editor, run in this exact order:
-   schema.sql → migration_002_admin_mediation.sql →
-   migration_003_audience_gender_split.sql → migration_004_gallery.sql →
-   migration_005_lock_admin_role.sql → seed.sql (seed.sql optional, sample rows only).
-2. js/supabase-client.js already has your project URL + anon key wired in —
-   nothing to change there. Never put the service_role key in any browser file.
-3. Sign up once through auth.html (or login.html) using creatopz.in@gmail.com.
-   Then re-run step 3 of migration_005 in the SQL editor to promote that one
-   account to admin. No other account can ever become admin — it's enforced
-   by a database trigger, not just hidden UI.
-4. The original Supabase-wired pages (login/signup/creators/campaigns/gallery/
-   admin/creator-dashboard/brand-dashboard/onboarding) work against live data
-   immediately after step 1-2.
-5. The new animated pages (index/directory/play/auth/dashboard-creator/
-   dashboard-brand/profile/admin-console) currently render realistic sample
-   data. To wire them to Supabase, replace the seed arrays at the top of each
-   page's logic script (APPS / CREATORS / CAMPAIGNS / PEOPLE / SEED) with
-   supabaseClient.from(...).select(...) calls using the same field names, and
-   add js/supabase-client.js + the Supabase CDN script tag to each page's
-   <head>. This is a developer task — hand this repo + migration files to a
-   dev or Claude Code for that pass if you want it done end-to-end.
-
-## Security notes already built into the migrations
-- A user can never set their own role to 'admin' (DB trigger, not just RLS).
-- Only the email creatopz.in@gmail.com can ever hold role='admin' (migration_005).
-- Creators/brands only see their own private data; public directory/gallery
+## Security notes
+- A user can never set their own role to 'admin' (DB trigger). Only
+  creatopz.in@gmail.com can ever hold role='admin' — enforced even against
+  an *existing* admin trying to promote a second account (migration_006).
+- Creators/brands only see their own private data; public directory/profile
   go through safe views (creators_public, brands_public, campaigns_public)
-  that exclude contact info, rates and budgets.
+  that exclude Instagram handle/URL, rate and budget.
+- admin-console.html's Applications tab is the one place that shows the
+  full picture on both sides (creator's Instagram + rate, brand's budget)
+  since admin mediates every deal.
+- is_verified can only ever be set by admin (migration_007) — a creator
+  cannot self-verify. Suspicious self-reported stats auto-flag the profile
+  and pull it out of the public directory until admin clears it.
+- Instagram OAuth (pulling real follower/engagement numbers to compare
+  against self-reported ones) needs a Meta developer app you register
+  yourself — the schema (ig_verified_followers/engagement columns) is
+  ready to receive that data once you have app credentials to wire up.
 - Only admin can finalize ("accept") an application — creators can withdraw,
   brands can shortlist/reject, admin closes the loop (migration_002).
 - Storage policies restrict avatar/logo uploads to the owner's own folder;
   gallery uploads are admin-only.
+- conversations/messages (migration_008) are RLS-scoped to the participant
+  or admin — nobody else can read a conversation they're not part of.
