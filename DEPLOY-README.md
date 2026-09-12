@@ -16,10 +16,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_008` are already applied there.
+`supabase/migration_002` through `migration_011` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → (optionally) `seed.sql` for sample rows on a dev project only.
+`008` → `009` → `010` → `011` → (optionally) `seed.sql` for sample rows on
+a dev project only.
 
 ## Modernist pages (wired to live Supabase data)
 - index.html ................ animated landing page
@@ -73,3 +74,16 @@ confirmed the new pages against your live data.
   gallery uploads are admin-only.
 - conversations/messages (migration_008) are RLS-scoped to the participant
   or admin — nobody else can read a conversation they're not part of.
+- campaigns/campaign_applications' RLS policies no longer mutually
+  recurse (migration_010) — a prior policy had campaigns' SELECT check
+  subquery campaign_applications, whose own policies subqueried campaigns
+  right back, which Postgres rejects as infinite recursion for any
+  non-superuser select. This was silently breaking a brand's own
+  `loadCampaigns()` call right after posting, which looked like the post
+  had failed and led to reposting.
+- Every new campaign is admin-gated (migration_011): a brand's insert
+  always lands as `status='draft'` (invisible to creators) no matter what
+  the client sends, and a brand can only self-close an already-open
+  campaign — publishing a draft or reopening a closed one requires admin.
+  Enforced by a DB trigger, not just the UI. Admin approves/declines
+  drafts from admin-console.html's Campaigns tab.

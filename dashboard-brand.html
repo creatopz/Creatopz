@@ -226,6 +226,7 @@
           </div>
           <button type="button" onClick="{{ closeForm }}" style="border:2px solid #000;background:#fff;font-family:Anton,sans-serif;font-size:18px;width:40px;height:40px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">×</button>
         </div>
+        <p style="font-size:13px;color:#8a8a8a;margin-top:14px;">Every new brief is reviewed by Creatopz admin before it goes live to creators — usually within a day.</p>
 
         <div style="margin-top:28px;">
           <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Campaign title</label>
@@ -300,6 +301,7 @@ class Component extends DCLogic {
 
   pill(status) {
     if (status === "open") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
+    if (status === "draft") return { pillBg: "transparent", pillFg: "#000", pillBorder: "#DCD8D1" };
     if (status === "closed" || status === "completed") return { pillBg: "#000", pillFg: "#fff", pillBorder: "#000" };
     return { pillBg: "transparent", pillFg: "#000", pillBorder: "#000" };
   }
@@ -337,7 +339,7 @@ class Component extends DCLogic {
       budget_min: num,
       budget_max: num,
       deadline,
-      status: "open"
+      status: "draft"
     });
     if (error) {
       this.setState({ formSaving: false, formError: error.message });
@@ -345,7 +347,7 @@ class Component extends DCLogic {
     }
     await this.loadCampaigns(brand.id);
     this.setState({ formOpen: false, formSaving: false, fTitle: "", fBudget: "", fDeliverables: "" });
-    this.flash("Brief published — creators can apply now");
+    this.flash("Brief sent for admin review — it'll go live once approved");
   };
 
   submitBrandForm = async (e) => {
@@ -418,15 +420,19 @@ class Component extends DCLogic {
         status: c.status,
         delay: i * 70 + "ms",
         fill: 0.3,
-        appsLabel: "Applications open",
-        toggleLabel: c.status === "open" ? "Close" : "Reopen",
+        appsLabel: c.status === "draft" ? "Awaiting admin approval" : c.status === "closed" ? "Closed to new applicants" : c.status === "completed" ? "Campaign completed" : "Applications open",
+        toggleLabel: c.status === "open" ? "Close" : c.status === "draft" ? "Pending review" : c.status === "closed" ? "Closed" : "Completed",
         review: () => { this.setState({ tab: "applicants", selectedCampaignId: c.id }); this.loadApplicants(c.id); },
         toggleStatus: async () => {
-          const nextStatus = c.status === "open" ? "closed" : "open";
-          const { error } = await supabaseClient.from("campaigns").update({ status: nextStatus }).eq("id", c.id);
+          if (c.status !== "open") {
+            return this.flash(c.status === "draft"
+              ? "This brief is waiting on Creatopz admin to approve it before it goes live."
+              : "Only Creatopz admin can reopen a closed brief.");
+          }
+          const { error } = await supabaseClient.from("campaigns").update({ status: "closed" }).eq("id", c.id);
           if (error) return this.flash("Couldn't update: " + error.message);
           await this.loadCampaigns(brand.id);
-          this.flash(nextStatus === "closed" ? "Brief closed to new applications" : "Brief reopened");
+          this.flash("Brief closed to new applications");
         }
       })),
       applicants: applicants.map((p, i) => ({
@@ -453,7 +459,7 @@ class Component extends DCLogic {
       shortlistEmpty: shortlisted.length === 0,
       goApplicants: () => this.setState({ tab: "applicants" }),
       formOpen, formSaving,
-      formSubmitLabel: formSaving ? "Publishing…" : "Publish the brief",
+      formSubmitLabel: formSaving ? "Sending…" : "Submit for review",
       formSavingOpacity: formSaving ? 0.6 : 1,
       openForm: () => this.setState({ formOpen: true, formError: "" }),
       closeForm: () => this.setState({ formOpen: false, formError: "" }),

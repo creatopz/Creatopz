@@ -163,7 +163,15 @@
                 <span style="font-size:12px;color:#8a8a8a;white-space:nowrap;">{{ c.appsLabel }}</span>
                 <div style="flex:1;height:5px;background:#1e1e1e;overflow:hidden;"><div style="height:100%;background:#FF3300;transform-origin:0 50%;transform:scaleX({{ c.fill }});animation:ctzSpark .9s cubic-bezier(.16,1,.3,1) .2s both;"></div></div>
               </div>
-              <button onClick="{{ c.toggleStatus }}" style="width:100%;margin-top:16px;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff">{{ c.toggleLabel }}</button>
+              <sc-if value="{{ c.isDraft }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:8px;margin-top:16px;">
+                  <button onClick="{{ c.approve }}" style="flex:1;border:2px solid #FF3300;background:#FF3300;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e62e00">Approve</button>
+                  <button onClick="{{ c.decline }}" style="flex:1;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:border-color .2s ease;" style-hover="border-color:#fff">Decline</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ c.isNotDraft }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ c.toggleStatus }}" style="width:100%;margin-top:16px;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff">{{ c.toggleLabel }}</button>
+              </sc-if>
             </article>
           </sc-for>
         </div>
@@ -306,6 +314,7 @@ class Component extends DCLogic {
     if (status === "rejected" || status === "withdrawn") return { pillBg: "transparent", pillFg: "#6d6d6d", pillBorder: "#333" };
     if (status === "shortlisted") return { pillBg: "#fff", pillFg: "#000", pillBorder: "#fff" };
     if (status === "open") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
+    if (status === "draft") return { pillBg: "transparent", pillFg: "#FF3300", pillBorder: "#FF3300" };
     if (status === "closed" || status === "completed") return { pillBg: "#fff", pillFg: "#000", pillBorder: "#fff" };
     return { pillBg: "transparent", pillFg: "#fff", pillBorder: "#fff" };
   }
@@ -364,6 +373,13 @@ class Component extends DCLogic {
     if (error) return this.flash("Couldn't update: " + error.message);
     await this.loadAll();
     this.flash(next === "closed" ? "Campaign closed" : "Campaign reopened");
+  }
+
+  async decideCampaign(id, next) {
+    const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
+    if (error) return this.flash("Couldn't update: " + error.message);
+    await this.loadAll();
+    this.flash(next === "open" ? "Campaign approved — now live to creators" : "Campaign declined");
   }
 
   async toggleGallery(id, next) {
@@ -426,9 +442,13 @@ class Component extends DCLogic {
       status: c.status,
       delay: i * 70 + "ms",
       fill: 0.4,
-      appsLabel: appsRaw.filter((a) => a.campaigns?.id === c.id).length + " applications",
+      appsLabel: c.status === "draft" ? "Pending your approval" : appsRaw.filter((a) => a.campaigns?.id === c.id).length + " applications",
+      isDraft: c.status === "draft",
+      isNotDraft: c.status !== "draft",
       toggleLabel: c.status === "closed" ? "Reopen" : "Close",
-      toggleStatus: () => this.toggleCampaignStatus(c.id, c.status === "closed" ? "open" : "closed")
+      toggleStatus: () => this.toggleCampaignStatus(c.id, c.status === "closed" ? "open" : "closed"),
+      approve: () => this.decideCampaign(c.id, "open"),
+      decline: () => this.decideCampaign(c.id, "closed")
     }));
 
     const gallery = galleryRaw.filter((g) => hit(g.caption || "")).map((g, i) => ({
