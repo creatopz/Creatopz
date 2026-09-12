@@ -1,0 +1,6 @@
+supabase/
+README.md
+DEPLOY-README.md
+.env.example
+wrangler.jsonc
+_ds-reference/
