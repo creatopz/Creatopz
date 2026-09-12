@@ -43,8 +43,12 @@
         <a href="directory.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Directory</a>
         <a href="dashboard-creator.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Creator view</a>
         <a href="admin-console.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Admin</a>
+        <a href="messages.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Messages</a>
       </div>
-      <button onClick="{{ openForm }}" data-magnetic="8" style="display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;padding:12px 22px;border:2px solid #FF3300;background:#FF3300;color:#fff;cursor:pointer;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Post a campaign<span style="font-family:Anton,sans-serif;">+</span></button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button onClick="{{ openForm }}" data-magnetic="8" style="display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;padding:12px 22px;border:2px solid #FF3300;background:#FF3300;color:#fff;cursor:pointer;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Post a campaign<span style="font-family:Anton,sans-serif;">+</span></button>
+        <button onClick="{{ logout }}" style="background:none;border:2px solid #000;font-size:12.5px;font-weight:600;padding:12px;cursor:pointer;">Log out</button>
+      </div>
     </nav>
   </header>
 
@@ -52,7 +56,7 @@
     <div ref="{{ glowRef }}" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(500px circle at var(--mx,80%) var(--my,20%), rgba(255,51,0,.15), transparent 68%);"></div>
     <div style="position:relative;max-width:1280px;margin:0 auto;padding:0 32px;">
       <div style="display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:7px 13px;margin-bottom:20px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
-        <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Brand account · Marwar Skincare
+        <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>{{ heroTag }}
       </div>
       <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(32px,4.2vw,54px);line-height:.98;margin:0;">
         <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .1s both;">Your&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .18s both;">briefs,&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .26s both;color:#FF3300;">and&nbsp;who&nbsp;wants&nbsp;them.</span></span>
@@ -105,6 +109,9 @@
           </article>
         </sc-for>
       </div>
+      <sc-if value="{{ campaignsEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border:2px solid #000;padding:56px 28px;color:#5C5C5C;">No campaigns yet — post your first brief below.</div>
+      </sc-if>
       <button onClick="{{ openForm }}" style="width:100%;margin-top:2px;border:2px solid #000;border-top:none;background:#fff;padding:26px;font-family:Anton,sans-serif;font-size:20px;cursor:pointer;text-align:left;transition:background .25s ease,color .25s ease,padding-left .25s ease;" style-hover="background:#FF3300;color:#fff;padding-left:38px">+ POST A NEW CAMPAIGN</button>
     </sc-if>
 
@@ -118,8 +125,8 @@
             <div style="display:flex;align-items:center;gap:12px;min-width:0;">
               <span style="width:36px;height:36px;flex:0 0 36px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:13px;">{{ a.initials }}</span>
               <div style="min-width:0;">
-                <a href="profile.html" style="font-size:15px;font-weight:600;display:block;overflow-wrap:anywhere;">{{ a.name }}</a>
-                <div style="font-size:12.5px;color:#8a8a8a;">{{ a.niche }} · {{ a.city }}</div>
+                <a href="{{ a.profileHref }}" style="font-size:15px;font-weight:600;display:block;overflow-wrap:anywhere;">{{ a.name }}</a>
+                <div style="font-size:12.5px;color:#8a8a8a;">{{ a.niche }}</div>
               </div>
             </div>
             <div style="font-size:14px;color:#5C5C5C;overflow-wrap:anywhere;">{{ a.campaign }}</div>
@@ -135,6 +142,9 @@
           </div>
         </sc-for>
       </div></div>
+      <sc-if value="{{ applicantsEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:56px 20px;color:#5C5C5C;">No applicants for this brief yet.</div>
+      </sc-if>
     </sc-if>
 
     <sc-if value="{{ isShortlist }}" hint-placeholder-val="{{ false }}">
@@ -228,26 +238,12 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-const SEED = [
-  { title: "Night-routine series for a new serum", niche: "Beauty", budget: "₹14,000", deliverables: "3-part reel series, raw footage welcome", status: "live", apps: 12, cap: 20 },
-  { title: "Festive gifting haul", niche: "Fashion", budget: "₹18,000", deliverables: "1 reel + 1 carousel, festive styling", status: "live", apps: 7, cap: 15 },
-  { title: "Scalp care myth-busting", niche: "Beauty", budget: "₹9,500", deliverables: "1 explainer reel + carousel, script provided", status: "closed", apps: 15, cap: 15 }
-];
-
-const PEOPLE = [
-  { name: "Aanya Rathore", niche: "Beauty", city: "Jodhpur", reach: 42000, match: 0.94, campaign: "Night-routine series for a new serum" },
-  { name: "Tanvi Joshi", niche: "Beauty", city: "Ajmer", reach: 19000, match: 0.86, campaign: "Night-routine series for a new serum" },
-  { name: "Ishita Bora", niche: "Fashion", city: "Jaipur", reach: 115000, match: 0.79, campaign: "Festive gifting haul" },
-  { name: "Sara Lodha", niche: "Fashion", city: "Jaipur", reach: 24000, match: 0.71, campaign: "Festive gifting haul" },
-  { name: "Naina Chauhan", niche: "Fitness", city: "Udaipur", reach: 33000, match: 0.58, campaign: "Night-routine series for a new serum" }
-];
-
 const NICHES = ["Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel"];
 
 class Component extends DCLogic {
   state = {
-    tab: "campaigns", campaigns: SEED.slice(), decisions: {},
-    formOpen: false, fTitle: "", fBudget: "", fDeliverables: "", fCloses: "In 7 days", fNiche: "Beauty",
+    tab: "campaigns", loading: true, brand: null, campaigns: [], applicants: [], selectedCampaignId: null,
+    formOpen: false, formSaving: false, fTitle: "", fBudget: "", fDeliverables: "", fCloses: "In 7 days", fNiche: "Beauty",
     formError: "", toast: ""
   };
   rootRef = React.createRef();
@@ -260,41 +256,60 @@ class Component extends DCLogic {
   }
 
   pill(status) {
-    if (status === "live") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
-    if (status === "closed") return { pillBg: "#000", pillFg: "#fff", pillBorder: "#000" };
+    if (status === "open") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
+    if (status === "closed" || status === "completed") return { pillBg: "#000", pillFg: "#fff", pillBorder: "#000" };
     return { pillBg: "transparent", pillFg: "#000", pillBorder: "#000" };
   }
 
-  submitForm = (e) => {
+  async loadCampaigns(brandId) {
+    const { data } = await supabaseClient.from("campaigns").select("*").eq("brand_id", brandId).order("created_at", { ascending: false });
+    this.setState({ campaigns: data || [] });
+    return data || [];
+  }
+
+  async loadApplicants(campaignId) {
+    if (!campaignId) { this.setState({ applicants: [] }); return; }
+    const { data, error } = await supabaseClient.rpc("get_campaign_applicants", { p_campaign_id: campaignId });
+    if (error) { this.flash("Couldn't load applicants: " + error.message); return; }
+    this.setState({ applicants: data || [] });
+  }
+
+  submitForm = async (e) => {
     e.preventDefault();
-    const { fTitle, fBudget, fDeliverables, fNiche, campaigns } = this.state;
+    const { fTitle, fBudget, fDeliverables, fNiche, fCloses, brand } = this.state;
     if (!fTitle.trim()) return this.setState({ formError: "Give the brief a title." });
     const num = parseInt(String(fBudget).replace(/[^0-9]/g, ""), 10);
     if (!num) return this.setState({ formError: "Add a budget in rupees." });
     if (!fDeliverables.trim()) return this.setState({ formError: "Say what you need delivered." });
-    const fresh = {
+    if (!brand) return this.setState({ formError: "Your brand profile isn't ready yet — refresh and try again." });
+    const days = parseInt(fCloses.replace(/[^0-9]/g, ""), 10) || 7;
+    const deadline = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
+    this.setState({ formSaving: true, formError: "" });
+    const { error } = await supabaseClient.from("campaigns").insert({
+      brand_id: brand.id,
       title: fTitle.trim(),
       niche: fNiche,
-      budget: "₹" + num.toLocaleString("en-IN"),
-      deliverables: fDeliverables.trim(),
-      status: "live",
-      apps: 0,
-      cap: 15
-    };
-    this.setState({
-      campaigns: [fresh].concat(campaigns),
-      formOpen: false, fTitle: "", fBudget: "", fDeliverables: "", formError: ""
+      brief: fDeliverables.trim(),
+      budget_min: num,
+      budget_max: num,
+      deadline,
+      status: "open"
     });
+    if (error) {
+      this.setState({ formSaving: false, formError: error.message });
+      return;
+    }
+    await this.loadCampaigns(brand.id);
+    this.setState({ formOpen: false, formSaving: false, fTitle: "", fBudget: "", fDeliverables: "" });
     this.flash("Brief published — creators can apply now");
   };
 
   renderVals() {
-    const { tab, campaigns, decisions, formOpen, fTitle, fBudget, fDeliverables, fCloses, fNiche, formError, toast } = this.state;
+    const { tab, campaigns, applicants, formOpen, formSaving, fTitle, fBudget, fDeliverables, fCloses, fNiche, formError, toast, brand, loading, selectedCampaignId } = this.state;
 
-    const live = campaigns.filter((c) => c.status === "live").length;
-    const totalApps = campaigns.reduce((n, c) => n + c.apps, 0);
-    const shortlisted = PEOPLE.filter((p) => decisions[p.name] === "short");
-    const open = PEOPLE.filter((p) => !decisions[p.name]).length;
+    const live = campaigns.filter((c) => c.status === "open").length;
+    const shortlisted = applicants.filter((p) => p.status === "shortlisted");
+    const open = applicants.filter((p) => p.status === "pending").length;
 
     const mk = (label, on, count) => ({
       label, count: String(count),
@@ -305,59 +320,67 @@ class Component extends DCLogic {
 
     return {
       rootRef: this.rootRef, glowRef: this.glowRef,
+      heroTag: "Brand account" + (brand?.company_name ? " · " + brand.company_name : ""),
+      logout: async () => { await supabaseClient.auth.signOut(); location.href = "auth.html"; },
       kpis: [
         { label: "Live campaigns", value: String(live), fill: Math.min(1, live / 4), color: "#FF3300" },
-        { label: "Applications", value: String(totalApps), fill: Math.min(1, totalApps / 40), color: "#fff" },
+        { label: "Applications", value: String(applicants.length), fill: Math.min(1, applicants.length / 40), color: "#fff" },
         { label: "Shortlisted", value: String(shortlisted.length), fill: Math.min(1, shortlisted.length / 5), color: "#FF3300" },
-        { label: "Still to review", value: String(open), fill: Math.min(1, open / PEOPLE.length), color: "#fff" }
+        { label: "Still to review", value: String(open), fill: Math.min(1, open / Math.max(1, applicants.length)), color: "#fff" }
       ],
       tabs: [
         mk("My campaigns", "campaigns", campaigns.length),
-        mk("Applicants", "applicants", PEOPLE.length),
+        mk("Applicants", "applicants", applicants.length),
         mk("Shortlist", "shortlist", shortlisted.length)
       ],
       isCampaigns: tab === "campaigns",
       isApplicants: tab === "applicants",
       isShortlist: tab === "shortlist",
-      campaigns: campaigns.map((c, i) => Object.assign({}, c, this.pill(c.status), {
+      campaignsEmpty: !loading && campaigns.length === 0,
+      applicantsEmpty: !loading && applicants.length === 0,
+      campaigns: campaigns.map((c, i) => Object.assign({}, this.pill(c.status), {
+        title: c.title,
+        niche: c.niche || "General",
+        budget: c.budget_min ? "₹" + Number(c.budget_min).toLocaleString("en-IN") : "—",
+        deliverables: c.brief || c.description || "",
+        status: c.status,
         delay: i * 70 + "ms",
-        fill: Math.min(1, c.apps / c.cap),
-        appsLabel: c.apps + "/" + c.cap + " applied",
-        toggleLabel: c.status === "live" ? "Close" : "Reopen",
-        review: () => this.setState({ tab: "applicants" }),
-        toggleStatus: () => {
-          const next = campaigns.slice();
-          next[i] = Object.assign({}, c, { status: c.status === "live" ? "closed" : "live" });
-          this.setState({ campaigns: next });
-          this.flash(c.status === "live" ? "Brief closed to new applications" : "Brief reopened");
+        fill: 0.3,
+        appsLabel: "Applications open",
+        toggleLabel: c.status === "open" ? "Close" : "Reopen",
+        review: () => { this.setState({ tab: "applicants", selectedCampaignId: c.id }); this.loadApplicants(c.id); },
+        toggleStatus: async () => {
+          const nextStatus = c.status === "open" ? "closed" : "open";
+          const { error } = await supabaseClient.from("campaigns").update({ status: nextStatus }).eq("id", c.id);
+          if (error) return this.flash("Couldn't update: " + error.message);
+          await this.loadCampaigns(brand.id);
+          this.flash(nextStatus === "closed" ? "Brief closed to new applications" : "Brief reopened");
         }
       })),
-      applicants: PEOPLE.map((p, i) => {
-        const d = decisions[p.name];
-        return Object.assign({}, p, {
-          delay: i * 60 + "ms",
-          initials: p.name.split(" ").map((w) => w[0]).join(""),
-          reachLabel: Math.round(p.reach / 1000) + "K",
-          matchLabel: Math.round(p.match * 100) + "%",
-          shortLabel: d === "short" ? "Shortlisted ✓" : "Shortlist",
-          shortBg: d === "short" ? "#FF3300" : "transparent",
-          shortFg: d === "short" ? "#fff" : "#FF3300",
-          passLabel: d === "pass" ? "Passed" : "Pass",
-          shortlist: () => {
-            this.setState({ decisions: Object.assign({}, decisions, { [p.name]: "short" }) });
-            this.flash(p.name + " shortlisted — Creatopz will set up the intro");
-          },
-          pass: () => this.setState({ decisions: Object.assign({}, decisions, { [p.name]: "pass" }) })
-        });
-      }),
+      applicants: applicants.map((p, i) => ({
+        name: p.creator_name || "Creator",
+        niche: p.creator_category || "—",
+        reachLabel: p.creator_followers >= 1000 ? Math.round(p.creator_followers / 1000) + "K" : String(p.creator_followers || 0),
+        profileHref: "profile.html?id=" + encodeURIComponent(p.creator_id),
+        match: p.creator_engagement_rate ? Math.min(1, Number(p.creator_engagement_rate) / 10) : 0.5,
+        matchLabel: p.creator_engagement_rate ? Number(p.creator_engagement_rate).toFixed(1) + "%" : "—",
+        delay: i * 60 + "ms",
+        initials: (p.creator_name || "?").split(" ").map((w) => w[0]).join(""),
+        shortLabel: p.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist",
+        shortBg: p.status === "shortlisted" ? "#FF3300" : "transparent",
+        shortFg: p.status === "shortlisted" ? "#fff" : "#FF3300",
+        passLabel: p.status === "rejected" ? "Passed" : "Pass",
+        shortlist: () => this.decide(p.application_id, "shortlisted"),
+        pass: () => this.decide(p.application_id, "rejected")
+      })),
       shortlisted: shortlisted.map((p) => ({
-        name: p.name,
-        campaign: p.campaign,
-        initials: p.name.split(" ").map((w) => w[0]).join("")
+        name: p.creator_name,
+        campaign: campaigns.find((c) => c.id === selectedCampaignId)?.title || "",
+        initials: (p.creator_name || "?").split(" ").map((w) => w[0]).join("")
       })),
       shortlistEmpty: shortlisted.length === 0,
       goApplicants: () => this.setState({ tab: "applicants" }),
-      formOpen,
+      formOpen, formSaving,
       openForm: () => this.setState({ formOpen: true, formError: "" }),
       closeForm: () => this.setState({ formOpen: false, formError: "" }),
       fTitle, fBudget, fDeliverables, fCloses,
@@ -382,7 +405,29 @@ class Component extends DCLogic {
     };
   }
 
-  componentDidMount() {
+  async decide(applicationId, status) {
+    const { error } = await supabaseClient.from("campaign_applications").update({ status }).eq("id", applicationId);
+    if (error) return this.flash("Couldn't update: " + error.message);
+    await this.loadApplicants(this.state.selectedCampaignId);
+    this.flash(status === "shortlisted" ? "Shortlisted — Creatopz will set up the intro" : "Applicant passed");
+  }
+
+  async componentDidMount() {
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const session = sessionData?.session;
+    if (!session) { location.href = "auth.html"; return; }
+    const { data: profile } = await supabaseClient.from("profiles").select("role").eq("id", session.user.id).single();
+    if (profile?.role === "admin") { location.href = "admin-console.html"; return; }
+    if (profile?.role === "creator") { location.href = "dashboard-creator.html"; return; }
+
+    const { data: brand } = await supabaseClient.from("brands").select("*").eq("user_id", session.user.id).single();
+    this.setState({ brand, loading: false });
+    if (brand) {
+      const campaigns = await this.loadCampaigns(brand.id);
+      const firstOpen = campaigns.find((c) => c.status === "open") || campaigns[0];
+      if (firstOpen) { this.setState({ selectedCampaignId: firstOpen.id }); this.loadApplicants(firstOpen.id); }
+    }
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const glow = this.glowRef.current;
     if (glow) {
