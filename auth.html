@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -164,7 +168,11 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{}">
 class Component extends DCLogic {
-  state = { mode: "login", step: 1, role: "Creator", name: "", email: "", pass: "", niches: [], error: "", done: false };
+  state = {
+    mode: "login", step: 1, role: "Creator", name: "", email: "", pass: "",
+    niches: [], error: "", done: false, loading: false, needsEmailConfirm: false,
+    resolvedRole: null, checkingSession: true
+  };
   rootRef = React.createRef();
   glowRef = React.createRef();
   doneRef = React.createRef();
@@ -179,14 +187,21 @@ class Component extends DCLogic {
     return s;
   }
 
-  submit = (e) => {
+  dashboardFor(role) {
+    if (role === "admin") return "admin-console.html";
+    if (role === "brand") return "dashboard-brand.html";
+    return "dashboard-creator.html";
+  }
+
+  submit = async (e) => {
     e.preventDefault();
+    if (this.state.loading) return;
     const { mode, step, email, pass, name } = this.state;
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (mode === "login") {
       if (!emailOk) return this.setState({ error: "Enter a valid email address." });
       if (pass.length < 6) return this.setState({ error: "Password is at least 6 characters." });
-      return this.finish();
+      return this.loginNow();
     }
     if (step === 1) return this.setState({ step: 2, error: "" });
     if (step === 2) {
@@ -196,8 +211,54 @@ class Component extends DCLogic {
       return this.setState({ step: 3, error: "" });
     }
     if (!this.state.niches.length) return this.setState({ error: "Pick at least one niche." });
-    this.finish();
+    this.signupNow();
   };
+
+  async loginNow() {
+    const { email, pass } = this.state;
+    this.setState({ loading: true, error: "" });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+      this.setState({ loading: false, error: error.message || "Couldn't log you in — check your email and password." });
+      return;
+    }
+    const { data: profile } = await supabaseClient.from("profiles").select("role").eq("id", data.user.id).single();
+    const role = profile?.role || "creator";
+    this.setState({ loading: false, done: true, error: "", resolvedRole: role }, () => {
+      this.burst();
+      setTimeout(() => { location.href = this.dashboardFor(role); }, 1200);
+    });
+  }
+
+  async signupNow() {
+    const { role, name, email, pass, niches } = this.state;
+    this.setState({ loading: true, error: "" });
+    const dbRole = role === "Brand" ? "brand" : "creator";
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password: pass,
+      options: { data: { role: dbRole, full_name: name } }
+    });
+    if (error) {
+      this.setState({ loading: false, error: error.message || "Couldn't create that account." });
+      return;
+    }
+    const hasSession = !!data.session;
+    // Best-effort: the profiles/creators/brands rows are created server-side by
+    // the handle_new_user trigger; fill in what the wizard collected on top of it.
+    if (hasSession && dbRole === "creator" && niches.length) {
+      await supabaseClient.from("creators").update({ content_types: niches, name }).eq("user_id", data.user.id);
+    }
+    if (hasSession && dbRole === "brand") {
+      await supabaseClient.from("brands").update({ company_name: name }).eq("user_id", data.user.id);
+    }
+    this.setState({
+      loading: false, done: true, error: "", resolvedRole: dbRole, needsEmailConfirm: !hasSession
+    }, () => {
+      this.burst();
+      if (hasSession) setTimeout(() => { location.href = this.dashboardFor(dbRole); }, 1800);
+    });
+  }
 
   finish() {
     this.setState({ done: true, error: "" }, () => this.burst());
@@ -275,20 +336,31 @@ class Component extends DCLogic {
           })
         };
       }),
-      errorText: error,
-      ctaLabel: mode === "login" ? "Log in" : step === 3 ? "Create my profile" : "Continue",
-      doneTitle: mode === "login" ? "You're in." : role === "Brand" ? "Brand profile created." : "Profile created.",
-      doneBody: mode === "login"
+      errorText: this.state.loading ? "" : error,
+      ctaLabel: this.state.loading ? "Please wait…" : mode === "login" ? "Log in" : step === 3 ? "Create my profile" : "Continue",
+      doneTitle: this.state.needsEmailConfirm
+        ? "Check your inbox."
+        : mode === "login" ? "You're in." : role === "Brand" ? "Brand profile created." : "Profile created.",
+      doneBody: this.state.needsEmailConfirm
+        ? "We sent a confirmation link to " + email + ". Confirm it, then log in here."
+        : mode === "login"
         ? "Jumping you back to where the briefs are."
         : role === "Brand"
-        ? "Post your first brief and we'll surface matching creators within a day."
-        : "We review new creators within 24 hours. Watch WhatsApp — briefs drop daily.",
-      reset: () => this.setState({ done: false, mode: "login", step: 1, pass: "" }),
+        ? "Taking you to your dashboard — post your first brief and we'll surface matching creators within a day."
+        : "Taking you to your dashboard. We review new creators within 24 hours — watch WhatsApp, briefs drop daily.",
+      reset: () => this.setState({ done: false, mode: "login", step: 1, pass: "", error: "", needsEmailConfirm: false }),
       submit: this.submit
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data?.session) {
+      const { data: profile } = await supabaseClient.from("profiles").select("role").eq("id", data.session.user.id).single();
+      location.href = this.dashboardFor(profile?.role || "creator");
+      return;
+    }
+    this.setState({ checkingSession: false });
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const glow = this.glowRef.current;
     if (glow) {

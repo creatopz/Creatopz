@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -64,7 +68,7 @@
           <span style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">Sort</span>
           <select value="{{ sort }}" onChange="{{ onSort }}" style="background:#000;color:#fff;border:2px solid #333;padding:11px 14px;font-size:14px;font-weight:600;">
             <option value="reach">Reach</option>
-            <option value="rate">Rate</option>
+            <option value="engagement">Engagement</option>
             <option value="name">Name</option>
           </select>
         </div>
@@ -74,6 +78,7 @@
         <sc-for list="{{ niches }}" as="n" hint-placeholder-count="6">
           <button onClick="{{ n.pick }}" style="border:2px solid {{ n.border }};background:{{ n.bg }};color:{{ n.fg }};font-size:13px;font-weight:600;letter-spacing:.04em;padding:9px 16px;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1),background .25s ease,color .25s ease,border-color .25s ease;" style-hover="transform:translateY(-3px)">{{ n.label }}</button>
         </sc-for>
+        <button onClick="{{ toggleVerified }}" style="border:2px solid {{ verifiedBorder }};background:{{ verifiedBg }};color:{{ verifiedFg }};font-size:13px;font-weight:600;letter-spacing:.04em;padding:9px 16px;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1),background .25s ease,color .25s ease,border-color .25s ease;" style-hover="transform:translateY(-3px)">✓ Verified only</button>
       </div>
     </div>
     <div style="background:#FF3300;border-top:2px solid #000;overflow:hidden;padding:11px 0;">
@@ -90,6 +95,13 @@
       <div style="font-size:13px;color:#5C5C5C;">{{ activeLabel }}</div>
     </div>
 
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+      <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;color:#5C5C5C;">Loading creators…</div>
+    </sc-if>
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;color:#FF3300;">{{ loadError }}</div>
+    </sc-if>
+
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;background:#E2DFD8;border:2px solid #000;border-top:none;">
       <sc-for list="{{ results }}" as="c" hint-placeholder-count="6">
         <article style="background:#fff;padding:28px;position:relative;overflow:hidden;animation:ctzCardIn .6s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .35s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#F6F4F1;transform:translateY(-4px)">
@@ -104,11 +116,14 @@
           <p style="font-size:14.5px;line-height:1.6;color:#5C5C5C;margin:16px 0 20px;">{{ c.bio }}</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#E2DFD8;border:1px solid #E2DFD8;">
             <div style="background:#fff;padding:12px 14px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Reach</div><div style="font-family:Anton,sans-serif;font-size:20px;margin-top:4px;">{{ c.reachLabel }}</div></div>
-            <div style="background:#fff;padding:12px 14px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Rate</div><div style="font-family:Anton,sans-serif;font-size:20px;margin-top:4px;">{{ c.rateLabel }}</div></div>
+            <div style="background:#fff;padding:12px 14px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Engagement</div><div style="font-family:Anton,sans-serif;font-size:20px;margin-top:4px;">{{ c.engagementLabel }}</div></div>
           </div>
+          <sc-if value="{{ c.verified }}" hint-placeholder-val="{{ false }}">
+            <div style="display:inline-flex;align-items:center;gap:5px;margin-top:14px;font-size:11.5px;font-weight:700;color:#0a7a3d;">✓ Verified</div>
+          </sc-if>
           <div style="display:flex;gap:10px;margin-top:20px;">
-            <a href="auth.html" style="flex:1;display:flex;align-items:center;gap:8px;background:#FF3300;color:#fff;font-weight:600;font-size:14px;padding:12px 16px;transition:background .2s ease;" style-hover="background:#e62e00">Invite to brief<span style="font-family:Anton,sans-serif;">→</span></a>
-            <a href="auth.html" style="display:flex;align-items:center;padding:12px 16px;border:2px solid #000;font-weight:600;font-size:14px;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Profile</a>
+            <a href="{{ c.applyHref }}" style="flex:1;display:flex;align-items:center;gap:8px;background:#FF3300;color:#fff;font-weight:600;font-size:14px;padding:12px 16px;transition:background .2s ease;" style-hover="background:#e62e00">Invite to brief<span style="font-family:Anton,sans-serif;">→</span></a>
+            <a href="{{ c.profileHref }}" style="display:flex;align-items:center;padding:12px 16px;border:2px solid #000;font-weight:600;font-size:14px;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Profile</a>
           </div>
         </article>
       </sc-for>
@@ -142,77 +157,37 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{}">
-const CREATORS = [
-  { name: "Aanya Rathore", city: "Jodhpur", niche: "Beauty", reach: 42000, rate: 6500, bio: "Skin-first beauty reviews and honest GRWM edits. Long-form IG carousels." },
-  { name: "Vikram Shekhawat", city: "Jaipur", niche: "Fitness", reach: 88000, rate: 12000, bio: "Home-gym programming, protein myth-busting and 30-day transformation series." },
-  { name: "Meher Qureshi", city: "Udaipur", niche: "Food", reach: 61000, rate: 9000, bio: "Street-food routes and cafe first-looks, shot entirely on a phone." },
-  { name: "Dev Panwar", city: "Jodhpur", niche: "Tech", reach: 27000, rate: 5000, bio: "Budget phone teardowns and app reviews for first-time buyers." },
-  { name: "Ishita Bora", city: "Jaipur", niche: "Fashion", reach: 115000, rate: 18000, bio: "Thrift-to-fit styling and slow-fashion hauls with real price breakdowns." },
-  { name: "Rehan Malik", city: "Jodhpur", niche: "Travel", reach: 53000, rate: 8000, bio: "Weekend routes out of Rajasthan — under budget, no sponsored fluff." },
-  { name: "Tanvi Joshi", city: "Ajmer", niche: "Beauty", reach: 19000, rate: 3500, bio: "Micro-niche fragrance reviews with a very loyal comment section." },
-  { name: "Kabir Sen", city: "Jaipur", niche: "Food", reach: 74000, rate: 11000, bio: "Home-cook recipe reels, 40 seconds, no voiceover, all texture." },
-  { name: "Naina Chauhan", city: "Udaipur", niche: "Fitness", reach: 33000, rate: 6000, bio: "Pilates and mobility for desk workers. Strong female 24-34 audience." },
-  { name: "Arjun Vyas", city: "Jodhpur", niche: "Tech", reach: 96000, rate: 14000, bio: "Creator-gear explainers: mics, lights, and what you can skip." },
-  { name: "Sara Lodha", city: "Jaipur", niche: "Fashion", reach: 24000, rate: 4200, bio: "Petite styling and occasion-wear try-ons for Indian weddings." },
-  { name: "Yash Bhati", city: "Jodhpur", niche: "Travel", reach: 141000, rate: 21000, bio: "Desert cinematography and heritage-stay collabs across Marwar." }
-];
+const FALLBACK_NICHES = ["All", "Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel"];
 
 class Component extends DCLogic {
-  state = { query: "", niche: "All", sort: "reach" };
+  state = { query: "", niche: "All", sort: "reach", verifiedOnly: false, creators: [], loading: true, loadError: "" };
   rootRef = React.createRef();
   glowRef = React.createRef();
   countRef = React.createRef();
   tickRef = React.createRef();
 
-  renderVals() {
-    const { query, niche, sort } = this.state;
-    const q = query.trim().toLowerCase();
-    let list = CREATORS.filter((c) => {
-      const inNiche = niche === "All" || c.niche === niche;
-      const inQuery = !q || (c.name + " " + c.city + " " + c.niche + " " + c.bio).toLowerCase().includes(q);
-      return inNiche && inQuery;
-    });
-    list = list.slice().sort((a, b) =>
-      sort === "name" ? a.name.localeCompare(b.name) : sort === "rate" ? a.rate - b.rate : b.reach - a.reach
-    );
-
-    const names = ["All", "Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel"];
-    const niches = names.map((label) => {
-      const on = label === niche;
-      return {
-        label,
-        border: on ? "#FF3300" : "#333",
-        bg: on ? "#FF3300" : "transparent",
-        fg: on ? "#fff" : "#e6e6e6",
-        pick: () => this.setState({ niche: label })
-      };
-    });
-
-    return {
-      niches,
-      query,
-      sort,
-      results: list.map((c, i) => ({
-        ...c,
-        initials: c.name.split(" ").map((w) => w[0]).join(""),
-        reachLabel: c.reach >= 1000 ? (c.reach / 1000).toFixed(0) + "K" : String(c.reach),
-        rateLabel: "₹" + (c.rate / 1000).toFixed(1) + "K",
-        delay: Math.min(i * 55, 440) + "ms"
-      })),
-      empty: list.length === 0,
-      activeLabel: (niche === "All" ? "All niches" : niche) + (q ? " · “" + query.trim() + "”" : ""),
-      onQuery: (e) => this.setState({ query: e.target.value }),
-      onSort: (e) => this.setState({ sort: e.target.value }),
-      clearAll: () => this.setState({ query: "", niche: "All" }),
-      rootRef: this.rootRef,
-      glowRef: this.glowRef,
-      countRef: this.countRef,
-      tickRef: this.tickRef,
-      liveRef: null
-    };
-  }
-
-  componentDidMount() {
+  async componentDidMount() {
+    const { data, error } = await supabaseClient
+      .from("creators_public")
+      .select("id, name, username, bio, category, followers, engagement_rate, locations, is_verified")
+      .order("followers", { ascending: false });
+    if (error) {
+      this.setState({ loading: false, loadError: "Couldn't load the directory right now. Try refreshing." });
+    } else {
+      this.setState({
+        loading: false,
+        creators: (data || []).map((c) => ({
+          id: c.id,
+          name: c.name || "Unnamed creator",
+          city: (c.locations && c.locations[0]) || "—",
+          niche: c.category || "Other",
+          reach: c.followers || 0,
+          engagement: Number(c.engagement_rate) || 0,
+          bio: c.bio || "",
+          verified: !!c.is_verified
+        }))
+      });
+    }
     this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.animateCount();
     const glow = this.glowRef.current;
@@ -239,6 +214,63 @@ class Component extends DCLogic {
         el.addEventListener("mouseleave", () => { el.style.transform = "translate(0,0)"; });
       });
     }
+  }
+
+  renderVals() {
+    const { query, niche, sort, verifiedOnly, creators } = this.state;
+    const q = query.trim().toLowerCase();
+    let list = creators.filter((c) => {
+      const inNiche = niche === "All" || c.niche === niche;
+      const inVerified = !verifiedOnly || c.verified;
+      const inQuery = !q || (c.name + " " + c.city + " " + c.niche + " " + c.bio).toLowerCase().includes(q);
+      return inNiche && inVerified && inQuery;
+    });
+    list = list.slice().sort((a, b) =>
+      sort === "name" ? a.name.localeCompare(b.name) : sort === "engagement" ? b.engagement - a.engagement : b.reach - a.reach
+    );
+
+    const names = Array.from(new Set(["All", ...creators.map((c) => c.niche)]));
+    const niches = (names.length > 1 ? names : FALLBACK_NICHES).map((label) => {
+      const on = label === niche;
+      return {
+        label,
+        border: on ? "#FF3300" : "#333",
+        bg: on ? "#FF3300" : "transparent",
+        fg: on ? "#fff" : "#e6e6e6",
+        pick: () => this.setState({ niche: label })
+      };
+    });
+
+    return {
+      niches,
+      query,
+      sort,
+      toggleVerified: () => this.setState({ verifiedOnly: !verifiedOnly }),
+      verifiedBorder: verifiedOnly ? "#0a7a3d" : "#333",
+      verifiedBg: verifiedOnly ? "#0a7a3d" : "transparent",
+      verifiedFg: verifiedOnly ? "#fff" : "#e6e6e6",
+      results: list.map((c, i) => ({
+        ...c,
+        initials: c.name.split(" ").map((w) => w[0]).join(""),
+        reachLabel: c.reach >= 1000 ? (c.reach / 1000).toFixed(0) + "K" : String(c.reach),
+        engagementLabel: c.engagement ? c.engagement.toFixed(1) + "%" : "—",
+        profileHref: "profile.html?id=" + encodeURIComponent(c.id),
+        applyHref: "auth.html",
+        delay: Math.min(i * 55, 440) + "ms"
+      })),
+      empty: !this.state.loading && list.length === 0,
+      loading: this.state.loading,
+      loadError: this.state.loadError,
+      activeLabel: this.state.loading ? "Loading…" : (niche === "All" ? "All niches" : niche) + (q ? " · “" + query.trim() + "”" : ""),
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onSort: (e) => this.setState({ sort: e.target.value }),
+      clearAll: () => this.setState({ query: "", niche: "All", verifiedOnly: false }),
+      rootRef: this.rootRef,
+      glowRef: this.glowRef,
+      countRef: this.countRef,
+      tickRef: this.tickRef,
+      liveRef: null
+    };
   }
 
   componentDidUpdate() { this.animateCount(); }
