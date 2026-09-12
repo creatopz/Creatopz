@@ -34,6 +34,20 @@
   @keyframes ctzNumFill{from{-webkit-text-stroke-color:#000;color:rgba(255,51,0,0);}to{-webkit-text-stroke-color:#FF3300;color:rgba(255,51,0,.10);}}
   @keyframes ctzGrain{0%{transform:translate(0,0);}25%{transform:translate(-2%,1%);}50%{transform:translate(1%,-2%);}75%{transform:translate(-1%,-1%);}100%{transform:translate(0,0);}}
   @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
+  @media (max-width:860px){
+    .ctz-hero-grid{grid-template-columns:1fr !important;gap:36px !important;}
+    .ctz-split-grid{grid-template-columns:1fr !important;}
+    .ctz-split-grid > div{border-right:none !important;border-bottom:2px solid #000;padding:36px 24px !important;}
+    .ctz-steps-grid{grid-template-columns:1fr !important;}
+    .ctz-community-grid{grid-template-columns:1fr !important;gap:32px !important;}
+  }
+  @media (max-width:640px){
+    .ctz-hero{padding-top:72px !important;}
+  }
+  @media (max-width:860px){
+    .dc-nav{flex-wrap:wrap;row-gap:10px;}
+    .dc-nav-links{flex-wrap:wrap;gap:14px !important;font-size:13.5px !important;order:3;width:100%;justify-content:flex-start;}
+  }
 </style>
 </helmet>
 
@@ -44,11 +58,11 @@
   </div>
 
   <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
-    <nav style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+    <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <a href="#top" data-magnetic="6" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:22px;letter-spacing:.5px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:34px;width:auto;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
       </a>
-      <div style="display:flex;gap:30px;font-size:15px;font-weight:500;">
+      <div class="dc-nav-links" style="display:flex;gap:30px;font-size:15px;font-weight:500;">
         <a href="#platform" style="position:relative;padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Platform</a>
         <a href="#how" style="position:relative;padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">How it works</a>
         <a href="directory.html" style="position:relative;padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Directory</a>
@@ -61,13 +75,13 @@
     </nav>
   </header>
 
-  <section id="top" ref="{{ heroRef }}" style="position:relative;overflow:hidden;background:#000;color:#fff;padding:104px 0 0;">
+  <section id="top" ref="{{ heroRef }}" class="ctz-hero" style="position:relative;overflow:hidden;background:#000;color:#fff;padding:104px 0 0;">
     <div style="position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,60%) var(--my,25%), rgba(255,51,0,0.16), transparent 68%);transition:opacity .4s ease;"></div>
     <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}">
       <div style="position:absolute;inset:-10%;z-index:1;pointer-events:none;opacity:.16;mix-blend-mode:overlay;animation:ctzGrain 1.2s steps(4) infinite;background-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>&quot;);"></div>
     </sc-if>
 
-    <div style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1.12fr .88fr;gap:48px;align-items:center;">
+    <div class="ctz-hero-grid" style="position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1.12fr .88fr;gap:48px;align-items:center;">
       <div>
         <div style="display:inline-flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:8px 14px;margin-bottom:30px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) .05s both;">
           <span style="width:7px;height:7px;background:#FF3300;display:inline-block;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Now onboarding creators in Jodhpur &amp; beyond
@@ -124,7 +138,7 @@
         <p data-reveal style="color:#5C5C5C;font-size:17px;line-height:1.6;margin:18px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .16s both paused;">No more scattered DMs and screenshots. Creators build a real profile once — brands post exactly what they need, once.</p>
       </div>
       <div data-reveal style="height:2px;background:#000;transform-origin:0 50%;animation:ctzRuleIn .9s cubic-bezier(.16,1,.3,1) both paused;"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;border:2px solid #000;border-top:none;">
+      <div class="ctz-split-grid" style="display:grid;grid-template-columns:1fr 1fr;border:2px solid #000;border-top:none;">
         <div data-reveal id="creators" style="padding:52px 44px;border-right:2px solid #000;background:#fff;animation:ctzWipeRight .9s cubic-bezier(.16,1,.3,1) both paused;transition:background .4s ease;" style-hover="background:#F6F4F1">
           <span style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:.14em;color:#FF3300;display:block;margin-bottom:18px;">FOR CREATORS</span>
           <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:30px;line-height:1.06;margin:0 0 16px;">Your work, your rates, your reputation — in one profile.</h3>
@@ -165,7 +179,7 @@
           <div ref="{{ pctRef }}" style="font-family:Anton,sans-serif;font-size:13px;letter-spacing:.12em;color:#5C5C5C;margin-top:10px;">00%</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#000;border:2px solid #000;">
+      <div class="ctz-steps-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#000;border:2px solid #000;">
         <div data-reveal style="background:#EFEDE8;padding:44px 36px;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) both paused;transition:background .35s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#fff;transform:translateY(-6px)">
           <span data-reveal style="display:block;font-family:Anton,sans-serif;font-size:64px;line-height:1;color:rgba(255,51,0,0);-webkit-text-stroke:2px #000;animation:ctzNumFill 1.4s ease .3s both paused;">01</span>
           <h4 style="font-family:Inter,sans-serif;font-weight:700;font-size:19px;margin:20px 0 12px;">Create your profile</h4>
@@ -198,7 +212,7 @@
 
   <section id="community" style="position:relative;overflow:hidden;background:#FF3300;color:#fff;padding:104px 0;border-top:2px solid #000;border-bottom:2px solid #000;">
     <div style="position:absolute;inset:0;opacity:.5;pointer-events:none;background-image:repeating-linear-gradient(45deg, rgba(0,0,0,.16) 0 2px, rgba(0,0,0,0) 2px 28px);animation:ctzStripes 2.6s linear infinite;"></div>
-    <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;">
+    <div class="ctz-community-grid" style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;">
       <div data-reveal style="animation:ctzRise .85s cubic-bezier(.16,1,.3,1) both paused;">
         <span style="display:block;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#FFD9CC;font-weight:700;">The community</span>
         <h2 data-scramble style="font-family:Anton,sans-serif;font-weight:400;line-height:.98;font-size:clamp(30px,3.6vw,44px);margin:14px 0 0;">Collabs land here first — before they're anywhere else.</h2>

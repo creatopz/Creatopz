@@ -27,21 +27,33 @@
   @keyframes ctzToast{0%{transform:translateY(20px);opacity:0;}12%{transform:translateY(0);opacity:1;}82%{transform:translateY(0);opacity:1;}100%{transform:translateY(-10px);opacity:0;}}
   @keyframes ctzSpark{from{transform:scaleX(0);}to{transform:scaleX(1);}}
   @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
+  @media (max-width:860px){
+    .admin-root{display:block !important;}
+    .admin-aside{position:static !important;height:auto !important;border-right:none !important;border-bottom:2px solid #1e1e1e;padding:16px 0 !important;}
+    .admin-nav{flex-direction:row !important;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 12px !important;gap:2px;}
+    .admin-nav-btn{border-left:none !important;border-bottom:3px solid transparent;white-space:nowrap;flex:0 0 auto;}
+    .admin-sidebar-footer{display:none;}
+    .admin-header{padding:16px 20px !important;}
+    .admin-search{min-width:0 !important;flex:1;}
+    .admin-section{padding-left:20px !important;padding-right:20px !important;}
+    .admin-messages-grid{grid-template-columns:1fr !important;}
+    .admin-convo-list{max-height:220px;}
+  }
 </style>
 </helmet>
 
-<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0b0b;min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);">
+<div ref="{{ rootRef }}" class="admin-root" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0b0b;min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);">
 
-  <aside style="border-right:2px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
+  <aside class="admin-aside" style="border-right:2px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
     <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:19px;padding:0 22px 22px;border-bottom:1px solid #1e1e1e;">
       <img src="assets/logo.png" alt="Creatopz mark" style="height:28px;display:block;filter:invert(1);">Creatopz<sup style="font-family:Inter,sans-serif;font-size:9px;">™</sup>
     </a>
-    <div style="padding:18px 0;display:flex;flex-direction:column;">
+    <div class="admin-nav" style="padding:18px 0;display:flex;flex-direction:column;">
       <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
-        <button onClick="{{ n.pick }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:{{ n.bg }};border:none;border-left:3px solid {{ n.rule }};color:{{ n.fg }};font-size:14.5px;font-weight:600;padding:14px 20px;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease,padding-left .25s ease;" style-hover="padding-left:26px;color:#fff">{{ n.label }}<span style="font-family:Anton,sans-serif;font-size:13px;color:#FF3300;">{{ n.count }}</span></button>
+        <button onClick="{{ n.pick }}" class="admin-nav-btn" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:{{ n.bg }};border:none;border-left:3px solid {{ n.rule }};color:{{ n.fg }};font-size:14.5px;font-weight:600;padding:14px 20px;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease,padding-left .25s ease;" style-hover="padding-left:26px;color:#fff">{{ n.label }}<span style="font-family:Anton,sans-serif;font-size:13px;color:#FF3300;">{{ n.count }}</span></button>
       </sc-for>
     </div>
-    <div style="margin-top:auto;padding:20px 22px;border-top:1px solid #1e1e1e;">
+    <div class="admin-sidebar-footer" style="margin-top:auto;padding:20px 22px;border-top:1px solid #1e1e1e;">
       <div style="display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">
         <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Mediation on
       </div>
@@ -51,18 +63,18 @@
   </aside>
 
   <main style="min-width:0;">
-    <header style="position:sticky;top:0;z-index:60;background:rgba(11,11,11,.92);backdrop-filter:blur(10px);border-bottom:2px solid #1e1e1e;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+    <header class="admin-header" style="position:sticky;top:0;z-index:60;background:rgba(11,11,11,.92);backdrop-filter:blur(10px);border-bottom:2px solid #1e1e1e;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
       <div>
         <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Admin</div>
         <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:30px;line-height:1;margin:8px 0 0;">{{ viewTitle }}</h1>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
-        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:15px;padding:10px 0;min-width:220px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
-        <div style="width:36px;height:36px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:14px;">CZ</div>
+        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" class="admin-search" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:15px;padding:10px 0;min-width:220px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+        <div style="width:36px;height:36px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:14px;flex:0 0 auto;">CZ</div>
       </div>
     </header>
 
-    <section style="padding:30px 32px 0;">
+    <section class="admin-section" style="padding:30px 32px 0;">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
         <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
           <div style="background:#000;padding:20px 22px;transition:background .3s ease;" style-hover="background:#121212">
@@ -74,7 +86,7 @@
       </div>
     </section>
 
-    <section style="padding:34px 32px 80px;">
+    <section class="admin-section" style="padding:34px 32px 80px;">
       <sc-if value="{{ isApps }}" hint-placeholder-val="{{ true }}">
         <div>
           <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">You're the middleman on every deal — full creator profile (Instagram included) and the brand's budget, side by side. Neither party sees the other's private details until you finalise a match.</p>
@@ -135,7 +147,7 @@
       </sc-if>
 
       <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
           <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
             <article style="background:#000;padding:26px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#121212;transform:translateY(-4px)">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
@@ -184,8 +196,8 @@
       </sc-if>
 
       <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;min-height:520px;">
-          <div style="background:#000;overflow-y:auto;max-height:640px;">
+        <div class="admin-messages-grid" style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;min-height:520px;">
+          <div class="admin-convo-list" style="background:#000;overflow-y:auto;max-height:640px;">
             <sc-if value="{{ conversationsEmpty }}" hint-placeholder-val="{{ false }}">
               <div style="padding:24px;color:#7d7d7d;font-size:13.5px;">No conversations yet.</div>
             </sc-if>
