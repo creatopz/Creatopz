@@ -1,8 +1,22 @@
 /* Modernist design system — shared styles for the legacy Supabase-wired
    pages (gallery, campaigns, onboarding, auth-recovery, dashboards, terms,
    privacy). Visual pass only: class names are unchanged so no markup in
-   the pages that include this file needs to change. */
+   the pages that need to change. */
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap');
+
+/* Smooth cross-fade between full page loads (Chromium/Edge; other
+   browsers just ignore this and keep the normal instant navigation). */
+@view-transition{navigation:auto;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
+}
+/* Safety-net transition for any interactive element that doesn't already
+   declare its own — nothing should snap instantly on hover/focus. */
+a,button,input,select,textarea,.btn,.field input,.field select,.field textarea{
+  transition:background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(.16,1,.3,1), opacity .2s ease;
+}
 
 :root{
   --color-bg:#f3f2f2;
