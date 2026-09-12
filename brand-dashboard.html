@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand dashboard — Creatopz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz<sup>™</sup></a>
+    <div class="nav-cta" id="authNav"></div>
+  </nav>
+</header>
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="brand-dashboard.html" class="active">Overview</a>
+    <a href="brand-onboarding.html">Company profile</a>
+    <a href="#postCampaign" onclick="event.preventDefault(); setCampaignFormOpen(true); document.getElementById('postCampaign').scrollIntoView({behavior:'smooth'});">Post a campaign</a>
+    <a href="#myCampaigns" onclick="document.getElementById('myCampaigns').scrollIntoView({behavior:'smooth'})">My campaigns</a>
+  </aside>
+
+  <main class="dash-main">
+    <h1 id="greeting">Brand dashboard</h1>
+    <p class="sub">Post campaigns and manage creator applications.</p>
+
+    <div id="incompleteNotice" class="empty-block" style="display:none;margin-bottom:28px;text-align:left;">
+      <p style="font-weight:600;margin-bottom:6px;">Finish your company profile</p>
+      <p style="font-size:14px;color:var(--grey);margin-bottom:16px;">Creators are more likely to trust and apply to campaigns from a complete profile.</p>
+      <a href="brand-onboarding.html" class="btn btn-red" style="padding:10px 20px;font-size:14px;">Complete company profile</a>
+    </div>
+
+    <div class="dash-cards">
+      <div class="dash-stat"><p class="num" id="statActive">—</p><p class="label">Active campaigns</p></div>
+      <div class="dash-stat"><p class="num" id="statClosed">—</p><p class="label">Closed campaigns</p></div>
+      <div class="dash-stat"><p class="num" id="statApplications">—</p><p class="label">Applications received</p></div>
+    </div>
+
+    <h2 id="postCampaign" style="font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+      Post a campaign
+      <button type="button" id="toggleCampaignForm" class="btn btn-outline-dark" style="padding:6px 14px;font-size:13px;font-weight:600;">+ New campaign</button>
+    </h2>
+    <form id="campaignForm" style="margin-bottom:48px;max-width:640px;display:none;">
+      <div class="field">
+        <label for="title">Campaign title</label>
+        <input type="text" id="title" required>
+      </div>
+      <div class="field">
+        <label for="description">Short description</label>
+        <textarea id="description" placeholder="What's this campaign about?"></textarea>
+      </div>
+      <div class="field">
+        <label for="brief">Full brief</label>
+        <textarea id="brief" placeholder="Deliverables, tone, do's and don'ts..."></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="niche">Niche</label>
+          <input type="text" id="niche" placeholder="e.g. Beauty, Fitness">
+        </div>
+        <div class="field">
+          <label for="location">Location (optional)</label>
+          <input type="text" id="location" placeholder="e.g. Pan-India, Mumbai">
+        </div>
+      </div>
+      <div class="field">
+        <label>Platforms</label>
+        <div class="checkbox-row" id="platformChips"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="budgetMin">Budget min (₹)</label>
+          <input type="number" id="budgetMin" min="0">
+        </div>
+        <div class="field">
+          <label for="budgetMax">Budget max (₹)</label>
+          <input type="number" id="budgetMax" min="0">
+        </div>
+      </div>
+      <div class="field">
+        <label for="deadline">Application deadline</label>
+        <input type="date" id="deadline">
+      </div>
+      <div class="field">
+        <label for="requirements">Requirements</label>
+        <textarea id="requirements" placeholder="Minimum followers, past experience, etc."></textarea>
+      </div>
+      <div class="field">
+        <label for="statusSelect">Status</label>
+        <select id="statusSelect">
+          <option value="draft">Save as draft</option>
+          <option value="open" selected>Publish now (visible to creators)</option>
+        </select>
+      </div>
+      <p class="form-error" id="formError"></p>
+      <div class="submit-row">
+        <button type="submit" class="btn btn-red" id="submitBtn" style="width:100%;">Post campaign</button>
+      </div>
+    </form>
+
+    <h2 id="myCampaigns" style="font-size:22px;margin-bottom:14px;">My campaigns</h2>
+    <div id="campaignsList"><p style="color:var(--grey);">Loading...</p></div>
+  </main>
+</div>
+
+<!-- Applications modal -->
+<div id="appsOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;">
+  <div style="background:#fff;max-width:720px;width:100%;max-height:85vh;overflow-y:auto;padding:32px;position:relative;">
+    <button id="closeAppsModal" style="position:absolute;top:16px;right:16px;border:none;background:none;font-size:22px;cursor:pointer;">×</button>
+    <h2 style="font-size:22px;margin-bottom:18px;" id="appsModalTitle">Applications</h2>
+    <div id="appsModalList"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  const PLATFORM_OPTIONS = ["Instagram", "YouTube", "Facebook", "TikTok", "Other"];
+  let selectedPlatforms = new Set(["Instagram"]);
+  let myBrand = null;
+
+  function renderPlatformChips() {
+    const host = document.getElementById("platformChips");
+    host.innerHTML = PLATFORM_OPTIONS.map(
+      (p) => `<span class="checkbox-chip ${selectedPlatforms.has(p) ? "selected" : ""}" data-p="${p}">${p}</span>`
+    ).join("");
+    qsa(".checkbox-chip", host).forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const p = chip.dataset.p;
+        if (selectedPlatforms.has(p)) selectedPlatforms.delete(p);
+        else selectedPlatforms.add(p);
+        renderPlatformChips();
+      });
+    });
+  }
+  renderPlatformChips();
+
+  function setCampaignFormOpen(open) {
+    document.getElementById("campaignForm").style.display = open ? "block" : "none";
+    document.getElementById("toggleCampaignForm").textContent = open ? "− Hide form" : "+ New campaign";
+  }
+  document.getElementById("toggleCampaignForm").addEventListener("click", () => {
+    const isOpen = document.getElementById("campaignForm").style.display !== "none";
+    setCampaignFormOpen(!isOpen);
+    if (!isOpen) document.getElementById("campaignForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  function statusPillHtml(status) {
+    return `<span class="status-pill status-${status}">${status}</span>`;
+  }
+
+  async function loadCampaigns() {
+    const list = document.getElementById("campaignsList");
+    const campaigns = await getMyCampaigns(myBrand.id).catch(() => []);
+    document.getElementById("statActive").textContent = campaigns.filter((c) => c.status === "open").length;
+    document.getElementById("statClosed").textContent = campaigns.filter((c) => c.status === "closed").length;
+
+    const { count: totalApps } = await supabaseClient
+      .from("campaign_applications")
+      .select("*, campaigns!inner(brand_id)", { count: "exact", head: true })
+      .eq("campaigns.brand_id", myBrand.id);
+    document.getElementById("statApplications").textContent = totalApps ?? 0;
+
+    if (!campaigns.length) {
+      list.innerHTML = `<div class="empty-block">You haven't posted a campaign yet.</div>`;
+      setCampaignFormOpen(true);
+      return;
+    }
+    list.innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Title</th><th>Status</th><th>Applications</th><th>Deadline</th><th></th></tr></thead>
+        <tbody>
+          ${campaigns
+            .map(
+              (c) => `<tr>
+                <td>${escapeHtml(c.title)}</td>
+                <td>${statusPillHtml(c.status)}</td>
+                <td>${c.campaign_applications?.[0]?.count ?? 0}</td>
+                <td>${c.deadline ? new Date(c.deadline).toLocaleDateString() : "—"}</td>
+                <td style="white-space:nowrap;">
+                  <button class="btn btn-outline-dark view-apps-btn" data-id="${c.id}" data-title="${escapeHtml(c.title)}" style="padding:8px 14px;font-size:13px;margin-right:6px;">Applications</button>
+                  ${
+                    c.status !== "closed"
+                      ? `<button class="btn btn-outline-dark close-btn" data-id="${c.id}" style="padding:8px 14px;font-size:13px;">Close</button>`
+                      : ""
+                  }
+                </td>
+              </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+
+    qsa(".view-apps-btn", list).forEach((btn) =>
+      btn.addEventListener("click", () => openApplicationsModal(btn.dataset.id, btn.dataset.title))
+    );
+    qsa(".close-btn", list).forEach((btn) =>
+      btn.addEventListener("click", async () => {
+        await updateCampaign(btn.dataset.id, { status: "closed" });
+        showToast("Campaign closed.", "success");
+        loadCampaigns();
+      })
+    );
+  }
+
+  async function openApplicationsModal(campaignId, title) {
+    document.getElementById("appsModalTitle").textContent = `Applications — ${title}`;
+    document.getElementById("appsOverlay").style.display = "flex";
+    const host = document.getElementById("appsModalList");
+    host.innerHTML = `<p style="color:var(--grey);">Loading...</p>`;
+    const apps = await getApplicationsForCampaign(campaignId).catch(() => []);
+    if (!apps.length) {
+      host.innerHTML = `<div class="empty-block">No applications yet.</div>`;
+      return;
+    }
+    host.innerHTML = apps
+      .map(
+        (a) => `
+      <div style="border:1px solid var(--hairline-light);padding:18px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <p style="font-weight:700;">${escapeHtml(a.creator_name || "Creator")}</p>
+            <p style="font-size:13px;color:var(--grey);">${escapeHtml(a.creator_category || "")} · ${formatNumber(a.creator_followers)} followers · ${a.creator_engagement_rate || "—"}% engagement</p>
+          </div>
+          ${statusPillHtml(a.status)}
+        </div>
+        ${a.message ? `<p style="font-size:14px;margin-top:10px;color:var(--ink);">"${escapeHtml(a.message)}"</p>` : ""}
+        <p style="font-size:12px;color:var(--grey);margin-top:8px;">Applied ${new Date(a.created_at).toLocaleDateString()}</p>
+        ${
+          a.status === "pending"
+            ? `<div style="margin-top:12px;display:flex;gap:10px;">
+                <button class="btn btn-red accept-btn" data-id="${a.application_id}" data-user="${a.creator_user_id || ""}" style="padding:8px 16px;font-size:13px;">Shortlist</button>
+                <button class="btn btn-outline-dark reject-btn" data-id="${a.application_id}" data-user="${a.creator_user_id || ""}" style="padding:8px 16px;font-size:13px;">Reject</button>
+              </div>`
+            : ""
+        }
+        ${
+          a.status === "shortlisted"
+            ? `<p style="font-size:12.5px;color:var(--green);margin-top:10px;font-weight:600;">Shortlisted — Creatopz will confirm the deal and share contact details.</p>`
+            : ""
+        }
+      </div>`
+      )
+      .join("");
+
+    qsa(".accept-btn", host).forEach((btn) =>
+      btn.addEventListener("click", async () => {
+        await setApplicationStatus(btn.dataset.id, "shortlisted", btn.dataset.user);
+        showToast("Creator shortlisted — Creatopz will finalize the match.", "success");
+        openApplicationsModal(campaignId, title);
+      })
+    );
+    qsa(".reject-btn", host).forEach((btn) =>
+      btn.addEventListener("click", async () => {
+        await setApplicationStatus(btn.dataset.id, "rejected", btn.dataset.user);
+        showToast("Application rejected.", "info");
+        openApplicationsModal(campaignId, title);
+      })
+    );
+  }
+
+  document.getElementById("closeAppsModal").addEventListener("click", () => {
+    document.getElementById("appsOverlay").style.display = "none";
+  });
+
+  async function init() {
+    renderAuthNav();
+    const authedProfile = await requireAuth("brand");
+    if (!authedProfile) return;
+
+    myBrand = await getMyBrandProfile(authedProfile.id);
+    if (!myBrand) {
+      document.getElementById("incompleteNotice").style.display = "block";
+      document.getElementById("campaignForm").style.display = "none";
+      document.getElementById("campaignsList").innerHTML =
+        `<div class="empty-block">Complete your company profile before posting a campaign.</div>`;
+      return;
+    }
+    document.getElementById("greeting").textContent = `Welcome back, ${myBrand.company_name}`;
+    loadCampaigns();
+  }
+  init();
+
+  document.getElementById("campaignForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const errorEl = document.getElementById("formError");
+    errorEl.style.display = "none";
+    setButtonLoading(btn, true, "Posting...");
+    try {
+      const fields = {
+        title: document.getElementById("title").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        brief: document.getElementById("brief").value.trim(),
+        niche: document.getElementById("niche").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        platforms: Array.from(selectedPlatforms),
+        budget_min: Number(document.getElementById("budgetMin").value) || null,
+        budget_max: Number(document.getElementById("budgetMax").value) || null,
+        deadline: document.getElementById("deadline").value || null,
+        requirements: document.getElementById("requirements").value.trim(),
+        status: document.getElementById("statusSelect").value,
+      };
+      if (!fields.title) throw new Error("Please add a campaign title.");
+      await createCampaign(myBrand.id, fields);
+      showToast("Campaign posted!", "success");
+      document.getElementById("campaignForm").reset();
+      selectedPlatforms = new Set(["Instagram"]);
+      renderPlatformChips();
+      loadCampaigns();
+    } catch (err) {
+      errorEl.textContent = friendlyAuthError(err);
+      errorEl.style.display = "block";
+    } finally {
+      setButtonLoading(btn, false);
+    }
+  });
+</script>
+</body>
+</html>

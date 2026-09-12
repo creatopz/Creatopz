@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your brand profile — Creatopz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz<sup>™</sup></a>
+    <div class="nav-cta" id="authNav"></div>
+  </nav>
+</header>
+
+<div class="auth-shell" style="align-items:flex-start;">
+  <div class="auth-card" style="max-width:640px;">
+    <h1>Company profile</h1>
+    <p class="sub">Tell creators who you are before you post a campaign.</p>
+
+    <div class="avatar-upload">
+      <div class="avatar-preview" id="avatarPreview">
+        <img id="logoImg" src="https://placehold.co/150x150?text=%20" alt="Logo preview">
+      </div>
+      <div>
+        <input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp,image/gif">
+        <p class="hint">Company logo, up to 5MB.</p>
+      </div>
+    </div>
+
+    <form id="brandForm">
+      <div class="field-row">
+        <div class="field">
+          <label for="companyName">Company name</label>
+          <input type="text" id="companyName" required>
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="e.g. acme-co" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="What does your brand do?"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="website">Website</label>
+          <input type="url" id="website" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label for="industry">Industry</label>
+          <input type="text" id="industry" placeholder="e.g. Fashion, D2C, SaaS">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="contactEmail">Contact email</label>
+          <input type="email" id="contactEmail" required>
+        </div>
+        <div class="field">
+          <label for="contactPhone">Contact phone</label>
+          <input type="text" id="contactPhone">
+        </div>
+      </div>
+      <div class="field">
+        <label for="location">Location</label>
+        <input type="text" id="location" placeholder="e.g. Mumbai, India">
+      </div>
+
+      <p class="form-error" id="formError"></p>
+      <div class="submit-row">
+        <button type="submit" class="btn btn-red" id="submitBtn" style="width:100%;">Save company profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  let brand = null;
+
+  document.getElementById("logoFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById("logoImg").src = URL.createObjectURL(file);
+  });
+
+  async function init() {
+    renderAuthNav();
+    const authedProfile = await requireAuth("brand");
+    if (!authedProfile) return;
+    brand = await getMyBrandProfile(authedProfile.id);
+    if (brand) {
+      document.getElementById("companyName").value = brand.company_name || "";
+      document.getElementById("username").value = brand.username || "";
+      document.getElementById("description").value = brand.description || "";
+      document.getElementById("website").value = brand.website || "";
+      document.getElementById("industry").value = brand.industry || "";
+      document.getElementById("contactEmail").value = brand.contact_email || authedProfile.email || "";
+      document.getElementById("contactPhone").value = brand.contact_phone || "";
+      document.getElementById("location").value = brand.location || "";
+      if (brand.logo_url) document.getElementById("logoImg").src = brand.logo_url;
+    } else {
+      document.getElementById("companyName").value = authedProfile.full_name || "";
+      document.getElementById("contactEmail").value = authedProfile.email || "";
+    }
+  }
+  init();
+
+  document.getElementById("brandForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const errorEl = document.getElementById("formError");
+    errorEl.style.display = "none";
+    setButtonLoading(btn, true, "Saving...");
+    try {
+      const authedProfile = await getCurrentProfile();
+      const file = document.getElementById("logoFile").files[0];
+      let logoUrl = brand?.logo_url || null;
+      if (file) {
+        logoUrl = await uploadImage(file, "brand-logos", authedProfile.id);
+      }
+      const fields = {
+        company_name: document.getElementById("companyName").value.trim(),
+        username: document.getElementById("username").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        website: document.getElementById("website").value.trim(),
+        industry: document.getElementById("industry").value.trim(),
+        contact_email: document.getElementById("contactEmail").value.trim(),
+        contact_phone: document.getElementById("contactPhone").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        logo_url: logoUrl,
+      };
+      await saveBrandProfile(authedProfile.id, fields);
+      showToast("Company profile saved!", "success");
+      setTimeout(() => (window.location.href = "brand-dashboard.html"), 900);
+    } catch (err) {
+      errorEl.textContent = friendlyAuthError(err);
+      errorEl.style.display = "block";
+    } finally {
+      setButtonLoading(btn, false);
+    }
+  });
+</script>
+</body>
+</html>

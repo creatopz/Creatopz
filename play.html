@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#000;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  *{box-sizing:border-box;}
+  a{color:inherit;text-decoration:none;}
+  a:hover{color:#FF3300;}
+  ::selection{background:#FF3300;color:#fff;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
+  @keyframes ctzRise{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes ctzWordUp{from{transform:translateY(110%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes ctzBlink{0%,60%{opacity:1;}80%{opacity:.25;}100%{opacity:1;}}
+  @keyframes ctzStamp{0%{transform:translate(-50%,-50%) scale(.1) rotate(var(--rot,0deg));opacity:.92;}
+    18%{transform:translate(-50%,-50%) scale(1.08) rotate(var(--rot,0deg));opacity:.92;}
+    30%{transform:translate(-50%,-50%) scale(1) rotate(var(--rot,0deg));opacity:.85;}
+    100%{transform:translate(-50%,-50%) scale(1.02) rotate(var(--rot,0deg));opacity:0;}}
+  @keyframes ctzRing{from{transform:translate(-50%,-50%) scale(.2);opacity:.7;}to{transform:translate(-50%,-50%) scale(2.4);opacity:0;}}
+  @keyframes ctzMarquee{from{transform:translate3d(0,0,0);}to{transform:translate3d(-50%,0,0);}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#000;">
+
+  <header style="position:sticky;top:0;z-index:120;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);border-bottom:2px solid #1e1e1e;">
+    <nav style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:22px;">
+        <img src="assets/logo.png" alt="Creatopz mark" style="height:34px;display:block;filter:invert(1);transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
+      </a>
+      <div style="display:flex;gap:28px;font-size:15px;font-weight:500;">
+        <a href="index.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#fff">Home</a>
+        <a href="directory.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#fff">Directory</a>
+        <a href="play.html" style="padding:6px 0;color:#FF3300;font-weight:600;background-image:linear-gradient(#FF3300,#FF3300);background-size:100% 2px;background-repeat:no-repeat;background-position:0 100%;">Play</a>
+        <a href="auth.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#fff">Log in</a>
+        <a href="dashboard-creator.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);">Dashboard</a>
+      </div>
+      <button onClick="{{ toggleSound }}" style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;padding:10px 18px;border:2px solid {{ soundBorder }};background:{{ soundBg }};color:{{ soundFg }};cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease;">
+        <span style="width:7px;height:7px;background:{{ soundDot }};display:inline-block;"></span>{{ soundLabel }}
+      </button>
+    </nav>
+  </header>
+
+  <section style="max-width:1180px;margin:0 auto;padding:76px 32px 40px;">
+    <div style="display:inline-flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:8px 14px;margin-bottom:26px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
+      <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>The Creatopz arcade · sound on recommended
+    </div>
+    <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(40px,5.4vw,70px);line-height:.96;margin:0;">
+      <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .1s both;">Three&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .18s both;">toys&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .26s both;">for&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .34s both;">restless</span></span>
+      <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .42s both;color:#FF3300;">hands.</span></span>
+    </h1>
+    <p style="color:#c9c9c9;font-size:18px;line-height:1.6;max-width:540px;margin:26px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .4s both;">Stamp ink, pluck strings, pop tiles. No score to chase, no timer — just texture and sound while you wait for your next brief.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;margin-top:44px;">
+      <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Blots stamped</div><div ref="{{ statBlots }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:6px;">0</div></div>
+      <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Strings plucked</div><div ref="{{ statPlucks }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:6px;">0</div></div>
+      <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Tiles popped</div><div ref="{{ statPops }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:6px;">0</div></div>
+      <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Best combo</div><div ref="{{ statCombo }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:6px;color:#FF3300;">0</div></div>
+    </div>
+  </section>
+
+  <section style="max-width:1180px;margin:0 auto;padding:0 32px 40px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 01</div>
+        <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">Ink bloom</h2>
+      </div>
+      <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Press and drag across the slab. Every stamp blooms, thuds softly and dries away.</div>
+    </div>
+    <div ref="{{ inkRef }}" style="position:relative;height:min(58vh,460px);background:#F3F2F2;border:2px solid #fff;overflow:hidden;cursor:crosshair;touch-action:none;">
+      <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,0,0,.07) 1px, transparent 1px),linear-gradient(90deg, rgba(0,0,0,.07) 1px, transparent 1px);background-size:44px 44px;"></div>
+      <div ref="{{ inkHintRef }}" style="position:absolute;left:28px;bottom:24px;font-family:Anton,sans-serif;font-size:clamp(24px,4vw,44px);color:rgba(0,0,0,.16);pointer-events:none;transition:opacity .5s ease;">DRAG TO STAMP</div>
+    </div>
+  </section>
+
+  <section style="max-width:1180px;margin:0 auto;padding:0 32px 40px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 02</div>
+        <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">String rake</h2>
+      </div>
+      <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Sweep sideways through the strings. Each one you cross plucks a note and springs back.</div>
+    </div>
+    <div ref="{{ harpRef }}" style="position:relative;height:min(46vh,340px);background:#0b0b0b;border:2px solid #1e1e1e;display:flex;align-items:stretch;justify-content:space-between;padding:0 14px;overflow:hidden;cursor:ew-resize;touch-action:none;"></div>
+  </section>
+
+  <section style="max-width:1180px;margin:0 auto;padding:0 32px 80px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 03</div>
+        <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">Pop grid</h2>
+      </div>
+      <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Run your cursor over the field. Tiles pop, the pitch climbs with your combo, then they refill.</div>
+    </div>
+    <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;touch-action:none;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px;">
+      <div ref="{{ comboRef }}" style="font-family:Anton,sans-serif;font-size:18px;color:#8a8a8a;">COMBO 0</div>
+      <button onClick="{{ resetStats }}" style="border:2px solid #333;background:transparent;color:#9a9a9a;font-size:13px;font-weight:600;padding:11px 18px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Reset my stats</button>
+    </div>
+  </section>
+
+  <div style="background:#FF3300;color:#fff;overflow:hidden;border-top:2px solid #000;border-bottom:2px solid #000;padding:13px 0;">
+    <div style="display:flex;width:max-content;animation:ctzMarquee 24s linear infinite;">
+      <div style="display:flex;align-items:center;gap:24px;padding-right:24px;font-family:Anton,sans-serif;font-size:18px;letter-spacing:.08em;white-space:nowrap;"><span>BRIEFS DROP DAILY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>PLAY WHILE YOU WAIT</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>JOIN THE COMMUNITY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span></div>
+      <div aria-hidden="true" style="display:flex;align-items:center;gap:24px;padding-right:24px;font-family:Anton,sans-serif;font-size:18px;letter-spacing:.08em;white-space:nowrap;"><span>BRIEFS DROP DAILY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>PLAY WHILE YOU WAIT</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>JOIN THE COMMUNITY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span></div>
+    </div>
+  </div>
+
+  <section style="max-width:1180px;margin:0 auto;padding:76px 32px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
+    <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(30px,4vw,52px);line-height:1;margin:0;max-width:640px;">Done playing?<br><span style="color:#FF3300;">Go get the deal.</span></h2>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;">
+      <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Join as a creator<span style="font-family:Anton,sans-serif;">→</span></a>
+      <a href="directory.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:600;font-size:15px;padding:13px 26px;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#fff;color:#000">Browse creators</a>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid #242424;padding:30px 0 40px;">
+    <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:#6d6d6d;font-size:13px;flex-wrap:wrap;gap:10px;">
+      <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const SCALE = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33, 659.25, 783.99, 880.0];
+const STORE = "ctz-arcade-stats";
+
+class Component extends DCLogic {
+  state = { sound: true };
+  rootRef = React.createRef();
+  inkRef = React.createRef();
+  inkHintRef = React.createRef();
+  harpRef = React.createRef();
+  gridRef = React.createRef();
+  comboRef = React.createRef();
+  statBlots = React.createRef();
+  statPlucks = React.createRef();
+  statPops = React.createRef();
+  statCombo = React.createRef();
+
+  renderVals() {
+    const on = this.state.sound;
+    return {
+      rootRef: this.rootRef, inkRef: this.inkRef, inkHintRef: this.inkHintRef,
+      harpRef: this.harpRef, gridRef: this.gridRef, comboRef: this.comboRef,
+      statBlots: this.statBlots, statPlucks: this.statPlucks, statPops: this.statPops, statCombo: this.statCombo,
+      soundLabel: on ? "Sound on" : "Sound off",
+      soundBg: on ? "#FF3300" : "transparent",
+      soundFg: "#fff",
+      soundBorder: on ? "#FF3300" : "#333",
+      soundDot: on ? "#fff" : "#555",
+      toggleSound: () => this.setState({ sound: !this.state.sound }, () => { if (this.state.sound) this.tone(523, 0.12, "triangle", 0.05); }),
+      resetStats: () => {
+        this.stats = { blots: 0, plucks: 0, pops: 0, combo: 0 };
+        this.paintStats();
+        this.save();
+      }
+    };
+  }
+
+  // ---------- audio ----------
+  audio() {
+    if (!this.state.sound) return null;
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      this.ctx = new AC();
+      this.master = this.ctx.createGain();
+      this.master.gain.value = 0.5;
+      this.master.connect(this.ctx.destination);
+    }
+    if (this.ctx.state === "suspended") this.ctx.resume();
+    return this.ctx;
+  }
+
+  tone(freq, dur, type, gain) {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = Math.max(600, freq * 4);
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain || 0.14, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + (dur || 0.3));
+    osc.connect(g); g.connect(lp); lp.connect(this.master);
+    osc.start(t); osc.stop(t + (dur || 0.3) + 0.05);
+  }
+
+  thud() {
+    const ctx = this.audio();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const len = Math.floor(ctx.sampleRate * 0.18);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 420 + Math.random() * 260;
+    const g = ctx.createGain();
+    g.gain.value = 0.5;
+    src.connect(lp); lp.connect(g); g.connect(this.master);
+    src.start(t);
+    this.tone(70 + Math.random() * 30, 0.22, "sine", 0.12);
+  }
+
+  // ---------- stats ----------
+  load() {
+    let s = { blots: 0, plucks: 0, pops: 0, combo: 0 };
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (raw) s = Object.assign(s, JSON.parse(raw));
+    } catch (e) {}
+    return s;
+  }
+  save() {
+    try { localStorage.setItem(STORE, JSON.stringify(this.stats)); } catch (e) {}
+  }
+  paintStats() {
+    const map = [[this.statBlots, "blots"], [this.statPlucks, "plucks"], [this.statPops, "pops"], [this.statCombo, "combo"]];
+    map.forEach(([ref, key]) => { if (ref.current) ref.current.textContent = String(this.stats[key]); });
+  }
+  bump(key) {
+    this.stats[key] = (this.stats[key] || 0) + 1;
+    const ref = { blots: this.statBlots, plucks: this.statPlucks, pops: this.statPops }[key];
+    if (ref && ref.current) {
+      ref.current.textContent = String(this.stats[key]);
+      ref.current.style.transform = "translateY(-3px)";
+      setTimeout(() => { if (ref.current) ref.current.style.transform = "translateY(0)"; }, 120);
+    }
+    clearTimeout(this._saveT);
+    this._saveT = setTimeout(() => this.save(), 800);
+  }
+
+  componentDidMount() {
+    this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.stats = this.load();
+    this.paintStats();
+    [this.statBlots, this.statPlucks, this.statPops].forEach((r) => {
+      if (r.current) r.current.style.transition = "transform .18s cubic-bezier(.34,1.56,.64,1)";
+    });
+    this.initInk();
+    this.initHarp();
+    this.initGrid();
+    const root = this.rootRef.current;
+    if (root && !this.reduced) {
+      root.addEventListener("mousemove", (ev) => {
+        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
+        if (!el) return;
+        const amt = parseFloat(el.dataset.magnetic) || 8;
+        const r = el.getBoundingClientRect();
+        el.style.transform =
+          "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
+          (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
+      });
+      root.addEventListener("mouseout", (ev) => {
+        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
+        if (el) el.style.transform = "translate(0,0)";
+      });
+    }
+  }
+
+  // ---------- Toy 1: ink bloom ----------
+  initInk() {
+    const stage = this.inkRef.current;
+    if (!stage) return;
+    let down = false, last = 0, hidden = false;
+    const stamp = (x, y) => {
+      const now = performance.now();
+      if (now - last < 90) return;
+      last = now;
+      if (!hidden && this.inkHintRef.current) { this.inkHintRef.current.style.opacity = "0"; hidden = true; }
+      const size = 60 + Math.random() * 110;
+      const blot = document.createElement("img");
+      blot.src = "assets/logo.png";
+      blot.alt = "";
+      blot.style.cssText =
+        "position:absolute;left:" + x + "px;top:" + y + "px;width:" + size + "px;pointer-events:none;" +
+        "--rot:" + (Math.random() * 60 - 30).toFixed(1) + "deg;transform:translate(-50%,-50%) scale(.1);" +
+        "animation:ctzStamp " + (3.4 + Math.random() * 2.2) + "s cubic-bezier(.16,1,.3,1) forwards;";
+      const ring = document.createElement("span");
+      ring.style.cssText =
+        "position:absolute;left:" + x + "px;top:" + y + "px;width:" + size * 1.1 + "px;height:" + size * 1.1 +
+        "px;border:2px solid #FF3300;pointer-events:none;transform:translate(-50%,-50%) scale(.2);" +
+        "animation:ctzRing .7s cubic-bezier(.16,1,.3,1) forwards;";
+      stage.appendChild(ring);
+      stage.appendChild(blot);
+      setTimeout(() => ring.remove(), 900);
+      setTimeout(() => blot.remove(), 6200);
+      this.thud();
+      this.bump("blots");
+    };
+    const pos = (ev) => {
+      const r = stage.getBoundingClientRect();
+      return [ev.clientX - r.left, ev.clientY - r.top];
+    };
+    stage.addEventListener("pointerdown", (ev) => {
+      down = true;
+      stage.setPointerCapture(ev.pointerId);
+      const [x, y] = pos(ev);
+      stamp(x, y);
+    });
+    stage.addEventListener("pointermove", (ev) => {
+      if (!down) return;
+      const [x, y] = pos(ev);
+      stamp(x, y);
+    });
+    const up = () => { down = false; };
+    stage.addEventListener("pointerup", up);
+    stage.addEventListener("pointercancel", up);
+    stage.addEventListener("pointerleave", up);
+  }
+
+  // ---------- Toy 2: string rake ----------
+  initHarp() {
+    const stage = this.harpRef.current;
+    if (!stage) return;
+    const count = 34;
+    const strings = [];
+    for (let i = 0; i < count; i++) {
+      const wrap = document.createElement("div");
+      wrap.style.cssText = "flex:1;display:flex;justify-content:center;align-items:stretch;";
+      const line = document.createElement("div");
+      const accent = i % 5 === 0;
+      line.style.cssText =
+        "width:2px;background:" + (accent ? "#FF3300" : "#3a3a3a") + ";transform-origin:50% 50%;will-change:transform;";
+      wrap.appendChild(line);
+      stage.appendChild(wrap);
+      strings.push({ el: line, x: 0, v: 0, accent });
+    }
+    let prevIdx = -1, running = false;
+
+    const pluck = (i, power) => {
+      const s = strings[i];
+      if (!s) return;
+      s.v += power;
+      const note = SCALE[i % SCALE.length] * (i > count / 2 ? 2 : 1);
+      this.tone(note, 0.5 + Math.random() * 0.3, "triangle", 0.09);
+      this.bump("plucks");
+      s.el.style.background = "#FF3300";
+      setTimeout(() => { s.el.style.background = s.accent ? "#FF3300" : "#3a3a3a"; }, 320);
+    };
+
+    const frame = () => {
+      let moving = false;
+      for (const s of strings) {
+        s.v += -s.x * 0.16;
+        s.v *= 0.9;
+        s.x += s.v;
+        if (Math.abs(s.x) > 0.2 || Math.abs(s.v) > 0.2) moving = true;
+        s.el.style.transform = "translateX(" + s.x.toFixed(2) + "px) scaleY(" + (1 - Math.min(0.12, Math.abs(s.x) / 240)).toFixed(3) + ")";
+      }
+      if (moving) requestAnimationFrame(frame);
+      else running = false;
+    };
+    const kick = () => { if (!running) { running = true; requestAnimationFrame(frame); } };
+
+    const onMove = (ev) => {
+      const r = stage.getBoundingClientRect();
+      const rel = (ev.clientX - r.left) / r.width;
+      const idx = Math.max(0, Math.min(count - 1, Math.floor(rel * count)));
+      if (idx !== prevIdx) {
+        if (prevIdx !== -1) {
+          const dir = idx > prevIdx ? 1 : -1;
+          const step = Math.abs(idx - prevIdx);
+          for (let i = 1; i <= Math.min(step, 4); i++) {
+            const t = prevIdx + dir * i;
+            pluck(t, dir * (6 + Math.random() * 3));
+          }
+        } else {
+          pluck(idx, 7);
+        }
+        prevIdx = idx;
+        kick();
+      }
+    };
+    stage.addEventListener("pointermove", onMove);
+    stage.addEventListener("pointerleave", () => { prevIdx = -1; });
+    stage.addEventListener("pointerdown", (ev) => { prevIdx = -1; onMove(ev); });
+  }
+
+  // ---------- Toy 3: pop grid ----------
+  initGrid() {
+    const stage = this.gridRef.current;
+    if (!stage) return;
+    const total = 96;
+    for (let i = 0; i < total; i++) {
+      const t = document.createElement("div");
+      t.style.cssText =
+        "aspect-ratio:1/1;background:#151515;transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .3s ease;" +
+        "will-change:transform;cursor:pointer;";
+      stage.appendChild(t);
+    }
+    const tiles = Array.from(stage.children);
+    let combo = 0, comboT = null;
+
+    const setCombo = (n) => {
+      combo = n;
+      if (this.comboRef.current) {
+        this.comboRef.current.textContent = "COMBO " + n;
+        this.comboRef.current.style.color = n > 4 ? "#FF3300" : "#8a8a8a";
+      }
+      if (n > (this.stats.combo || 0)) {
+        this.stats.combo = n;
+        if (this.statCombo.current) this.statCombo.current.textContent = String(n);
+        clearTimeout(this._saveT);
+        this._saveT = setTimeout(() => this.save(), 800);
+      }
+    };
+
+    const pop = (tile) => {
+      if (tile.dataset.popped === "1") return;
+      tile.dataset.popped = "1";
+      tile.style.background = "#FF3300";
+      tile.style.transform = "scale(1.18)";
+      setTimeout(() => { tile.style.transform = "scale(0)"; }, 90);
+      setCombo(combo + 1);
+      const step = SCALE[Math.min(SCALE.length - 1, combo % SCALE.length)];
+      this.tone(step * 2, 0.16, "sine", 0.1);
+      this.bump("pops");
+      clearTimeout(comboT);
+      comboT = setTimeout(() => setCombo(0), 1100);
+      setTimeout(() => {
+        tile.style.background = "#151515";
+        tile.style.transform = "scale(1)";
+        tile.dataset.popped = "0";
+      }, 1500 + Math.random() * 900);
+    };
+
+    stage.addEventListener("pointerover", (ev) => {
+      const tile = ev.target;
+      if (tiles.indexOf(tile) === -1) return;
+      pop(tile);
+    });
+    stage.addEventListener("pointerdown", (ev) => {
+      const tile = ev.target;
+      if (tiles.indexOf(tile) !== -1) pop(tile);
+    });
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this._saveT);
+    if (this.ctx && this.ctx.close) this.ctx.close();
+  }
+}
+</script>
+</body>
+</html>

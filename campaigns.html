@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaigns — Creatopz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<style>
+  .campaign-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:32px;}
+  .campaign-card{border:1px solid var(--hairline-light);padding:24px;background:#fff;
+    transition:transform .4s cubic-bezier(0.16,1,0.3,1), box-shadow .4s cubic-bezier(0.16,1,0.3,1);}
+  .campaign-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -22px rgba(0,0,0,0.2);}
+  .campaign-top{display:flex;gap:14px;align-items:center;margin-bottom:14px;}
+  .campaign-brand-logo{width:44px;height:44px;border-radius:50%;background:var(--grey-light);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:700;flex-shrink:0;}
+  .campaign-brand-logo img{width:100%;height:100%;object-fit:cover;}
+  .campaign-brand-name{font-size:12px;color:var(--grey);text-transform:uppercase;letter-spacing:0.04em;}
+  .campaign-title{font-family:'Anton',sans-serif;font-size:19px;margin-top:2px;}
+  .campaign-desc{font-size:14px;color:var(--grey);margin-bottom:16px;line-height:1.5;}
+  .campaign-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:12.5px;}
+  .campaign-meta span{background:var(--grey-light);padding:5px 10px;border-radius:20px;}
+
+  .apply-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:100;
+  }
+  .apply-overlay.open{display:flex;}
+  .apply-modal{background:#fff;width:100%;max-width:440px;border-radius:2px;
+    opacity:0;transform:translateY(18px) scale(0.97);
+    transition:opacity .3s cubic-bezier(0.16,1,0.3,1), transform .3s cubic-bezier(0.16,1,0.3,1);}
+  .apply-overlay.open .apply-modal{opacity:1;transform:translateY(0) scale(1);}
+  @media (prefers-reduced-motion: reduce){ .apply-modal, .campaign-card, .stagger-item{ transition:none !important; } }
+  .stagger-item{opacity:0;transform:translateY(20px);transition:opacity .5s cubic-bezier(0.16,1,0.3,1), transform .5s cubic-bezier(0.16,1,0.3,1);}
+  .stagger-item.is-visible{opacity:1;transform:translateY(0);}
+  .apply-modal-head{padding:26px 28px 16px;border-bottom:1px solid var(--hairline-light);}
+  .apply-modal-head h3{font-size:20px;margin-bottom:4px;}
+  .apply-modal-head p{font-size:13.5px;color:var(--grey);}
+  .apply-modal-body{padding:22px 28px;}
+  .apply-modal-body textarea{
+    width:100%;min-height:120px;padding:13px 14px;border:1.5px solid var(--hairline-light);
+    border-radius:2px;font-family:'Inter',sans-serif;font-size:14.5px;resize:vertical;outline:none;
+  }
+  .apply-modal-body textarea:focus{border-color:var(--ink);}
+  .apply-char-count{font-size:12px;color:var(--grey);text-align:right;margin-top:6px;}
+  .apply-modal-foot{padding:16px 28px 26px;display:flex;justify-content:flex-end;gap:10px;}
+  .apply-cancel-btn{font-family:inherit;font-size:13.5px;font-weight:600;color:var(--grey);background:none;border:none;cursor:pointer;padding:11px 8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz<sup>™</sup></a>
+    <div class="nav-cta" id="authNav"></div>
+  </nav>
+</header>
+
+<div class="wrap" style="padding-top:44px;padding-bottom:80px;">
+  <h1 style="font-size:34px;">Open campaigns</h1>
+  <p class="sub" style="color:var(--grey);">Real briefs from real brands — apply directly.</p>
+
+  <div class="campaign-grid" id="campaignGrid"></div>
+  <div class="empty-block" id="campaignEmptyState" style="display:none;margin-top:24px;">
+    No active campaigns yet. Check back soon.
+  </div>
+</div>
+
+<div class="apply-overlay" id="applyOverlay">
+  <div class="apply-modal">
+    <div class="apply-modal-head">
+      <h3 id="applyModalTitle">Apply to this campaign</h3>
+      <p>A short, specific message helps brands say yes faster.</p>
+    </div>
+    <div class="apply-modal-body">
+      <textarea id="applyMessage" maxlength="500" placeholder="e.g. I create skincare content for a 40k-follower audience mostly in Mumbai & Delhi, and I think this fits my page well because..."></textarea>
+      <div class="apply-char-count"><span id="applyCharCount">0</span>/500</div>
+    </div>
+    <div class="apply-modal-foot">
+      <button type="button" class="apply-cancel-btn" id="applyCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-red" id="applyConfirmBtn">Send application</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/campaigns.js"></script>
+<script>
+  renderAuthNav();
+  fetchOpenCampaigns();
+  initApplyModal();
+</script>
+</body>
+</html>

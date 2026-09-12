@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#000;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  *{box-sizing:border-box;}
+  a{color:inherit;text-decoration:none;}
+  a:hover{color:#FF3300;}
+  ::selection{background:#FF3300;color:#fff;}
+  input,button,select{font-family:inherit;}
+  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
+  @keyframes ctzRise{from{transform:translateY(26px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes ctzWordUp{from{transform:translateY(110%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes ctzSlideIn{from{transform:translateX(26px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  @keyframes ctzFloat{0%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-16px) rotate(-1deg);}100%{transform:translateY(0) rotate(-4deg);}}
+  @keyframes ctzBlink{0%,60%{opacity:1;}80%{opacity:.25;}100%{opacity:1;}}
+  @keyframes ctzPop{from{transform:scale(0);opacity:1;}to{transform:scale(1.6);opacity:0;}}
+  @keyframes ctzMarqueeV{from{transform:translateY(0);}to{transform:translateY(-50%);}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#000;min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;">
+
+  <aside style="position:relative;overflow:hidden;border-right:2px solid #1e1e1e;padding:40px;display:flex;flex-direction:column;justify-content:space-between;min-height:100vh;">
+    <div ref="{{ glowRef }}" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,40%) var(--my,40%), rgba(255,51,0,.18), transparent 68%);"></div>
+    <a href="index.html" style="position:relative;display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:22px;">
+      <img src="assets/logo.png" alt="Creatopz mark" style="height:32px;display:block;filter:invert(1);">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
+    </a>
+
+    <div style="position:relative;padding:40px 0;">
+      <img src="assets/logo.png" alt="" style="position:absolute;right:-40px;top:-30px;width:300px;opacity:.07;filter:invert(1);animation:ctzFloat 10s ease-in-out infinite;">
+      <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(34px,4.4vw,54px);line-height:.96;margin:0;position:relative;">
+        <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .1s both;">One&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .18s both;">profile.</span></span>
+        <span style="display:block;overflow:hidden;"><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .26s both;color:#FF3300;">Every&nbsp;</span><span style="display:inline-block;animation:ctzWordUp .9s cubic-bezier(.16,1,.3,1) .34s both;color:#FF3300;">brief.</span></span>
+      </h1>
+      <div style="position:relative;margin-top:34px;border-top:1px solid #242424;">
+        <div style="display:flex;gap:12px;padding:16px 0;border-bottom:1px solid #242424;font-size:15px;transition:padding-left .3s ease,color .3s ease;" style-hover="padding-left:10px;color:#FF3300"><span style="color:#FF3300;font-weight:700;">—</span>Vetted before you're listed</div>
+        <div style="display:flex;gap:12px;padding:16px 0;border-bottom:1px solid #242424;font-size:15px;transition:padding-left .3s ease,color .3s ease;" style-hover="padding-left:10px;color:#FF3300"><span style="color:#FF3300;font-weight:700;">—</span>Briefs land on WhatsApp, daily</div>
+        <div style="display:flex;gap:12px;padding:16px 0;font-size:15px;transition:padding-left .3s ease,color .3s ease;" style-hover="padding-left:10px;color:#FF3300"><span style="color:#FF3300;font-weight:700;">—</span>No cold DMs, ever</div>
+      </div>
+    </div>
+
+    <div style="position:relative;display:flex;align-items:center;gap:10px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">
+      <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Beta cohort forming · Jodhpur
+    </div>
+  </aside>
+
+  <main style="padding:40px;display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div style="width:100%;max-width:460px;">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;border:2px solid #fff;margin-bottom:34px;">
+        <button onClick="{{ setLogin }}" style="background:{{ loginBg }};color:{{ loginFg }};border:none;padding:14px;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:background .3s ease,color .3s ease;">Log in</button>
+        <button onClick="{{ setSignup }}" style="background:{{ signupBg }};color:{{ signupFg }};border:none;padding:14px;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:background .3s ease,color .3s ease;">Sign up</button>
+      </div>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ submit }}" style="animation:ctzSlideIn .5s cubic-bezier(.16,1,.3,1) both;">
+          <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:34px;line-height:1;margin:0 0 8px;">Welcome back.</h2>
+          <p style="color:#9a9a9a;font-size:15px;margin:0 0 30px;">Pick up where you left off.</p>
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:8px;">Email</label>
+          <input type="email" value="{{ email }}" onInput="{{ onEmail }}" placeholder="you@studio.com" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;margin-bottom:26px;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+          <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:8px;">Password</label>
+          <input type="password" value="{{ pass }}" onInput="{{ onPass }}" placeholder="••••••••" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;margin-bottom:12px;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;font-size:13.5px;color:#9a9a9a;">
+            <span>{{ errorText }}</span>
+            <a href="#" style="color:#FF3300;font-weight:600;">Forgot password?</a>
+          </div>
+          <button type="submit" data-magnetic="8" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">{{ ctaLabel }}<span style="font-family:Anton,sans-serif;">→</span></button>
+        </form>
+      </sc-if>
+
+      <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+        <form onSubmit="{{ submit }}" style="animation:ctzSlideIn .5s cubic-bezier(.16,1,.3,1) both;">
+          <div style="display:flex;gap:6px;margin-bottom:26px;">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3">
+              <div style="flex:1;height:4px;background:#262626;overflow:hidden;"><div style="height:100%;background:#FF3300;transform:scaleX({{ s.fill }});transform-origin:0 50%;transition:transform .5s cubic-bezier(.16,1,.3,1);"></div></div>
+            </sc-for>
+          </div>
+          <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;margin-bottom:10px;">Step {{ stepLabel }} of 3</div>
+          <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:34px;line-height:1;margin:0 0 8px;">{{ stepTitle }}</h2>
+          <p style="color:#9a9a9a;font-size:15px;margin:0 0 30px;">{{ stepHint }}</p>
+
+          <sc-if value="{{ onStep1 }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#262626;border:2px solid #262626;margin-bottom:30px;">
+              <button type="button" onClick="{{ pickCreator }}" style="background:{{ creatorBg }};color:{{ creatorFg }};border:none;text-align:left;padding:22px 20px;cursor:pointer;transition:background .3s ease,color .3s ease;">
+                <div style="font-family:Anton,sans-serif;font-size:22px;line-height:1;">Creator</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.75;">I make the content</div>
+              </button>
+              <button type="button" onClick="{{ pickBrand }}" style="background:{{ brandBg }};color:{{ brandFg }};border:none;text-align:left;padding:22px 20px;cursor:pointer;transition:background .3s ease,color .3s ease;">
+                <div style="font-family:Anton,sans-serif;font-size:22px;line-height:1;">Brand</div>
+                <div style="font-size:13px;margin-top:8px;opacity:.75;">I post the briefs</div>
+              </button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ onStep2 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:26px;">
+              <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:8px;">{{ nameLabel }}</label>
+              <input value="{{ name }}" onInput="{{ onName }}" placeholder="{{ namePlaceholder }}" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+            </div>
+            <div style="margin-bottom:26px;">
+              <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:8px;">Email</label>
+              <input type="email" value="{{ email }}" onInput="{{ onEmail }}" placeholder="you@studio.com" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+            </div>
+            <div style="margin-bottom:22px;">
+              <label style="display:block;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;margin-bottom:8px;">Password</label>
+              <input type="password" value="{{ pass }}" onInput="{{ onPass }}" placeholder="8+ characters" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+              <div style="display:flex;gap:4px;margin-top:12px;">
+                <sc-for list="{{ strengthBars }}" as="b" hint-placeholder-count="4">
+                  <div style="flex:1;height:3px;background:{{ b.color }};transition:background .35s ease;"></div>
+                </sc-for>
+              </div>
+              <div style="font-size:12.5px;color:#8a8a8a;margin-top:8px;">{{ strengthLabel }}</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ onStep3 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px;">
+              <sc-for list="{{ nicheChips }}" as="n" hint-placeholder-count="6">
+                <button type="button" onClick="{{ n.toggle }}" style="border:2px solid {{ n.border }};background:{{ n.bg }};color:{{ n.fg }};font-size:13px;font-weight:600;padding:10px 16px;cursor:pointer;transition:transform .25s cubic-bezier(.16,1,.3,1),background .25s ease,color .25s ease,border-color .25s ease;" style-hover="transform:translateY(-3px)">{{ n.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="font-size:13.5px;color:#FF8566;min-height:20px;margin-bottom:16px;">{{ errorText }}</div>
+          <div style="display:flex;gap:12px;">
+            <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ back }}" style="border:2px solid #444;background:transparent;color:#fff;font-weight:600;font-size:15px;padding:15px 22px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Back</button>
+            </sc-if>
+            <button type="submit" data-magnetic="8" style="flex:1;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">{{ ctaLabel }}<span style="font-family:Anton,sans-serif;">→</span></button>
+          </div>
+        </form>
+      </sc-if>
+
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div ref="{{ doneRef }}" style="position:relative;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) both;">
+          <div style="width:64px;height:64px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:32px;margin-bottom:24px;">✓</div>
+          <h2 style="font-family:Anton,sans-serif;font-weight:400;font-size:36px;line-height:1;margin:0 0 12px;">{{ doneTitle }}</h2>
+          <p style="color:#9a9a9a;font-size:16px;line-height:1.6;margin:0 0 30px;">{{ doneBody }}</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="directory.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 26px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Browse the directory<span style="font-family:Anton,sans-serif;">→</span></a>
+            <a href="play.html" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);font-weight:600;font-size:15px;padding:13px 24px;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Visit the arcade</a>
+          </div>
+          <button onClick="{{ reset }}" style="margin-top:28px;background:none;border:none;color:#8a8a8a;font-size:13.5px;text-decoration:underline;cursor:pointer;">Use a different account</button>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:34px;padding-top:20px;border-top:1px solid #242424;font-size:13px;color:#7d7d7d;">
+        By continuing you agree to the <a href="terms.html" style="color:#fff;">Terms</a> and <a href="privacy.html" style="color:#fff;">Privacy Policy</a>.
+      </div>
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = { mode: "login", step: 1, role: "Creator", name: "", email: "", pass: "", niches: [], error: "", done: false };
+  rootRef = React.createRef();
+  glowRef = React.createRef();
+  doneRef = React.createRef();
+
+  strength() {
+    const p = this.state.pass;
+    let s = 0;
+    if (p.length >= 8) s++;
+    if (/[A-Z]/.test(p)) s++;
+    if (/[0-9]/.test(p)) s++;
+    if (/[^A-Za-z0-9]/.test(p)) s++;
+    return s;
+  }
+
+  submit = (e) => {
+    e.preventDefault();
+    const { mode, step, email, pass, name } = this.state;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (mode === "login") {
+      if (!emailOk) return this.setState({ error: "Enter a valid email address." });
+      if (pass.length < 6) return this.setState({ error: "Password is at least 6 characters." });
+      return this.finish();
+    }
+    if (step === 1) return this.setState({ step: 2, error: "" });
+    if (step === 2) {
+      if (!name.trim()) return this.setState({ error: "Tell us what to call you." });
+      if (!emailOk) return this.setState({ error: "Enter a valid email address." });
+      if (this.strength() < 2) return this.setState({ error: "Use 8+ characters with a capital or a number." });
+      return this.setState({ step: 3, error: "" });
+    }
+    if (!this.state.niches.length) return this.setState({ error: "Pick at least one niche." });
+    this.finish();
+  };
+
+  finish() {
+    this.setState({ done: true, error: "" }, () => this.burst());
+  }
+
+  burst() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const host = this.doneRef.current;
+    if (!host) return;
+    for (let i = 0; i < 14; i++) {
+      const dot = document.createElement("span");
+      const size = 6 + Math.random() * 16;
+      dot.style.cssText =
+        "position:absolute;left:" + (10 + Math.random() * 60) + "px;top:" + (10 + Math.random() * 50) +
+        "px;width:" + size + "px;height:" + size + "px;background:" + (i % 3 ? "#FF3300" : "#fff") +
+        ";pointer-events:none;transform:scale(0);animation:ctzPop " + (0.5 + Math.random() * 0.5) +
+        "s cubic-bezier(.16,1,.3,1) " + (i * 0.035) + "s forwards;";
+      host.appendChild(dot);
+      setTimeout(() => dot.remove(), 1400);
+    }
+  }
+
+  renderVals() {
+    const { mode, step, role, name, email, pass, niches, error, done } = this.state;
+    const isSignup = mode === "signup" && !done;
+    const names = ["Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel", "Gaming", "Lifestyle"];
+    const s = this.strength();
+    const labels = ["Too short", "Weak — add a number", "Decent", "Strong", "Very strong"];
+
+    return {
+      rootRef: this.rootRef, glowRef: this.glowRef, doneRef: this.doneRef,
+      isLogin: mode === "login" && !done,
+      isSignup,
+      isDone: done,
+      loginBg: mode === "login" ? "#fff" : "transparent",
+      loginFg: mode === "login" ? "#000" : "#fff",
+      signupBg: mode === "signup" ? "#fff" : "transparent",
+      signupFg: mode === "signup" ? "#000" : "#fff",
+      setLogin: () => this.setState({ mode: "login", error: "", done: false }),
+      setSignup: () => this.setState({ mode: "signup", step: 1, error: "", done: false }),
+      steps: [1, 2, 3].map((n) => ({ fill: step >= n ? 1 : 0 })),
+      stepLabel: String(step),
+      stepTitle: step === 1 ? "Which side are you on?" : step === 2 ? "Set up your account." : "What do you make?",
+      stepHint: step === 1 ? "You can run both later — this just sets your home screen."
+        : step === 2 ? "Takes about forty seconds."
+        : "Pick the niches your content lives in.",
+      onStep1: step === 1, onStep2: step === 2, onStep3: step === 3,
+      canGoBack: isSignup && step > 1,
+      back: () => this.setState({ step: Math.max(1, step - 1), error: "" }),
+      role,
+      pickCreator: () => this.setState({ role: "Creator", step: 2, error: "" }),
+      pickBrand: () => this.setState({ role: "Brand", step: 2, error: "" }),
+      creatorBg: role === "Creator" ? "#FF3300" : "#000",
+      creatorFg: "#fff",
+      brandBg: role === "Brand" ? "#FF3300" : "#000",
+      brandFg: "#fff",
+      nameLabel: role === "Brand" ? "Brand name" : "Your name",
+      namePlaceholder: role === "Brand" ? "e.g. Marwar Skincare" : "e.g. Aanya Rathore",
+      name, email, pass,
+      onName: (e) => this.setState({ name: e.target.value }),
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onPass: (e) => this.setState({ pass: e.target.value }),
+      strengthBars: [1, 2, 3, 4].map((n) => ({ color: s >= n ? (s >= 3 ? "#FF3300" : "#ffb199") : "#262626" })),
+      strengthLabel: pass ? labels[s] : "Use 8+ characters, mixed case and a number.",
+      nicheChips: names.map((label) => {
+        const on = niches.includes(label);
+        return {
+          label,
+          border: on ? "#FF3300" : "#333",
+          bg: on ? "#FF3300" : "transparent",
+          fg: on ? "#fff" : "#e6e6e6",
+          toggle: () => this.setState({
+            niches: on ? niches.filter((x) => x !== label) : niches.concat(label),
+            error: ""
+          })
+        };
+      }),
+      errorText: error,
+      ctaLabel: mode === "login" ? "Log in" : step === 3 ? "Create my profile" : "Continue",
+      doneTitle: mode === "login" ? "You're in." : role === "Brand" ? "Brand profile created." : "Profile created.",
+      doneBody: mode === "login"
+        ? "Jumping you back to where the briefs are."
+        : role === "Brand"
+        ? "Post your first brief and we'll surface matching creators within a day."
+        : "We review new creators within 24 hours. Watch WhatsApp — briefs drop daily.",
+      reset: () => this.setState({ done: false, mode: "login", step: 1, pass: "" }),
+      submit: this.submit
+    };
+  }
+
+  componentDidMount() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const glow = this.glowRef.current;
+    if (glow) {
+      const host = glow.parentElement;
+      this.host = host;
+      this.move = (ev) => {
+        const r = host.getBoundingClientRect();
+        glow.style.setProperty("--mx", ev.clientX - r.left + "px");
+        glow.style.setProperty("--my", ev.clientY - r.top + "px");
+      };
+      host.addEventListener("mousemove", this.move);
+    }
+    const root = this.rootRef.current;
+    if (root) {
+      root.addEventListener("mousemove", (ev) => {
+        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
+        if (!el) return;
+        const amt = parseFloat(el.dataset.magnetic) || 8;
+        const r = el.getBoundingClientRect();
+        el.style.transform =
+          "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
+          (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
+      });
+      root.addEventListener("mouseout", (ev) => {
+        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
+        if (el) el.style.transform = "translate(0,0)";
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.host && this.move) this.host.removeEventListener("mousemove", this.move);
+  }
+}
+</script>
+</body>
+</html>

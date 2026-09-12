@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /creators.html
+Allow: /campaigns.html
+
+Disallow: /admin.html
+Disallow: /login.html
+Disallow: /signup.html
+Disallow: /forgot-password.html
+Disallow: /reset-password.html
+Disallow: /creator-onboarding.html
+Disallow: /creator-dashboard.html
+Disallow: /brand-onboarding.html
+Disallow: /brand-dashboard.html
+
+Sitemap: https://creatopz.in/sitemap.xml

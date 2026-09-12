@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creatopz™ — Where creators meet brands</title>
+<meta name="description" content="Creatopz — where micro-influencers meet real brand briefs. No cold DMs, just vetted creators and real campaigns, straight to WhatsApp.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Creatopz™ — Where creators meet brands">
+<meta property="og:description" content="Creatopz — where micro-influencers meet real brand briefs. No cold DMs, just vetted creators and real campaigns, straight to WhatsApp.">
+<meta property="og:image" content="https://creatopz.com/og-image.png">
+<meta property="og:url" content="https://creatopz.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Creatopz™ — Where creators meet brands">
+<meta name="twitter:description" content="Creatopz — where micro-influencers meet real brand briefs. No cold DMs, just vetted creators and real campaigns, straight to WhatsApp.">
+<meta name="twitter:image" content="https://creatopz.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#000000;
+    --red:#FF3300;
+    --grey:#5C5C5C;
+    --grey-light:#EFEDE8;
+    --hairline-light:#E2DFD8;
+    --hairline-dark:#242424;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  h1,h2,h3{font-family:'Anton',sans-serif;font-weight:400;line-height:0.95;letter-spacing:0.2px;}
+  .eyebrow{font-size:13px;color:var(--grey);font-weight:500;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:14px 26px;font-family:'Inter',sans-serif;font-weight:600;font-size:15px;
+    border-radius:2px;border:1.5px solid transparent;cursor:pointer;transition:transform .15s ease, background .15s ease, color .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-red{background:var(--red);color:#fff;}
+  .btn-red:hover{background:#E62E00;}
+  .btn-outline-dark{border-color:var(--ink);color:var(--ink);background:transparent;}
+  .btn-outline-dark:hover{background:var(--ink);color:#fff;}
+  .btn-outline-light{border-color:rgba(255,255,255,0.5);color:#fff;background:transparent;}
+  .btn-outline-light:hover{background:#fff;color:var(--ink);}
+
+  /* ---------- Nav ---------- */
+  header{
+    position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hairline-light);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Anton',sans-serif;font-size:22px;letter-spacing:0.5px;}
+  .brand img{height:34px;width:auto;}
+  .brand sup{font-family:'Inter',sans-serif;font-size:10px;position:relative;top:-8px;}
+  .nav-links{display:flex;gap:36px;font-size:15px;font-weight:500;}
+  .nav-links a{position:relative;padding:4px 0;}
+  .nav-links a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--red);transition:width .2s ease;}
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{display:flex;gap:14px;}
+
+  /* ---------- Mobile nav ---------- */
+  .burger{
+    display:none;flex-direction:column;justify-content:center;gap:5px;
+    width:38px;height:38px;border:none;background:transparent;cursor:pointer;
+    padding:0;z-index:70;
+  }
+  .burger span{display:block;width:100%;height:2px;background:var(--ink);transition:transform .25s ease, opacity .25s ease;}
+  .burger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .burger.is-open span:nth-child(2){opacity:0;}
+  .burger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+  .mobile-panel{
+    position:fixed;top:0;right:0;height:100%;width:78%;max-width:320px;
+    background:#fff;z-index:65;box-shadow:-8px 0 24px rgba(0,0,0,0.12);
+    transform:translateX(100%);transition:transform .3s ease;
+    padding:96px 32px 32px;display:flex;flex-direction:column;gap:28px;
+  }
+  .mobile-panel.is-open{transform:translateX(0);}
+  .mobile-panel a{font-size:19px;font-weight:600;}
+  .mobile-panel .btn{width:100%;}
+  .nav-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:60;
+    opacity:0;visibility:hidden;transition:opacity .25s ease;
+  }
+  .nav-overlay.is-open{opacity:1;visibility:visible;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    background:var(--ink);color:#fff;position:relative;overflow:hidden;
+    padding:96px 0 110px;
+  }
+  .hero .wrap{display:grid;grid-template-columns:1.15fr 0.85fr;gap:40px;align-items:center;position:relative;z-index:2;}
+  .hero .tag{
+    display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#cfcfcf;font-weight:500;
+    border:1px solid var(--hairline-dark);padding:7px 14px;border-radius:20px;margin-bottom:26px;
+  }
+  .hero .tag span{width:6px;height:6px;background:var(--red);border-radius:50%;display:inline-block;}
+  .hero h1{font-size:clamp(40px,5.4vw,68px);}
+  .hero h1 .line2{color:#8f8f8f;}
+  .hero p.lead{
+    font-size:18px;line-height:1.6;color:#cfcfcf;max-width:480px;margin:28px 0 36px;
+  }
+  .hero .cta-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .hero-art{position:relative;display:flex;align-items:center;justify-content:center;}
+  .hero-art img{
+    width:100%;max-width:420px;filter:invert(1);
+    transform:rotate(-4deg);
+  }
+  .hero-art .streak{position:absolute;font-family:'Anton',sans-serif;color:var(--red);opacity:0.9;font-size:14px;letter-spacing:2px;}
+  .hero-foot{
+    margin-top:70px;padding-top:26px;border-top:1px solid var(--hairline-dark);
+    display:flex;gap:48px;flex-wrap:wrap;color:#9a9a9a;font-size:14px;
+  }
+  .hero-foot b{color:#fff;font-family:'Inter',sans-serif;font-weight:700;}
+
+  /* ---------- Section generic ---------- */
+  section{padding:100px 0;}
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head h2{font-size:clamp(30px,3.6vw,44px);margin-top:10px;}
+  .section-head p{color:var(--grey);font-size:17px;margin-top:16px;line-height:1.6;}
+
+  /* ---------- Split (creators / brands) ---------- */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--hairline-light);}
+  .split-col{padding:52px 44px;position:relative;}
+  .split-col:first-child{border-right:1px solid var(--hairline-light);}
+  .split-col.dark{background:var(--ink);color:#fff;}
+  .split-col .num{font-family:'Anton',sans-serif;font-size:14px;color:var(--red);letter-spacing:1px;margin-bottom:18px;display:block;}
+  .split-col h3{font-size:30px;margin-bottom:16px;}
+  .split-col p.desc{color:var(--grey);margin-bottom:28px;line-height:1.6;}
+  .split-col.dark p.desc{color:#b5b5b5;}
+  .split-col ul{list-style:none;}
+  .split-col li{
+    padding:14px 0;border-top:1px solid var(--hairline-light);font-size:15.5px;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  .split-col.dark li{border-top:1px solid var(--hairline-dark);}
+  .split-col li:last-child{border-bottom:1px solid var(--hairline-light);}
+  .split-col.dark li:last-child{border-bottom:1px solid var(--hairline-dark);}
+  .split-col li::before{content:'—';color:var(--red);font-weight:700;flex-shrink:0;}
+
+  /* ---------- How it works ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hairline-light);border:1px solid var(--hairline-light);}
+  .step{background:var(--paper);padding:44px 36px;}
+  .step .step-num{font-family:'Anton',sans-serif;font-size:46px;color:var(--grey-light);-webkit-text-stroke:1.5px var(--ink);color:transparent;}
+  .step h4{font-family:'Inter',sans-serif;font-weight:700;font-size:19px;margin:18px 0 12px;}
+  .step p{color:var(--grey);font-size:15px;line-height:1.6;}
+
+  /* ---------- Community band ---------- */
+  .community{background:var(--red);color:#fff;position:relative;overflow:hidden;}
+  .community .wrap{display:grid;grid-template-columns:1.2fr 0.8fr;gap:40px;align-items:center;}
+  .community h2{font-size:clamp(28px,3.4vw,42px);color:#fff;}
+  .community p{margin:20px 0 30px;color:#FFE3DA;font-size:17px;line-height:1.6;max-width:480px;}
+  .community-card{
+    background:rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:4px;padding:30px;
+  }
+  .community-card .row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.22);font-size:14.5px;}
+  .community-card .row:last-child{border-bottom:none;}
+  .community-card .row span:first-child{color:#FFD9CC;}
+  .community-card .row span:last-child{font-weight:700;}
+
+  /* ---------- Final CTA ---------- */
+  .final{background:var(--ink);color:#fff;text-align:left;}
+  .final .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;}
+  .final h2{font-size:clamp(32px,4.4vw,54px);max-width:640px;}
+  .final .cta-row{display:flex;gap:16px;flex-wrap:wrap;}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--paper);border-top:1px solid var(--hairline-light);padding:56px 0 30px;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:40px;}
+  .foot-brand{display:flex;align-items:center;gap:10px;font-family:'Anton',sans-serif;font-size:20px;}
+  .foot-brand img{height:26px;filter:none;}
+  .foot-cols{display:flex;gap:64px;flex-wrap:wrap;}
+  .foot-col h5{font-size:13px;color:var(--grey);font-weight:600;margin-bottom:16px;}
+  .foot-col a{display:block;font-size:14.5px;margin-bottom:11px;color:var(--ink);}
+  .foot-col a:hover{color:var(--red);}
+  .foot-bottom{
+    margin-top:56px;padding-top:22px;border-top:1px solid var(--hairline-light);
+    display:flex;justify-content:space-between;color:var(--grey);font-size:13px;flex-wrap:wrap;gap:10px;
+  }
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .nav-cta .btn{display:none;}
+    .burger{display:flex;}
+    .hero .wrap{grid-template-columns:1fr;}
+    .hero-art{order:-1;max-width:220px;margin:0 auto 30px;}
+    .split{grid-template-columns:1fr;}
+    .split-col:first-child{border-right:none;border-bottom:1px solid var(--hairline-light);}
+    .steps{grid-template-columns:1fr;}
+    .community .wrap{grid-template-columns:1fr;}
+    .final .wrap{flex-direction:column;align-items:flex-start;}
+    section{padding:64px 0;}
+  }
+
+  /* ---------- Motion system ---------- */
+  /* Reveal content is visible by DEFAULT. Only becomes hidden-then-animated
+     if JS successfully runs and adds .reveal-armed to <html> — so a JS
+     failure of any kind just means "no animation", never "invisible forever". */
+  html.reveal-armed [data-reveal]{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s cubic-bezier(0.16,1,0.3,1), transform .7s cubic-bezier(0.16,1,0.3,1);
+  }
+  html.reveal-armed [data-reveal].is-visible{opacity:1;transform:translateY(0);}
+
+  /* Hero entrance: pure CSS, no JS dependency — always plays on load */
+  @keyframes heroEnter{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .hero [data-enter]{
+    opacity:0;
+    animation:heroEnter .7s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .hero .tag[data-enter]{ animation-delay:.05s; }
+  .hero h1[data-enter]{ animation-delay:.15s; }
+  .hero p.lead[data-enter]{ animation-delay:.28s; }
+  .hero .cta-row[data-enter]{ animation-delay:.4s; }
+  .hero .hero-foot[data-enter]{ animation-delay:.5s; }
+  .hero .hero-art[data-enter]{ animation-delay:.2s; }
+
+  @media (prefers-reduced-motion: reduce){
+    [data-reveal]{ transition:none !important; }
+    .hero [data-enter]{ animation:none !important; opacity:1 !important; }
+  }
+
+  /* Button polish: lift + shine sweep */
+  .btn{ position:relative; overflow:hidden; transition:transform .35s cubic-bezier(0.16,1,0.3,1), box-shadow .35s cubic-bezier(0.16,1,0.3,1), background .2s ease, color .2s ease; }
+  .btn:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -12px rgba(0,0,0,0.28); }
+  .btn:active{ transform:translateY(-1px) scale(0.98); }
+  .btn-red::after, .btn-outline-light::after{
+    content:"";
+    position:absolute; top:0; left:-120%; width:60%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform:skewX(-20deg);
+    transition:left .65s ease;
+    pointer-events:none;
+  }
+  .btn-red:hover::after, .btn-outline-light:hover::after{ left:140%; }
+
+  /* Logo: subtle personality on hover only */
+  .brand img{ transition:transform .5s cubic-bezier(0.34,1.56,0.64,1); }
+  .brand:hover img{ transform:rotate(-8deg) scale(1.08); }
+
+  /* Nav link underline, refined */
+  .nav-links a{ position:relative; }
+  .nav-links a::after{ height:2px; transition:width .35s cubic-bezier(0.16,1,0.3,1); }
+  .nav-links a:hover::after{ width:100%; }
+
+  /* Hero cursor glow */
+  .hero{ position:relative; overflow:hidden; }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0; pointer-events:none; z-index:0;
+    background:radial-gradient(480px circle at var(--mx,50%) var(--my,20%), rgba(255,51,0,0.08), transparent 70%);
+    transition:opacity .3s ease;
+  }
+  .hero .wrap{ position:relative; z-index:1; }
+
+  /* Card lift polish */
+  .split-col{ transition:transform .45s cubic-bezier(0.16,1,0.3,1), box-shadow .45s cubic-bezier(0.16,1,0.3,1); }
+  .split-col:hover{ transform:translateY(-6px); box-shadow:0 24px 48px -24px rgba(0,0,0,0.22); }
+  .step{ transition:transform .4s cubic-bezier(0.16,1,0.3,1); }
+  .step:hover{ transform:translateY(-4px); }
+  .step-num{ transition:transform .4s cubic-bezier(0.16,1,0.3,1), color .3s ease; }
+  .step:hover .step-num{ transform:scale(1.15); color:var(--red); }
+  .community-card .row{ transition:background .25s ease, padding-left .25s ease; }
+  .community-card .row:hover{ background:rgba(255,255,255,0.06); padding-left:8px; }
+
+  /* Stagger-in for dynamically rendered grids elsewhere */
+  .stagger-item{ opacity:0; transform:translateY(20px); transition:opacity .55s cubic-bezier(0.16,1,0.3,1), transform .55s cubic-bezier(0.16,1,0.3,1); }
+  .stagger-item.is-visible{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#" class="brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz<sup>™</sup></a>
+    <div class="nav-links">
+      <a href="#platform">Platform</a>
+      <a href="creators.html">Directory</a>
+      <a href="campaigns.html">Campaigns</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="#community">Community</a>
+    </div>
+    <div class="nav-cta" id="authNav">
+      <a href="signup.html" class="btn btn-outline-dark" style="padding:10px 20px;font-size:14px;">Get started</a>
+    </div>
+    <div class="nav-cta">
+      <button class="burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="nav-overlay" id="navOverlay"></div>
+<div class="mobile-panel" id="mobilePanel">
+  <a href="#platform">Platform</a>
+  <a href="creators.html">Directory</a>
+  <a href="campaigns.html">Campaigns</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="#community">Community</a>
+  <a href="signup.html" class="btn btn-red">Get started</a>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="tag" data-enter><span></span> Now onboarding creators in Jodhpur &amp; beyond</div>
+      <h1 data-enter>Creators find their<br>next brand deal<br><span class="line2">right here.</span></h1>
+      <p class="lead" data-enter>Creatopz is the front door between micro-influencers and the brands actually running campaigns — real briefs, real budgets, no cold DMs.</p>
+      <div class="cta-row" data-enter>
+        <a href="signup.html" class="btn btn-red">Join as a creator</a>
+        <a href="signup.html" class="btn btn-outline-light">Post a campaign</a>
+      </div>
+      <div class="hero-foot" data-enter>
+        <div>Built for <b>micro-influencers</b><br>not vanity metrics</div>
+        <div>Vetted before <b>they're listed</b><br>quality over volume</div>
+        <div>Daily drops in the <b>community</b><br>never miss a brief</div>
+      </div>
+    </div>
+    <div class="hero-art" data-enter>
+      <img src="assets/logo.png" alt="Creatopz ink mark">
+    </div>
+  </div>
+</section>
+
+<section id="platform">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">The platform</span>
+      <h2>Two sides. One place to close the deal.</h2>
+      <p>No more scattered DMs and screenshots. Creators build a real profile once — brands post exactly what they need, once.</p>
+    </div>
+    <div class="split">
+      <div class="split-col" id="creators" data-reveal data-reveal-group="split">
+        <span class="num">For creators</span>
+        <h3>Your work, your rates, your reputation — in one profile.</h3>
+        <p class="desc">Set up your portfolio once and let it do the talking every time a brand comes looking.</p>
+        <ul>
+          <li>List your following across Instagram, YouTube &amp; more</li>
+          <li>Show past collabs and content samples in one place</li>
+          <li>Set your niche, rate card and location</li>
+          <li>Get discovered — or apply directly to open briefs</li>
+        </ul>
+      </div>
+      <div class="split-col dark" id="brands" data-reveal data-reveal-group="split">
+        <span class="num">For brands</span>
+        <h3>Post the brief. Pick the creator. Skip the back-and-forth.</h3>
+        <p class="desc">Every creator on Creatopz is checked before they're listed, so you're choosing from people who can actually deliver.</p>
+        <ul>
+          <li>Post a campaign brief with budget &amp; deliverables</li>
+          <li>Filter by niche, following size and location</li>
+          <li>Message and shortlist creators directly</li>
+          <li>Track who's applied and who you've booked</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--grey-light);">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">How it works</span>
+      <h2>From sign-up to your first collab</h2>
+    </div>
+    <div class="steps">
+      <div class="step" data-reveal data-reveal-group="steps">
+        <span class="step-num">01</span>
+        <h4>Create your profile</h4>
+        <p>Creators add their niche, following and past work. Brands add what they're building and who they're building it for.</p>
+      </div>
+      <div class="step" data-reveal data-reveal-group="steps">
+        <span class="step-num">02</span>
+        <h4>Explore &amp; get matched</h4>
+        <p>Search open briefs or browse vetted creators — both sides can find each other directly, no middleman required.</p>
+      </div>
+      <div class="step" data-reveal data-reveal-group="steps">
+        <span class="step-num">03</span>
+        <h4>Collab &amp; get paid</h4>
+        <p>Confirm the deliverables, ship the content, and build the track record that gets you picked next time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="community" id="community">
+  <div class="wrap">
+    <div data-reveal>
+      <span class="eyebrow" style="color:#FFD9CC;">The community</span>
+      <h2>Collabs land here first — before they're anywhere else.</h2>
+      <p>Join the Creatopz community for daily updates on new briefs, eligibility criteria, and what brands are actually looking for right now.</p>
+      <div class="cta-row">
+        <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20join%20the%20community" target="_blank" rel="noopener" class="btn" style="background:#fff;color:var(--red);font-weight:700;">Join the community</a>
+      </div>
+    </div>
+    <div class="community-card" data-reveal>
+      <div class="row"><span>Status</span><span>Beta cohort forming</span></div>
+      <div class="row"><span>Niches we're prioritizing</span><span>Beauty, Fitness, Food</span></div>
+      <div class="row"><span>How we reply</span><span>Directly, on WhatsApp</span></div>
+      <div class="row"><span>Where it happens</span><span>WhatsApp</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="join">
+  <div class="wrap" data-reveal>
+    <h2>The collab economy needed a front door.<br>This is it.</h2>
+    <div class="cta-row">
+      <a href="signup.html" class="btn btn-red">Join as a creator</a>
+      <a href="signup.html" class="btn btn-outline-light">Post a campaign</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz™</div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="#creators">For creators</a>
+        <a href="#brands">For brands</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="#community">Community</a>
+      </div>
+      <div class="foot-col">
+        <h5>Follow</h5>
+        <a href="https://instagram.com/creatopz" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20know%20more" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+      <div class="foot-col">
+        <h5>Legal</h5>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="mailto:creatopz.in@gmail.com">creatopz.in@gmail.com</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 Creatopz™. All rights reserved.</span>
+    <span>Jodhpur, Rajasthan</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/motion.js"></script>
+<script>
+  renderAuthNav();
+  initCursorGlow('.hero');
+</script>
+<script>
+  (function(){
+    var burger = document.getElementById('burgerBtn');
+    var panel = document.getElementById('mobilePanel');
+    var overlay = document.getElementById('navOverlay');
+
+    function openMenu(){
+      panel.classList.add('is-open');
+      overlay.classList.add('is-open');
+      burger.classList.add('is-open');
+      burger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu(){
+      panel.classList.remove('is-open');
+      overlay.classList.remove('is-open');
+      burger.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+    burger.addEventListener('click', function(){
+      panel.classList.contains('is-open') ? closeMenu() : openMenu();
+    });
+    overlay.addEventListener('click', closeMenu);
+    panel.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeMenu();
+    });
+  })();
+</script>
+</body>
+</html>

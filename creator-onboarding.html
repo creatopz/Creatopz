@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your creator profile — Creatopz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<style>
+  .avatar-upload{align-items:center;}
+  .upload-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:inherit;font-size:13.5px;font-weight:700;color:var(--red);
+    background:var(--grey-light);border:none;border-radius:8px;
+    padding:10px 15px;cursor:pointer;transition:background .15s ease;
+  }
+  .upload-btn:hover{background:#E9DEFA;}
+  .upload-btn input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;}
+  .char-count{font-size:11.5px;color:var(--grey);text-align:right;margin-top:4px;}
+  .er-row{display:flex;gap:8px;align-items:flex-start;}
+  .er-row .field{flex:1;margin-bottom:0;}
+  .er-calc-btn{
+    flex-shrink:0;height:47px;display:inline-flex;align-items:center;gap:6px;
+    font-family:inherit;font-size:12.5px;font-weight:700;color:var(--red);
+    background:var(--grey-light);border:none;border-radius:2px;padding:0 14px;
+    cursor:pointer;white-space:nowrap;transition:background .15s ease;
+  }
+  .er-calc-btn:hover{background:#E9DEFA;}
+  .gender-bar{height:8px;border-radius:999px;overflow:hidden;display:flex;margin-top:10px;background:var(--hairline-light);}
+  .gender-bar .f{background:#DB5A82;}
+  .gender-bar .m{background:var(--red);}
+  .gender-note{font-size:11.5px;color:var(--grey);margin-top:6px;}
+  .gender-note.err{color:#B8493D;font-weight:600;}
+
+  .erc-overlay{
+    position:fixed;inset:0;background:rgba(28,22,38,0.55);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;padding:20px;z-index:100;
+  }
+  .erc-overlay.open{display:flex;}
+  .erc-modal{background:#fff;width:100%;max-width:400px;border-radius:4px;max-height:88vh;overflow-y:auto;}
+  .erc-head{padding:22px 24px 14px;border-bottom:1px solid var(--hairline-light);}
+  .erc-head h3{font-size:17px;margin-bottom:4px;}
+  .erc-head p{font-size:12.5px;color:var(--grey);line-height:1.5;}
+  .erc-body{padding:20px 24px;}
+  .erc-note{
+    background:#FFF8EB;border:1px solid #FDE7B0;border-radius:8px;
+    padding:11px 13px;font-size:12px;color:#7A5A0A;line-height:1.55;margin-bottom:18px;
+  }
+  .erc-result{
+    margin-top:16px;padding:14px 16px;border-radius:8px;background:#E1F3ED;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .erc-result .lbl{font-size:12px;font-weight:700;color:#0A6B4C;}
+  .erc-result .val{font-size:22px;font-weight:800;color:var(--green);}
+  .erc-foot{padding:14px 24px 22px;display:flex;justify-content:flex-end;gap:10px;}
+  .erc-cancel{font-family:inherit;font-size:13.5px;font-weight:700;color:var(--grey);background:none;border:none;cursor:pointer;padding:11px 8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz mark"> Creatopz<sup>™</sup></a>
+    <div class="nav-cta" id="authNav"></div>
+  </nav>
+</header>
+
+<div class="auth-shell" style="align-items:flex-start;">
+  <div class="auth-card" style="max-width:640px;">
+    <h1>Build your profile</h1>
+    <p class="sub">This is what brands and the public directory will see. You can edit it any time.</p>
+
+    <div class="avatar-upload">
+      <div class="avatar-preview" id="avatarPreview">
+        <img id="avatarImg" src="https://placehold.co/150x150?text=%20" alt="Profile photo preview">
+      </div>
+      <div>
+        <label class="upload-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Add Profile Picture
+          <input type="file" id="avatarFile" accept="image/png,image/jpeg,image/webp,image/gif">
+        </label>
+        <p class="hint">JPG, PNG, WEBP or GIF, up to 5MB.</p>
+      </div>
+    </div>
+
+    <form id="onboardingForm">
+      <h3 style="font-size:16px;margin-bottom:14px;">Basic information</h3>
+      <div class="field-row">
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="e.g. priya.creates" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="bio">Bio <span class="hint" style="display:inline;margin:0;">short intro, max 150 characters</span></label>
+        <textarea id="bio" maxlength="150" placeholder="Tell brands who you are and what you make..."></textarea>
+        <div class="char-count"><span id="bioCount">0</span>/150</div>
+      </div>
+      <div class="field">
+        <label for="category">Category / niche</label>
+        <select id="category">
+          <option value="">Select a category</option>
+          <option>Fashion &amp; Style</option>
+          <option>Beauty</option>
+          <option>Skincare</option>
+          <option>Makeup</option>
+          <option>Haircare</option>
+          <option>Food</option>
+          <option>Travel</option>
+          <option>Fitness</option>
+          <option>Tech</option>
+          <option>Comedy</option>
+          <option>Lifestyle</option>
+          <option>Parenting</option>
+          <option>Home &amp; Decor</option>
+          <option>Finance</option>
+          <option>Gaming</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <h3 style="font-size:16px;margin:26px 0 14px;">Social &amp; audience</h3>
+      <div class="field-row">
+        <div class="field">
+          <label for="instagram">Instagram URL</label>
+          <input type="url" id="instagram" placeholder="https://instagram.com/...">
+        </div>
+        <div class="field">
+          <label for="youtube">YouTube URL</label>
+          <input type="url" id="youtube" placeholder="https://youtube.com/...">
+        </div>
+      </div>
+      <div class="field">
+        <label for="website">Website</label>
+        <input type="url" id="website" placeholder="https://...">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="followers">Followers</label>
+          <input type="number" id="followers" min="0" placeholder="e.g. 45000">
+        </div>
+        <div class="field">
+          <label for="engagement">Engagement rate (%)</label>
+          <div class="er-row">
+            <input type="number" id="engagement" min="0" max="100" step="0.1" placeholder="e.g. 5.4">
+            <button type="button" class="er-calc-btn" id="openErCalc">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/></svg>
+              Calculate
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Audience locations (comma-separated)</label>
+        <input type="text" id="audienceLocations" placeholder="Mumbai, Delhi, Bangalore">
+      </div>
+      <div class="field">
+        <label>Audience gender split</label>
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0;">
+            <label for="femalePct" style="font-weight:500;font-size:11.5px;color:var(--grey);">Female %</label>
+            <input type="number" id="femalePct" min="0" max="100" placeholder="e.g. 68">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="malePct" style="font-weight:500;font-size:11.5px;color:var(--grey);">Male %</label>
+            <input type="number" id="malePct" min="0" max="100" placeholder="e.g. 32">
+          </div>
+        </div>
+        <div class="gender-bar"><div class="f" id="genderBarF" style="width:0%"></div><div class="m" id="genderBarM" style="width:0%"></div></div>
+        <div class="gender-note" id="genderNote">Should add up to 100%</div>
+      </div>
+      <div class="field">
+        <label for="pastCollabs">Past brand collabs <span class="hint" style="display:inline;margin:0;">optional, comma-separated</span></label>
+        <input type="text" id="pastCollabs" placeholder="e.g. Dot &amp; Key, Foxtale, Mamaearth">
+      </div>
+
+      <h3 style="font-size:16px;margin:26px 0 14px;">Creator details</h3>
+      <div class="field">
+        <label>Content types</label>
+        <div class="checkbox-row" id="contentTypes"></div>
+      </div>
+      <div class="field">
+        <label for="location">Your location</label>
+        <input type="text" id="location" placeholder="e.g. Jodhpur, Rajasthan">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="rateMin">Rate — minimum (₹)</label>
+          <input type="number" id="rateMin" min="0" placeholder="e.g. 5000">
+        </div>
+        <div class="field">
+          <label for="rateMax">Rate — maximum (₹)</label>
+          <input type="number" id="rateMax" min="0" placeholder="e.g. 20000">
+        </div>
+      </div>
+      <div class="field">
+        <label for="availability">Availability</label>
+        <select id="availability">
+          <option value="available">Available for new work</option>
+          <option value="limited">Limited availability</option>
+          <option value="unavailable">Not currently available</option>
+        </select>
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="isPublic" checked style="width:auto;">
+        <label for="isPublic" style="margin:0;">List my profile in the public creator directory</label>
+      </div>
+
+      <p class="form-error" id="formError"></p>
+      <div class="submit-row">
+        <button type="submit" class="btn btn-red" id="submitBtn" style="width:100%;">Save profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="erc-overlay" id="ercOverlay">
+  <div class="erc-modal">
+    <div class="erc-head">
+      <h3>Engagement Rate Calculator</h3>
+      <p>Use your last 30 days of posts, from Instagram Insights.</p>
+    </div>
+    <div class="erc-body">
+      <div class="erc-note">
+        Add up <strong>likes + comments + shares + saves</strong> across all posts/reels from the last 30 days, and your total <strong>reach</strong> for the same period — both are in Instagram Insights.
+      </div>
+      <div class="field">
+        <label for="ercLikes">Total Likes (last 30 days)</label>
+        <input type="number" id="ercLikes" min="0" placeholder="e.g. 12400">
+      </div>
+      <div class="field">
+        <label for="ercComments">Total Comments</label>
+        <input type="number" id="ercComments" min="0" placeholder="e.g. 860">
+      </div>
+      <div class="field">
+        <label for="ercShares">Total Shares</label>
+        <input type="number" id="ercShares" min="0" placeholder="e.g. 540">
+      </div>
+      <div class="field">
+        <label for="ercSaves">Total Saves</label>
+        <input type="number" id="ercSaves" min="0" placeholder="e.g. 1100">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label for="ercReach">Total Reach (last 30 days)</label>
+        <input type="number" id="ercReach" min="0" placeholder="e.g. 240000">
+      </div>
+      <div class="erc-result">
+        <span class="lbl">Your Engagement Rate</span>
+        <span class="val" id="ercResultVal">—</span>
+      </div>
+    </div>
+    <div class="erc-foot">
+      <button type="button" class="erc-cancel" id="ercCancel">Close</button>
+      <button type="button" class="btn btn-red" id="ercUse">Use this value</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  const CONTENT_TYPE_OPTIONS = ["Reels", "Static posts", "Stories", "Long-form video", "Live streams", "Blogs/Articles"];
+  let selectedContentTypes = new Set();
+  let profile = null;
+  let uploadedAvatarUrl = null;
+
+  function renderContentTypes() {
+    const host = document.getElementById("contentTypes");
+    host.innerHTML = CONTENT_TYPE_OPTIONS.map(
+      (t) => `<span class="checkbox-chip ${selectedContentTypes.has(t) ? "selected" : ""}" data-type="${t}">${t}</span>`
+    ).join("");
+    qsa(".checkbox-chip", host).forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const t = chip.dataset.type;
+        if (selectedContentTypes.has(t)) selectedContentTypes.delete(t);
+        else selectedContentTypes.add(t);
+        renderContentTypes();
+      });
+    });
+  }
+
+  document.getElementById("avatarFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById("avatarImg").src = URL.createObjectURL(file);
+  });
+
+  // Bio character counter
+  document.getElementById("bio").addEventListener("input", (e) => {
+    document.getElementById("bioCount").textContent = e.target.value.length;
+  });
+
+  // Gender split live bar
+  function updateGenderBar() {
+    const f = parseFloat(document.getElementById("femalePct").value) || 0;
+    const m = parseFloat(document.getElementById("malePct").value) || 0;
+    document.getElementById("genderBarF").style.width = f + "%";
+    document.getElementById("genderBarM").style.width = m + "%";
+    const note = document.getElementById("genderNote");
+    const total = f + m;
+    if ((f || m) && total !== 100) {
+      note.textContent = `Currently ${total}% — should add up to 100%`;
+      note.classList.add("err");
+    } else {
+      note.textContent = "Should add up to 100%";
+      note.classList.remove("err");
+    }
+  }
+  document.getElementById("femalePct").addEventListener("input", updateGenderBar);
+  document.getElementById("malePct").addEventListener("input", updateGenderBar);
+
+  // Engagement rate calculator
+  const ercOverlay = document.getElementById("ercOverlay");
+  function calcEngagementRate() {
+    const likes = parseFloat(document.getElementById("ercLikes").value) || 0;
+    const comments = parseFloat(document.getElementById("ercComments").value) || 0;
+    const shares = parseFloat(document.getElementById("ercShares").value) || 0;
+    const saves = parseFloat(document.getElementById("ercSaves").value) || 0;
+    const reach = parseFloat(document.getElementById("ercReach").value) || 0;
+    const resultEl = document.getElementById("ercResultVal");
+    if (!reach) { resultEl.textContent = "—"; return null; }
+    const rate = ((likes + comments + shares + saves) / reach) * 100;
+    resultEl.textContent = rate.toFixed(2) + "%";
+    return rate;
+  }
+  ["ercLikes", "ercComments", "ercShares", "ercSaves", "ercReach"].forEach((id) => {
+    document.getElementById(id).addEventListener("input", calcEngagementRate);
+  });
+  document.getElementById("openErCalc").addEventListener("click", () => ercOverlay.classList.add("open"));
+  document.getElementById("ercCancel").addEventListener("click", () => ercOverlay.classList.remove("open"));
+  ercOverlay.addEventListener("click", (e) => { if (e.target === ercOverlay) ercOverlay.classList.remove("open"); });
+  document.getElementById("ercUse").addEventListener("click", () => {
+    const rate = calcEngagementRate();
+    if (rate !== null) document.getElementById("engagement").value = rate.toFixed(2);
+    ercOverlay.classList.remove("open");
+  });
+
+  async function init() {
+    renderAuthNav();
+    const authedProfile = await requireAuth("creator");
+    if (!authedProfile) return;
+    profile = await getMyCreatorProfile(authedProfile.id);
+    if (profile) {
+      document.getElementById("name").value = profile.name || authedProfile.full_name || "";
+      document.getElementById("username").value = profile.username || "";
+      document.getElementById("bio").value = profile.bio || "";
+      document.getElementById("bioCount").textContent = (profile.bio || "").length;
+      document.getElementById("category").value = profile.category || "";
+      document.getElementById("instagram").value = profile.instagram_url || "";
+      document.getElementById("youtube").value = profile.youtube_url || "";
+      document.getElementById("website").value = profile.website_url || "";
+      document.getElementById("followers").value = profile.followers || "";
+      document.getElementById("engagement").value = profile.engagement_rate || "";
+      document.getElementById("audienceLocations").value = (profile.audience_locations || []).join(", ");
+      document.getElementById("femalePct").value = profile.audience_female_pct ?? "";
+      document.getElementById("malePct").value = profile.audience_male_pct ?? "";
+      updateGenderBar();
+      document.getElementById("pastCollabs").value = (profile.brand_partnerships || []).join(", ");
+      document.getElementById("location").value = (profile.locations || [])[0] || "";
+      document.getElementById("rateMin").value = profile.rate_min || "";
+      document.getElementById("rateMax").value = profile.rate_max || "";
+      document.getElementById("availability").value = profile.availability || "available";
+      document.getElementById("isPublic").checked = profile.is_public !== false;
+      if (profile.profile_image) document.getElementById("avatarImg").src = profile.profile_image;
+      selectedContentTypes = new Set(profile.content_types || []);
+    } else {
+      document.getElementById("name").value = authedProfile.full_name || "";
+    }
+    renderContentTypes();
+  }
+  init();
+
+  document.getElementById("onboardingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const errorEl = document.getElementById("formError");
+    errorEl.style.display = "none";
+    setButtonLoading(btn, true, "Saving...");
+    try {
+      const authedProfile = await getCurrentProfile();
+      const file = document.getElementById("avatarFile").files[0];
+      let imageUrl = profile?.profile_image || null;
+      if (file) {
+        imageUrl = await uploadImage(file, "creator-avatars", authedProfile.id);
+      }
+      const fields = {
+        name: document.getElementById("name").value.trim(),
+        username: document.getElementById("username").value.trim(),
+        bio: document.getElementById("bio").value.trim(),
+        category: document.getElementById("category").value,
+        profile_image: imageUrl,
+        instagram_url: document.getElementById("instagram").value.trim(),
+        youtube_url: document.getElementById("youtube").value.trim(),
+        website_url: document.getElementById("website").value.trim(),
+        followers: Number(document.getElementById("followers").value) || 0,
+        engagement_rate: Number(document.getElementById("engagement").value) || 0,
+        audience_locations: document
+          .getElementById("audienceLocations")
+          .value.split(",").map((s) => s.trim()).filter(Boolean),
+        audience_female_pct: document.getElementById("femalePct").value === "" ? null : Number(document.getElementById("femalePct").value),
+        audience_male_pct: document.getElementById("malePct").value === "" ? null : Number(document.getElementById("malePct").value),
+        brand_partnerships: document
+          .getElementById("pastCollabs")
+          .value.split(",").map((s) => s.trim()).filter(Boolean),
+        locations: [document.getElementById("location").value.trim()].filter(Boolean),
+        content_types: Array.from(selectedContentTypes),
+        rate_min: Number(document.getElementById("rateMin").value) || null,
+        rate_max: Number(document.getElementById("rateMax").value) || null,
+        availability: document.getElementById("availability").value,
+        is_public: document.getElementById("isPublic").checked,
+      };
+      await saveCreatorProfile(authedProfile.id, fields);
+      showToast("Profile saved!", "success");
+      setTimeout(() => (window.location.href = "creator-dashboard.html"), 900);
+    } catch (err) {
+      errorEl.textContent = friendlyAuthError(err);
+      errorEl.style.display = "block";
+    } finally {
+      setButtonLoading(btn, false);
+    }
+  });
+</script>
+</body>
+</html>

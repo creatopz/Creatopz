@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#0b0b0b;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  *{box-sizing:border-box;}
+  a{color:inherit;text-decoration:none;}
+  a:hover{color:#FF3300;}
+  ::selection{background:#FF3300;color:#fff;}
+  button,input{font-family:inherit;}
+  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
+  @keyframes ctzRise{from{transform:translateY(22px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  @keyframes ctzRowIn{from{transform:translateX(-16px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  @keyframes ctzBlink{0%,60%{opacity:1;}80%{opacity:.25;}100%{opacity:1;}}
+  @keyframes ctzToast{0%{transform:translateY(20px);opacity:0;}12%{transform:translateY(0);opacity:1;}82%{transform:translateY(0);opacity:1;}100%{transform:translateY(-10px);opacity:0;}}
+  @keyframes ctzSpark{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0b0b;min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);">
+
+  <aside style="border-right:2px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:19px;padding:0 22px 22px;border-bottom:1px solid #1e1e1e;">
+      <img src="assets/logo.png" alt="Creatopz mark" style="height:28px;display:block;filter:invert(1);">Creatopz<sup style="font-family:Inter,sans-serif;font-size:9px;">™</sup>
+    </a>
+    <div style="padding:18px 0;display:flex;flex-direction:column;">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.pick }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:{{ n.bg }};border:none;border-left:3px solid {{ n.rule }};color:{{ n.fg }};font-size:14.5px;font-weight:600;padding:14px 20px;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease,padding-left .25s ease;" style-hover="padding-left:26px;color:#fff">{{ n.label }}<span style="font-family:Anton,sans-serif;font-size:13px;color:#FF3300;">{{ n.count }}</span></button>
+      </sc-for>
+    </div>
+    <div style="margin-top:auto;padding:20px 22px;border-top:1px solid #1e1e1e;">
+      <div style="display:flex;align-items:center;gap:9px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">
+        <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>Mediation on
+      </div>
+      <div style="font-size:12.5px;color:#6d6d6d;margin-top:10px;line-height:1.5;">Creators and brands never see each other's contact details until you finalise a match.</div>
+    </div>
+  </aside>
+
+  <main style="min-width:0;">
+    <header style="position:sticky;top:0;z-index:60;background:rgba(11,11,11,.92);backdrop-filter:blur(10px);border-bottom:2px solid #1e1e1e;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Admin</div>
+        <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:30px;line-height:1;margin:8px 0 0;">{{ viewTitle }}</h1>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:15px;padding:10px 0;min-width:220px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+        <div style="width:36px;height:36px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:14px;">CZ</div>
+      </div>
+    </header>
+
+    <section style="padding:30px 32px 0;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div style="background:#000;padding:20px 22px;transition:background .3s ease;" style-hover="background:#121212">
+            <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">{{ k.label }}</div>
+            <div ref="{{ k.ref }}" style="font-family:Anton,sans-serif;font-size:34px;line-height:1;margin:8px 0 10px;">0</div>
+            <div style="height:3px;background:#1e1e1e;overflow:hidden;"><div style="height:100%;background:{{ k.color }};transform-origin:0 50%;transform:scaleX({{ k.fill }});animation:ctzSpark 1.1s cubic-bezier(.16,1,.3,1) .2s both;"></div></div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="padding:34px 32px 80px;">
+      <sc-if value="{{ isApps }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">Shortlist a match to open the channel. Creatopz introduces both sides on WhatsApp — neither party gets raw contact details until you approve.</p>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:880px;">
+          <div style="display:grid;grid-template-columns:1.6fr 1.2fr 1fr .8fr auto;gap:16px;padding:0 20px 12px;border-bottom:2px solid #fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">
+            <div>Campaign</div><div>Creator</div><div>Brand</div><div>Status</div><div>Action</div>
+          </div>
+          <sc-for list="{{ apps }}" as="a" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:1.6fr 1.2fr 1fr .8fr auto;gap:16px;align-items:center;padding:18px 20px;border-bottom:1px solid #1e1e1e;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ a.delay }} both;transition:background .25s ease,padding-left .25s ease;" style-hover="background:#121212;padding-left:26px">
+              <div>
+                <div style="font-size:15.5px;font-weight:600;overflow-wrap:anywhere;">{{ a.campaign }}</div>
+                <div style="font-size:12.5px;color:#7d7d7d;margin-top:4px;">{{ a.applied }}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                <span style="width:30px;height:30px;flex:0 0 30px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:12px;">{{ a.initials }}</span>
+                <span style="font-size:14.5px;min-width:0;overflow-wrap:anywhere;">{{ a.creator }}</span>
+              </div>
+              <div style="font-size:14.5px;color:#c9c9c9;">{{ a.brand }}</div>
+              <div><span style="display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:2px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span></div>
+              <div style="display:flex;gap:8px;">
+                <button onClick="{{ a.approve }}" style="border:2px solid #FF3300;background:{{ a.approveBg }};color:#fff;font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease;" style-hover="background:#FF3300">{{ a.approveLabel }}</button>
+                <button onClick="{{ a.reject }}" style="border:2px solid #333;background:transparent;color:#9a9a9a;font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Decline</button>
+              </div>
+            </div>
+          </sc-for>
+          </div></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCreators }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:880px;">
+          <div style="display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr auto;gap:16px;padding:0 20px 12px;border-bottom:2px solid #fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">
+            <div>Name</div><div>Niche</div><div>Reach</div><div>Public</div><div>Verify</div>
+          </div>
+          <sc-for list="{{ creators }}" as="c" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:1.4fr 1fr .8fr .8fr auto;gap:16px;align-items:center;padding:18px 20px;border-bottom:1px solid #1e1e1e;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .25s ease,padding-left .25s ease;" style-hover="background:#121212;padding-left:26px">
+              <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+                <span style="width:34px;height:34px;flex:0 0 34px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:13px;">{{ c.initials }}</span>
+                <div style="min-width:0;">
+                  <a href="profile.html" style="font-size:15px;font-weight:600;display:block;min-width:0;overflow-wrap:anywhere;">{{ c.name }}</a>
+                  <div style="font-size:12.5px;color:#7d7d7d;">{{ c.city }}</div>
+                </div>
+              </div>
+              <div style="font-size:14px;color:#c9c9c9;">{{ c.niche }}</div>
+              <div style="font-family:Anton,sans-serif;font-size:18px;">{{ c.reachLabel }}</div>
+              <div><span style="font-size:12.5px;color:{{ c.publicColor }};font-weight:600;">{{ c.publicLabel }}</span></div>
+              <button onClick="{{ c.toggle }}" style="border:2px solid {{ c.vBorder }};background:{{ c.vBg }};color:{{ c.vFg }};font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ c.vLabel }}</button>
+            </div>
+          </sc-for>
+          </div></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+          <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
+            <article style="background:#000;padding:26px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#121212;transform:translateY(-4px)">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+                <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">{{ c.brand }}</div>
+                <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:5px 9px;border:2px solid {{ c.pillBorder }};background:{{ c.pillBg }};color:{{ c.pillFg }};">{{ c.status }}</span>
+              </div>
+              <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:22px;line-height:1.08;margin:14px 0 12px;">{{ c.title }}</h3>
+              <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;font-size:14px;">
+                <span style="color:#8a8a8a;">Budget</span><span style="font-family:Anton,sans-serif;font-size:18px;">{{ c.budget }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+                <span style="font-size:12px;color:#8a8a8a;white-space:nowrap;">{{ c.appsLabel }}</span>
+                <div style="flex:1;height:5px;background:#1e1e1e;overflow:hidden;"><div style="height:100%;background:#FF3300;transform-origin:0 50%;transform:scaleX({{ c.fill }});animation:ctzSpark .9s cubic-bezier(.16,1,.3,1) .2s both;"></div></div>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isGallery }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">Toggle a tile to publish or hide it on the public gallery. Changes go live immediately.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+            <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="8">
+              <div style="background:#000;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ g.delay }} both;">
+                <div style="position:relative;aspect-ratio:1/1;background:#141414;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                  <span style="font-family:Anton,sans-serif;font-size:46px;color:#242424;">{{ g.order }}</span>
+                  <div style="position:absolute;inset:0;background:{{ g.veil }};transition:background .3s ease;"></div>
+                </div>
+                <div style="padding:14px 16px;">
+                  <div style="font-size:13.5px;color:#c9c9c9;line-height:1.45;min-height:38px;">{{ g.caption }}</div>
+                  <button onClick="{{ g.toggle }}" style="width:100%;margin-top:12px;border:2px solid {{ g.border }};background:{{ g.bg }};color:{{ g.fg }};font-size:12.5px;font-weight:700;padding:10px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ g.label }}</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border:2px solid #1e1e1e;padding:64px 28px;">
+          <div style="font-family:Anton,sans-serif;font-size:28px;margin-bottom:10px;">Nothing matches “{{ query }}”.</div>
+          <button onClick="{{ clearQuery }}" style="border:2px solid #fff;background:transparent;color:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Clear search</button>
+        </div>
+      </sc-if>
+    </section>
+  </main>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:200;background:#FF3300;color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;animation:ctzToast 2.6s ease forwards;">{{ toast }}</div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const APPS = [
+  { campaign: "Monsoon skincare ritual", creator: "Aanya Rathore", brand: "Marwar Skincare", status: "pending", applied: "Applied 2 days ago" },
+  { campaign: "Festive gifting haul", creator: "Ishita Bora", brand: "Tilak & Co.", status: "pending", applied: "Applied 4 days ago" },
+  { campaign: "Campus coffee launch", creator: "Kabir Sen", brand: "Kaapi Kind", status: "matched", applied: "Applied 1 week ago" },
+  { campaign: "Desert route film", creator: "Yash Bhati", brand: "Fort & Field", status: "pending", applied: "Applied 1 week ago" },
+  { campaign: "Creator gear explainer", creator: "Arjun Vyas", brand: "Studio Kit", status: "matched", applied: "Applied 2 weeks ago" }
+];
+
+const CREATORS = [
+  { name: "Aanya Rathore", city: "Jodhpur", niche: "Beauty", reach: 42000, verified: true, isPublic: true },
+  { name: "Vikram Shekhawat", city: "Jaipur", niche: "Fitness", reach: 88000, verified: true, isPublic: true },
+  { name: "Meher Qureshi", city: "Udaipur", niche: "Food", reach: 61000, verified: false, isPublic: false },
+  { name: "Dev Panwar", city: "Jodhpur", niche: "Tech", reach: 27000, verified: false, isPublic: true },
+  { name: "Ishita Bora", city: "Jaipur", niche: "Fashion", reach: 115000, verified: true, isPublic: true },
+  { name: "Tanvi Joshi", city: "Ajmer", niche: "Beauty", reach: 19000, verified: false, isPublic: false }
+];
+
+const CAMPAIGNS = [
+  { title: "Night-routine series for a new serum", brand: "Marwar Skincare", budget: "₹14,000", status: "live", apps: 12, cap: 20 },
+  { title: "Festive gifting haul", brand: "Tilak & Co.", budget: "₹18,000", status: "live", apps: 7, cap: 15 },
+  { title: "Campus coffee launch", brand: "Kaapi Kind", budget: "₹9,000", status: "closed", apps: 15, cap: 15 },
+  { title: "Heritage stay takeover", brand: "Fort & Field", budget: "₹22,000", status: "draft", apps: 0, cap: 10 }
+];
+
+const GALLERY = [
+  { caption: "Marwar Skincare — reel still", order: "01", live: true },
+  { caption: "Tilak & Co. festive set", order: "02", live: true },
+  { caption: "Kaapi Kind launch day", order: "03", live: false },
+  { caption: "Creator meet, Jodhpur", order: "04", live: true },
+  { caption: "Fort & Field stay", order: "05", live: false },
+  { caption: "Suncraft SPF explainer", order: "06", live: true },
+  { caption: "Rang Studio bridal prep", order: "07", live: true },
+  { caption: "Community drop poster", order: "08", live: false }
+];
+
+class Component extends DCLogic {
+  state = {
+    view: "apps", query: "", toast: "",
+    appStatus: {}, verified: {}, live: {}
+  };
+  rootRef = React.createRef();
+  kpiRefs = [React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+
+  flash(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: "" }), 2600);
+  }
+
+  pill(status) {
+    if (status === "matched") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
+    if (status === "declined") return { pillBg: "transparent", pillFg: "#6d6d6d", pillBorder: "#333" };
+    if (status === "live") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
+    if (status === "closed") return { pillBg: "#fff", pillFg: "#000", pillBorder: "#fff" };
+    return { pillBg: "transparent", pillFg: "#fff", pillBorder: "#fff" };
+  }
+
+  renderVals() {
+    const { view, query, toast, appStatus, verified, live } = this.state;
+    const q = query.trim().toLowerCase();
+    const hit = (s) => !q || s.toLowerCase().includes(q);
+
+    const apps = APPS.filter((a) => hit(a.campaign + " " + a.creator + " " + a.brand)).map((a, i) => {
+      const status = appStatus[a.campaign] || a.status;
+      return Object.assign({}, a, this.pill(status), {
+        status,
+        delay: i * 60 + "ms",
+        initials: a.creator.split(" ").map((w) => w[0]).join(""),
+        approveLabel: status === "matched" ? "Matched ✓" : "Finalise match",
+        approveBg: status === "matched" ? "#FF3300" : "transparent",
+        approve: () => {
+          this.setState({ appStatus: Object.assign({}, appStatus, { [a.campaign]: "matched" }) });
+          this.flash("Match finalised — intro sent on WhatsApp");
+        },
+        reject: () => {
+          this.setState({ appStatus: Object.assign({}, appStatus, { [a.campaign]: "declined" }) });
+          this.flash("Application declined");
+        }
+      });
+    });
+
+    const creators = CREATORS.filter((c) => hit(c.name + " " + c.city + " " + c.niche)).map((c, i) => {
+      const isV = verified[c.name] !== undefined ? verified[c.name] : c.verified;
+      return Object.assign({}, c, {
+        delay: i * 55 + "ms",
+        initials: c.name.split(" ").map((w) => w[0]).join(""),
+        reachLabel: Math.round(c.reach / 1000) + "K",
+        publicLabel: c.isPublic ? "Listed" : "Hidden",
+        publicColor: c.isPublic ? "#c9c9c9" : "#6d6d6d",
+        vLabel: isV ? "Verified ✓" : "Verify",
+        vBg: isV ? "#FF3300" : "transparent",
+        vFg: "#fff",
+        vBorder: isV ? "#FF3300" : "#333",
+        toggle: () => {
+          this.setState({ verified: Object.assign({}, verified, { [c.name]: !isV }) });
+          this.flash(!isV ? c.name + " verified" : c.name + " unverified");
+        }
+      });
+    });
+
+    const campaigns = CAMPAIGNS.filter((c) => hit(c.title + " " + c.brand)).map((c, i) =>
+      Object.assign({}, c, this.pill(c.status), {
+        delay: i * 70 + "ms",
+        fill: Math.min(1, c.apps / c.cap),
+        appsLabel: c.apps + "/" + c.cap + " applied"
+      })
+    );
+
+    const gallery = GALLERY.filter((g) => hit(g.caption)).map((g, i) => {
+      const isLive = live[g.order] !== undefined ? live[g.order] : g.live;
+      return Object.assign({}, g, {
+        delay: i * 45 + "ms",
+        veil: isLive ? "rgba(255,51,0,0)" : "rgba(0,0,0,.55)",
+        label: isLive ? "Live — hide it" : "Hidden — publish",
+        bg: isLive ? "#FF3300" : "transparent",
+        fg: "#fff",
+        border: isLive ? "#FF3300" : "#333",
+        toggle: () => {
+          this.setState({ live: Object.assign({}, live, { [g.order]: !isLive }) });
+          this.flash(!isLive ? "Published to the gallery" : "Hidden from the gallery");
+        }
+      });
+    });
+
+    const counts = { apps: apps.length, creators: creators.length, campaigns: campaigns.length, gallery: gallery.length };
+    const mk = (label, on) => ({
+      label,
+      count: String(counts[on] || 0),
+      bg: view === on ? "#151515" : "transparent",
+      rule: view === on ? "#FF3300" : "transparent",
+      fg: view === on ? "#fff" : "#8a8a8a",
+      pick: () => this.setState({ view: on })
+    });
+
+    const current = { apps, creators, campaigns, gallery }[view] || [];
+
+    return {
+      rootRef: this.rootRef,
+      nav: [mk("Applications", "apps"), mk("Creators", "creators"), mk("Campaigns", "campaigns"), mk("Gallery", "gallery")],
+      viewTitle: { apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery" }[view],
+      kpis: [
+        { label: "Pending matches", fill: 0.6, color: "#FF3300", ref: this.kpiRefs[0] },
+        { label: "Live campaigns", fill: 0.45, color: "#fff", ref: this.kpiRefs[1] },
+        { label: "Creators listed", fill: 0.82, color: "#FF3300", ref: this.kpiRefs[2] },
+        { label: "Awaiting verify", fill: 0.3, color: "#fff", ref: this.kpiRefs[3] }
+      ],
+      isApps: view === "apps" && apps.length > 0,
+      isCreators: view === "creators" && creators.length > 0,
+      isCampaigns: view === "campaigns" && campaigns.length > 0,
+      isGallery: view === "gallery" && gallery.length > 0,
+      isEmpty: current.length === 0,
+      apps, creators, campaigns, gallery,
+      query,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      clearQuery: () => this.setState({ query: "" }),
+      hasToast: !!toast,
+      toast
+    };
+  }
+
+  componentDidMount() {
+    this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    [24, 9, 138, 6].forEach((t, i) => this.countTo(this.kpiRefs[i].current, t, i * 80));
+  }
+
+  countTo(el, target, delay) {
+    if (!el) return;
+    if (this.reduced) { el.textContent = String(target); return; }
+    const t0 = performance.now() + delay;
+    const tick = (t) => {
+      if (t < t0) return requestAnimationFrame(tick);
+      const p = Math.min(1, (t - t0) / 1000);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(target * e));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+}
+</script>
+</body>
+</html>
