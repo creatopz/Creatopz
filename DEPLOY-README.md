@@ -3,6 +3,15 @@
 Upload the whole contents of this folder to any static host (Netlify drop,
 Vercel, GitHub Pages, Hostinger, cPanel public_html). No build step.
 
+## Live deploy: Cloudflare Workers (Static Assets)
+This branch is connected to the Cloudflare Worker `creatopz` via Workers
+Builds — every push here rebuilds and redeploys automatically, no CLI or
+manual upload needed. `wrangler.jsonc` at the repo root points Workers'
+static-asset serving at this same folder; `.assetsignore` keeps the SQL
+migrations, docs and this deploy config out of what's actually served.
+Custom domain `www.creatopz.in` is attached under that Worker's
+Domains & Routes.
+
 ## Live Supabase project
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
