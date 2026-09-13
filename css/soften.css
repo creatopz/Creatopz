@@ -9,18 +9,19 @@
    width) and never color, layout or spacing, so it's safe to load
    everywhere without fighting a page's own design. */
 
-/* Cards / panels / modals: rounded corners, clipped content — kept
-   modest on purpose (this is a "minimal" pass, not a "bubbly" one) */
+/* Cards / panels / modals: rounded corners, clipped content. Bumped from
+   the original "minimal" 10px pass to a more generous editorial radius to
+   match the rounded-card, rounded-photo look of the new reference style. */
 article,
 .card{
-  border-radius:10px !important;
+  border-radius:22px !important;
   overflow:hidden;
 }
 .modal,
 .apply-modal,
 .dc-form-modal,
 dialog{
-  border-radius:14px !important;
+  border-radius:22px !important;
   overflow:hidden;
 }
 
@@ -33,17 +34,18 @@ dialog{
    pill poking out from under the sticky header — fix it at the source
    instead of avoiding radius on buttons altogether. */
 button{
-  border-radius:10px !important;
+  border-radius:14px !important;
   -webkit-appearance:none;
   appearance:none;
 }
 select,
 input,
 textarea{
-  border-radius:10px !important;
+  border-radius:14px !important;
 }
 
-/* Link-styled buttons/CTAs (solid or bordered <a> tags used as buttons) */
+/* Primary/secondary CTA links (solid or bordered <a> tags used as buttons)
+   -> full pill, matching the reference mood board's rounded CTA buttons. */
 a[style*="background:#FF3300"],
 a[style*="background: #FF3300"],
 a[style*="background:#000"],
@@ -51,6 +53,15 @@ a[style*="background: #000"],
 a[style*="border:2px solid"],
 a[style*="border: 2px solid"],
 a[style*="border:1px solid #000"]{
+  border-radius:999px !important;
+}
+
+/* Small square utility buttons (niche/filter chips, verified toggle, sort,
+   pagination, icon buttons) read oddly as full pills — keep those at a
+   soft rounded-rect instead of forcing every bordered element into a pill. */
+button[style*="border:1px solid"],
+button[style*="padding:8px"],
+button[style*="padding: 8px"]{
   border-radius:10px !important;
 }
 
@@ -60,7 +71,7 @@ span[style*="text-transform:uppercase"][style*="letter-spacing"]{
 }
 
 /* Square initials/logo-mark avatar blocks -> soft rounded squares */
-div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-items:center"]{
+div[style*="font-family:'Bricolage Grotesque'"][style*="justify-content:center"][style*="align-items:center"]{
   border-radius:10px !important;
 }
 
@@ -91,6 +102,14 @@ div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-i
    dark-theme (admin console etc.) cards, which don't have this problem. */
 article[style*="background:#fff"]{
   border:1px solid rgba(32,30,29,.1) !important;
+}
+
+/* Pure #000 fills read flat/harsh next to the new rounded, editorial
+   look — nudge every solid-black inline background to a warmer, softer
+   near-black across the whole site (text/border colors are untouched). */
+[style*="background:#000;"],
+[style*="background: #000;"]{
+  background-color:#181614 !important;
 }
 
 /* Trim the biggest space/size offenders on small screens: a wrapped

@@ -1,8 +1,12 @@
-/* Modernist design system — shared styles for the legacy Supabase-wired
+/* Editorial design system — shared styles for the legacy Supabase-wired
    pages (gallery, campaigns, onboarding, auth-recovery, dashboards, terms,
    privacy). Visual pass only: class names are unchanged so no markup in
-   the pages that need to change. */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap');
+   the pages that need to change.
+
+   Redesign pass: bold display grotesk + clean body sans, generous radius,
+   pill CTAs, eyebrow labels, dark cinematic panels — matching the rest of
+   the site's refreshed look. */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 /* Smooth cross-fade between full page loads (Chromium/Edge; other
    browsers just ignore this and keep the normal instant navigation). */
@@ -19,27 +23,27 @@ a,button,input,select,textarea,.btn,.field input,.field select,.field textarea{
 }
 
 :root{
-  --color-bg:#f3f2f2;
-  --color-surface:#eae9e9;
-  --color-text:#201e1d;
+  --color-bg:#f7f5f2;
+  --color-surface:#eeece6;
+  --color-text:#181614;
   --color-accent:#ec3013;
   --color-accent-600:#d12a10;
   --color-accent-700:#b3240e;
   --color-divider:#201e1d;
-  --font-heading:'Archivo', system-ui, sans-serif;
-  --font-body:'Archivo', system-ui, sans-serif;
-  --radius-sm:8px;
-  --radius-md:12px;
-  --radius-lg:16px;
+  --font-heading:'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body:'Inter', system-ui, sans-serif;
+  --radius-sm:12px;
+  --radius-md:18px;
+  --radius-lg:26px;
   --radius-pill:999px;
 
   /* Back-compat aliases so every existing rule below keeps working. */
   --paper:var(--color-bg);
   --ink:var(--color-text);
   --red:var(--color-accent);
-  --grey:#5C5C5C;
+  --grey:#6b6660;
   --grey-light:var(--color-surface);
-  --hairline-light:#d8d6d5;
+  --hairline-light:#e3e0d9;
   --hairline-dark:var(--color-text);
   --green:#3E7C6B;
 }
@@ -52,32 +56,48 @@ body{
 }
 img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
-h1,h2,h3{font-family:var(--font-heading);font-weight:800;line-height:1.02;}
+h1,h2,h3{font-family:var(--font-heading);font-weight:800;line-height:1.02;letter-spacing:-0.01em;}
 .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
 :focus-visible{outline:2px solid var(--color-accent);outline-offset:2px;}
 .grayscale{filter:grayscale(1);}
 
+/* Small uppercase tracked label used above headlines — the "eyebrow" motif
+   shared across every hero/section intro on the site. */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent);
+}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--color-accent);display:inline-block;}
+.badge-outline{
+  display:inline-flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:600;border:1px solid var(--hairline-light);border-radius:var(--radius-pill);padding:8px 16px;color:var(--grey);
+}
+
 /* ---------- Buttons ---------- */
 .btn{
-  display:inline-flex;align-items:center;justify-content:flex-start;gap:8px;
-  padding:12px 22px;font-family:var(--font-body);font-weight:700;font-size:14.5px;
-  border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:flex-start;gap:10px;
+  padding:13px 24px;font-family:var(--font-body);font-weight:700;font-size:14.5px;
+  border-radius:var(--radius-pill);border:1.5px solid transparent;cursor:pointer;
   -webkit-appearance:none;appearance:none;
   transition:transform .15s ease, background .15s ease, color .15s ease, opacity .15s ease, box-shadow .2s ease;
 }
-.btn:hover{transform:translateY(-2px);}
-.btn-red{background:var(--color-accent);color:#fff;}
-.btn-red:hover{background:var(--color-accent-600);}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -14px rgba(24,22,20,.4);}
+.btn-red{background:var(--color-text);color:#fff;}
+.btn-red:hover{background:var(--color-accent);}
 .btn-red:active{background:var(--color-accent-700);}
 .btn-outline-dark{border-color:var(--color-text);color:var(--color-text);background:transparent;}
 .btn-outline-dark:hover{background:var(--color-text);color:#fff;}
+.btn .btn-icon{
+  display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+  background:rgba(255,255,255,.16);flex-shrink:0;font-size:12px;
+}
 
 /* ---------- Nav ---------- */
 header{
-  position:sticky;top:0;z-index:50;background:rgba(243,242,242,0.94);backdrop-filter:blur(8px);
+  position:sticky;top:0;z-index:50;background:rgba(247,245,242,0.86);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--hairline-light);
 }
-nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;gap:20px;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:20px;}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-heading);font-weight:800;font-size:20px;}
 .brand img{height:30px;width:auto;}
 .brand sup{font-family:var(--font-body);font-size:9px;position:relative;top:-8px;}

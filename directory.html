@@ -13,7 +13,7 @@
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
   body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
   *{box-sizing:border-box;}
@@ -39,7 +39,7 @@
 
   <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
     <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
-      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:22px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:34px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
       </a>
       <div class="dc-nav-links" style="display:flex;gap:28px;font-size:15px;font-weight:500;">
@@ -59,7 +59,7 @@
       <div style="display:inline-flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:8px 14px;margin-bottom:22px;">
         <span style="width:7px;height:7px;border-radius:50%;background:#FF3300;"></span>Live directory
       </div>
-      <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:0;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) both;">Vetted creators, <span style="color:#FF3300;">ready to collab.</span></h1>
+      <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:0;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) both;">Vetted creators, <span style="color:#FF3300;">ready to collab.</span></h1>
       <p style="color:#c9c9c9;font-size:16px;line-height:1.6;max-width:500px;margin:18px 0 0;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) .08s both;">Search by niche, city or reach. Every profile here has been checked before it was listed.</p>
 
       <div style="margin:32px 0 0;max-width:480px;">
@@ -89,7 +89,7 @@
 
   <section style="max-width:1180px;margin:0 auto;padding:44px 32px 96px;">
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-bottom:2px solid #000;padding-bottom:14px;margin-bottom:2px;">
-      <div style="font-family:Anton,sans-serif;font-size:20px;"><span ref="{{ countRef }}">0</span> creators</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;"><span ref="{{ countRef }}">0</span> creators</div>
       <div style="font-size:13px;color:#5C5C5C;">{{ activeLabel }}</div>
     </div>
 
@@ -104,9 +104,9 @@
       <sc-for list="{{ results }}" as="c" hint-placeholder-count="6">
         <article style="background:#fff;padding:24px;position:relative;animation:ctzCardIn .5s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .25s ease;" style-hover="background:#F6F4F1">
           <div style="display:flex;gap:14px;align-items:center;">
-            <div style="width:52px;height:52px;flex:0 0 52px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:19px;letter-spacing:.04em;">{{ c.initials }}</div>
+            <div style="width:52px;height:52px;flex:0 0 52px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;letter-spacing:.04em;">{{ c.initials }}</div>
             <div style="min-width:0;">
-              <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:19px;margin:0;line-height:1.1;overflow-wrap:anywhere;">{{ c.name }}</h3>
+              <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;margin:0;line-height:1.1;overflow-wrap:anywhere;">{{ c.name }}</h3>
               <div style="font-size:12.5px;color:#8a8a8a;margin-top:3px;">{{ c.city }} · {{ c.niche }}</div>
             </div>
           </div>
@@ -128,7 +128,7 @@
 
     <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
       <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;">
-        <div style="font-family:Anton,sans-serif;font-size:30px;margin-bottom:10px;">No creators match that.</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:30px;margin-bottom:10px;">No creators match that.</div>
         <p style="color:#5C5C5C;margin:0 0 22px;">Try a different niche — or clear the filters.</p>
         <button onClick="{{ clearAll }}" style="border:2px solid #000;background:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Clear filters</button>
       </div>

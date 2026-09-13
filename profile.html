@@ -13,7 +13,7 @@
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
   body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
   *{box-sizing:border-box;}
@@ -42,7 +42,7 @@
 
   <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
     <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
-      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:21px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:32px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
       </a>
       <div class="dc-nav-links" style="display:flex;gap:26px;font-size:14.5px;font-weight:500;">
@@ -62,7 +62,7 @@
     <img src="assets/logo.png" alt="" style="position:absolute;right:-60px;top:20px;width:340px;opacity:.06;filter:invert(1);animation:ctzFloat 11s ease-in-out infinite;">
     <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;">
       <div style="display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;">
-        <div style="width:132px;height:132px;flex:0 0 132px;background:#FF3300;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:52px;overflow:hidden;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
+        <div style="width:132px;height:132px;flex:0 0 132px;background:#FF3300;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:52px;overflow:hidden;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
           <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
             <img src="{{ avatarUrl }}" alt="" style="width:100%;height:100%;object-fit:cover;">
           </sc-if>
@@ -74,7 +74,7 @@
           <div style="display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:7px 13px;margin-bottom:16px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) .06s both;">
             <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>{{ statusTag }}
           </div>
-          <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(38px,5vw,64px);line-height:.96;margin:0;">{{ displayName }}</h1>
+          <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(38px,5vw,64px);line-height:.96;margin:0;">{{ displayName }}</h1>
           <div style="display:flex;gap:16px;flex-wrap:wrap;color:#9a9a9a;font-size:14.5px;margin-top:14px;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .28s both;">
             <span>{{ nicheLabel }}</span><span style="color:#333;">/</span><span>{{ cityLabel }}</span>
           </div>
@@ -85,7 +85,7 @@
 
       <sc-if value="{{ isPublicView }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .42s both;">
-          <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:Anton,sans-serif;">→</span></a>
+          <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></a>
           <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
         </div>
       </sc-if>
@@ -94,7 +94,7 @@
         <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="5">
           <div style="background:#000;padding:20px 22px;transition:background .3s ease;" style-hover="background:#0d0d0d">
             <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">{{ m.label }}</div>
-            <div ref="{{ m.ref }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:7px;">0</div>
+            <div ref="{{ m.ref }}" style="font-family:'Bricolage Grotesque',sans-serif;font-size:32px;margin-top:7px;">0</div>
             <div style="font-size:12px;color:#7d7d7d;margin-top:4px;">{{ m.note }}</div>
           </div>
         </sc-for>
@@ -118,7 +118,7 @@
   <section style="max-width:1180px;margin:0 auto;padding:40px 32px 80px;">
     <sc-if value="{{ showWork }}" hint-placeholder-val="{{ true }}">
       <div>
-        <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 18px;">Brand collaborations</h3>
+        <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:0 0 18px;">Brand collaborations</h3>
         <sc-if value="{{ collabsEmpty }}" hint-placeholder-val="{{ false }}">
           <div style="border:2px solid #000;padding:48px 28px;color:#5C5C5C;">No past brand collaborations listed yet.</div>
         </sc-if>
@@ -133,9 +133,9 @@
     <sc-if value="{{ showAudience }}" hint-placeholder-val="{{ false }}">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;">
         <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Base city</h3>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:0 0 22px;">Base city</h3>
           <p style="font-size:15px;color:#5C5C5C;">{{ cityLabel }}</p>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:30px 0 16px;">Audience cities</h3>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:30px 0 16px;">Audience cities</h3>
           <sc-if value="{{ audienceCitiesEmpty }}" hint-placeholder-val="{{ false }}">
             <p style="font-size:14.5px;color:#8a8a8a;">Not shared yet.</p>
           </sc-if>
@@ -146,10 +146,10 @@
           </div>
         </div>
         <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Audience gender split</h3>
+          <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:0 0 22px;">Audience gender split</h3>
           <div style="display:flex;gap:2px;background:#E2DFD8;border:2px solid #000;">
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ femalePct }}</div></div>
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ malePct }}</div></div>
+            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin-top:6px;">{{ femalePct }}</div></div>
+            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin-top:6px;">{{ malePct }}</div></div>
           </div>
         </div>
       </div>
@@ -158,12 +158,12 @@
     <sc-if value="{{ showRates }}" hint-placeholder-val="{{ false }}">
       <div style="border:2px solid #000;padding:30px 28px;">
         <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">Rate per collab</div>
-        <div style="font-family:Anton,sans-serif;font-size:44px;margin:14px 0 10px;line-height:1;">{{ rateLabel }}</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:44px;margin:14px 0 10px;line-height:1;">{{ rateLabel }}</div>
         <div style="font-size:14px;line-height:1.6;color:#5C5C5C;">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</div>
       </div>
       <div style="border:2px solid #000;border-top:none;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
         <div style="font-size:14.5px;color:#5C5C5C;max-width:560px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</div>
-        <a href="auth.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-weight:600;font-size:14.5px;padding:14px 24px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#FF3300">Request a quote<span style="font-family:Anton,sans-serif;">→</span></a>
+        <a href="auth.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-weight:600;font-size:14.5px;padding:14px 24px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#FF3300">Request a quote<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></a>
       </div>
     </sc-if>
 
@@ -226,7 +226,7 @@
         </div>
 
         <div style="margin-top:30px;padding:24px;border:2px solid #000;">
-          <div style="font-family:Anton,sans-serif;font-size:19px;margin-bottom:6px;">Engagement rate calculator</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;margin-bottom:6px;">Engagement rate calculator</div>
           <p style="font-size:13px;color:#5C5C5C;margin:0 0 16px;">Enter your last 30 days on one typical post — the rate below is (likes + comments + shares + saves) ÷ reach.</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;">
             <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Likes</label><input type="number" min="0" value="{{ calcLikes }}" onInput="{{ onCalcLikes }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
@@ -236,13 +236,13 @@
             <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Reach</label><input type="number" min="0" value="{{ calcReach }}" onInput="{{ onCalcReach }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
           </div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:16px;">
-            <div style="font-family:Anton,sans-serif;font-size:28px;">{{ calcRate }}</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;">{{ calcRate }}</div>
             <button type="button" onClick="{{ applyCalc }}" style="border:2px solid #000;background:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Use this as my engagement rate</button>
           </div>
         </div>
 
         <div style="font-size:13.5px;color:#FF3300;min-height:20px;margin-top:20px;">{{ formError }}</div>
-        <button type="submit" data-magnetic="8" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;width:100%;max-width:280px;transition:background .2s ease;" style-hover="background:#e62e00">{{ saveLabel2 }}<span style="font-family:Anton,sans-serif;">→</span></button>
+        <button type="submit" data-magnetic="8" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;width:100%;max-width:280px;transition:background .2s ease;" style-hover="background:#e62e00">{{ saveLabel2 }}<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></button>
       </form>
     </sc-if>
 
