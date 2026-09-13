@@ -278,6 +278,21 @@ textarea{ resize:vertical; min-height:110px; }
 .budget-bar-track{ height:10px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden; }
 .budget-bar-fill{ height:100%; background:var(--accent); border-radius:var(--r-pill); transition:width .3s ease; }
 
+/* Rate card row (profile.html edit form): content type + rate + delete
+   in one row. A grid item's min-width:0 above only lets the *column*
+   shrink -- a bare <input> still carries the UA's own intrinsic
+   min-content width (~170-200px, independent of its actual value),
+   which is wider than the 1fr column has left once 160px+40px+gaps
+   are subtracted from a narrow phone screen. Stack it below 480px
+   instead of trying to shrink an input past what it can render. */
+.rate-row-grid{ grid-template-columns:1fr 160px 40px; }
+@media (max-width:480px){
+  .rate-row-grid{ grid-template-columns:1fr 40px; grid-template-areas:"type type" "rate del"; }
+  .rate-row-grid > div:first-child{ grid-area:type; }
+  .rate-row-grid > div:nth-child(2){ grid-area:rate; }
+  .rate-row-grid > button{ grid-area:del; }
+}
+
 /* ---------------- Tabs / segmented control ---------------- */
 .tabs{ display:inline-flex; gap:4px; background:var(--surface-2); padding:5px; border-radius:var(--r-pill); }
 .tab{ padding:9px 20px; border-radius:var(--r-pill); font-size:14px; font-weight:600; color:var(--ink-soft); background:transparent; border:none; cursor:pointer; }
