@@ -386,7 +386,7 @@ document.getElementById("msgForm").addEventListener("submit", async (e) => {
   const body = input.value.trim();
   if (!body || !ACTIVE_CONVO_ID) return;
   const { error } = await supabaseClient.from("messages").insert({ conversation_id: ACTIVE_CONVO_ID, sender_id: SESSION.user.id, body });
-  if (error) return showToast("Couldn't send: " + error.message, "error");
+  if (error) return showToast("Couldn't send: " + friendlyAuthError(error), "error");
   input.value = "";
   await openConversation(ACTIVE_CONVO_ID);
 });
@@ -395,31 +395,31 @@ async function decideApplication(id, status) {
   const patch = { status };
   if (status === "accepted" && AGREED_DRAFTS[id]) patch.agreed_budget = Number(AGREED_DRAFTS[id]);
   const { error } = await supabaseClient.from("campaign_applications").update(patch).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(status === "accepted" ? "Match finalised — intro sent" : "Application declined", "success");
 }
 async function toggleVerified(id, next) {
   const { error } = await supabaseClient.from("creators").update({ is_verified: next }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next ? "Creator verified" : "Creator unverified", "success");
 }
 async function togglePublic(id, next) {
   const { error } = await supabaseClient.from("creators").update({ is_public: next }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next ? "Listed in the directory" : "Hidden from the directory", "success");
 }
 async function clearFlag(id) {
   const { error } = await supabaseClient.from("creators").update({ flagged_for_review: false, is_public: true }).eq("id", id);
-  if (error) return showToast("Couldn't clear flag: " + error.message, "error");
+  if (error) return showToast("Couldn't clear flag: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast("Cleared for review — listed in the directory", "success");
 }
 async function toggleCampaignStatus(id, next) {
   const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next === "closed" ? "Campaign closed" : "Campaign reopened", "success");
 }
@@ -440,13 +440,13 @@ async function approveTeamPick(campaignId, creatorId) {
 
 async function decideCampaign(id, next) {
   const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next === "open" ? "Campaign approved — now live" : "Campaign declined", "success");
 }
 async function toggleGallery(id, next) {
   const { error } = await supabaseClient.from("gallery_posts").update({ is_published: next }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next ? "Published to the gallery" : "Hidden from the gallery", "success");
 }

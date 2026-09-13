@@ -194,7 +194,12 @@
 <script src="js/motion.js"></script>
 <script src="js/nav.js"></script>
 <script>
-const NICHES = ["Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel"];
+// Must match creator-onboarding.html's #category options (and
+// auth.html's signup niche list) exactly -- this sets campaigns.niche,
+// which dashboard-creator.html's "match %" compares directly against
+// a creator's own category. A value here that doesn't exist in that
+// vocabulary just never matches, silently.
+const NICHES = ["Fashion & Style", "Beauty", "Skincare", "Makeup", "Haircare", "Food", "Travel", "Fitness", "Tech", "Comedy", "Lifestyle", "Parenting", "Home & Decor", "Finance", "Gaming", "Other"];
 let BRAND = null, CAMPAIGNS = [], APPLICANTS = [], SELECTED_CAMPAIGN_ID = null, C_NICHE = "Beauty";
 
 function pillClassFor(status) {
@@ -263,7 +268,7 @@ async function toggleCampaignStatus(id, status) {
     return;
   }
   const { error } = await supabaseClient.from("campaigns").update({ status: "closed" }).eq("id", id);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadCampaigns();
   showToast("Brief closed to new applications", "success");
 }
@@ -307,7 +312,7 @@ function renderApplicants() {
 
 async function decide(applicationId, status) {
   const { error } = await supabaseClient.from("campaign_applications").update({ status }).eq("id", applicationId);
-  if (error) return showToast("Couldn't update: " + error.message, "error");
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadApplicants(SELECTED_CAMPAIGN_ID);
   showToast(status === "shortlisted" ? "Shortlisted — Creatopz will set up the intro" : "Applicant passed", "success");
 }
@@ -315,7 +320,7 @@ async function decide(applicationId, status) {
 async function loadApplicants(campaignId) {
   if (!campaignId) { APPLICANTS = []; renderApplicants(); return; }
   const { data, error } = await supabaseClient.rpc("get_campaign_applicants", { p_campaign_id: campaignId });
-  if (error) { showToast("Couldn't load applicants: " + error.message, "error"); return; }
+  if (error) { showToast("Couldn't load applicants: " + friendlyAuthError(error), "error"); return; }
   APPLICANTS = data || [];
   renderApplicants();
   renderShortlist();
@@ -348,7 +353,7 @@ async function loadSavedCreators() {
     .select("id, created_at, creators(id, name, category, profile_image, rate_min, rate_max)")
     .eq("brand_id", BRAND.id)
     .order("created_at", { ascending: false });
-  if (error) { showToast("Couldn't load saved creators: " + error.message, "error"); return; }
+  if (error) { showToast("Couldn't load saved creators: " + friendlyAuthError(error), "error"); return; }
   SAVED_CREATORS = data || [];
   renderSavedCreators();
 }
@@ -379,7 +384,7 @@ function renderSavedCreators() {
   }).join("");
   host.querySelectorAll(".remove-saved-btn").forEach((btn) => btn.addEventListener("click", async () => {
     const { error } = await supabaseClient.from("brand_shortlists").delete().eq("id", btn.dataset.id);
-    if (error) return showToast("Couldn't remove: " + error.message, "error");
+    if (error) return showToast("Couldn't remove: " + friendlyAuthError(error), "error");
     await loadSavedCreators();
   }));
 }
@@ -406,7 +411,7 @@ async function openTeamModal(campaignId) {
 
 async function loadTeamPicks(campaignId) {
   const { data: picks, error } = await supabaseClient.from("campaign_team_picks").select("*").eq("campaign_id", campaignId);
-  if (error) { showToast("Couldn't load team plan: " + error.message, "error"); return; }
+  if (error) { showToast("Couldn't load team plan: " + friendlyAuthError(error), "error"); return; }
   const creatorIds = [...new Set((picks || []).map((p) => p.creator_id))];
   let creatorsById = {};
   if (creatorIds.length) {
@@ -495,13 +500,13 @@ async function setPickQuantity(creatorId, contentType, rate, qty) {
   if (qty === 0) {
     const { error } = await supabaseClient.from("campaign_team_picks").delete()
       .eq("campaign_id", TEAM_CAMPAIGN_ID).eq("creator_id", creatorId).eq("content_type", contentType);
-    if (error) return showToast("Couldn't update: " + error.message, "error");
+    if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   } else {
     const { error } = await supabaseClient.from("campaign_team_picks").upsert({
       campaign_id: TEAM_CAMPAIGN_ID, creator_id: creatorId, content_type: contentType,
       quantity: qty, rate_snapshot: rate,
     }, { onConflict: "campaign_id,creator_id,content_type" });
-    if (error) return showToast("Couldn't update: " + error.message, "error");
+    if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   }
   TEAM_CREATORS[creatorId].quantities[contentType] = qty;
   renderTeamModal();
@@ -510,7 +515,7 @@ async function setPickQuantity(creatorId, contentType, rate, qty) {
 async function removeCreatorFromTeam(creatorId) {
   const { error } = await supabaseClient.from("campaign_team_picks").delete()
     .eq("campaign_id", TEAM_CAMPAIGN_ID).eq("creator_id", creatorId);
-  if (error) return showToast("Couldn't remove: " + error.message, "error");
+  if (error) return showToast("Couldn't remove: " + friendlyAuthError(error), "error");
   delete TEAM_CREATORS[creatorId];
   renderTeamModal();
 }
@@ -601,7 +606,7 @@ document.getElementById("campaignForm").addEventListener("submit", async (e) => 
     brand_id: BRAND.id, title, niche: C_NICHE, brief: deliverables, budget_min: num, budget_max: num, deadline, status: "draft",
   });
   setButtonLoading(btn, false);
-  if (error) return (errorEl.textContent = error.message);
+  if (error) return (errorEl.textContent = friendlyAuthError(error));
   await loadCampaigns();
   closeModal("campaignModal");
   e.target.reset();
@@ -636,7 +641,7 @@ document.getElementById("companyForm").addEventListener("submit", async (e) => {
     .update({ company_name: name, industry: industry || null, description: bio || null, logo_url: logoUrl })
     .eq("user_id", BRAND.user_id).select().single();
   setButtonLoading(btn, false);
-  if (error) return (errorEl.textContent = error.message);
+  if (error) return (errorEl.textContent = friendlyAuthError(error));
   BRAND = updated;
   document.getElementById("heroTag").textContent = "Brand account · " + (BRAND.company_name || "");
   closeModal("companyModal");

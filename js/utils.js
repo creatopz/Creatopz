@@ -78,6 +78,13 @@ function friendlyAuthError(error) {
     return "That didn't go through — the page may be out of date. Please refresh and try again.";
   }
   if (msg.includes("duplicate key")) {
+    // Postgres' unique-violation message names the constraint (e.g.
+    // "...violates unique constraint \"creators_username_key\"") --
+    // worth a specific message for the one users hit by choice
+    // (picking a username), not just by coincidence of re-clicking.
+    if (msg.includes("username")) {
+      return "That username is already taken — try a different one.";
+    }
     return "You've already done that.";
   }
   // Never show a raw database/Postgres error to a user.
