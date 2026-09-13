@@ -9,19 +9,34 @@
    width) and never color, layout or spacing, so it's safe to load
    everywhere without fighting a page's own design. */
 
-/* Cards / panels / modals: rounded corners, clipped content */
+/* Cards / panels / modals: rounded corners, clipped content — kept
+   modest on purpose (this is a "minimal" pass, not a "bubbly" one) */
 article,
-.card,
+.card{
+  border-radius:10px !important;
+  overflow:hidden;
+}
 .modal,
 .apply-modal,
 .dc-form-modal,
 dialog{
-  border-radius:16px !important;
+  border-radius:14px !important;
   overflow:hidden;
 }
 
-/* Buttons, inputs and selects: soft rounded instead of square */
-button,
+/* Buttons, inputs and selects: soft rounded instead of square.
+   -webkit-appearance:none is load-bearing here, not decoration: iOS
+   Safari draws its own native rounded/shadowed chrome behind a <button>
+   the moment it has a border-radius to render against, even one that
+   sets background:transparent + border:none (e.g. every tab-underline
+   button on this site). That's what showed up live as a stray rounded
+   pill poking out from under the sticky header — fix it at the source
+   instead of avoiding radius on buttons altogether. */
+button{
+  border-radius:10px !important;
+  -webkit-appearance:none;
+  appearance:none;
+}
 select,
 input,
 textarea{
@@ -46,7 +61,7 @@ span[style*="text-transform:uppercase"][style*="letter-spacing"]{
 
 /* Square initials/logo-mark avatar blocks -> soft rounded squares */
 div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-items:center"]{
-  border-radius:14px !important;
+  border-radius:10px !important;
 }
 
 /* The responsive card-grid idiom used for creators/campaigns/applicants
@@ -56,7 +71,7 @@ div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-i
    exact idiom (not every gap:2px grid) so it doesn't space out tightly-
    packed UI like the arcade's touch grids or a two-pane layout. */
 [style*="minmax(min("]{
-  gap:16px !important;
+  gap:12px !important;
   background:transparent !important;
   border:none !important;
 }
@@ -67,3 +82,21 @@ div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-i
 [style*="border-bottom:2px solid"]{border-bottom-width:1.5px !important;}
 [style*="border-left:2px solid"]{border-left-width:1.5px !important;}
 [style*="border-right:2px solid"]{border-right-width:1.5px !important;}
+
+/* White cards had no border at all (only a hover tint), which reads as
+   randomly-highlighted/untidy on touch devices once a hover state gets
+   stuck on the last-tapped card. Give them a permanent, quiet edge so
+   every card looks the same regardless of hover/touch state. Scoped to
+   light cards only so it doesn't add a near-invisible border to the
+   dark-theme (admin console etc.) cards, which don't have this problem. */
+article[style*="background:#fff"]{
+  border:1px solid rgba(32,30,29,.1) !important;
+}
+
+/* Trim the biggest space/size offenders on small screens: a wrapped
+   two-row header shouldn't eat a quarter of the viewport, and hero
+   sections don't need desktop-sized padding on a phone. */
+@media (max-width:600px){
+  header nav{padding-top:10px !important;padding-bottom:10px !important;}
+  .dc-nav-links{gap:12px !important;font-size:12.5px !important;}
+}
