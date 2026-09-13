@@ -291,3 +291,28 @@ gaps at phone widths specifically -- nothing above ~640px changed.
 admin-console.html's own `.admin-card` padding got the same treatment
 in its page-scoped `<style>` block. Verified via a full-site Playwright
 sweep (320/375/390/430/1280px, every page) with zero new overflow.
+
+## Homepage creator slider + directory redesign
+No schema change -- both read the same `creators_public` view every
+other public page already uses.
+- index.html gained a dark, minimal, horizontally-scrolling "Meet the
+  creators" section (new `.creator-slider-section`/`.slider-card`
+  classes in css/theme.css) between the trust strip and the platform
+  split section: native CSS scroll-snap + two arrow buttons, no
+  carousel library. Shows the top ~12 creators by followers and links
+  to directory.html; stays hidden below 3 creators rather than showing
+  a near-empty slider.
+- `.creator-card` (directory.html, spotlight.html, index.html's home
+  spotlight) lost its border in favor of a soft shadow, gained a
+  photo-zoom hover, and directory.html's own card markup gained a
+  floating niche-tag pill and a red circular verified badge over the
+  photo -- the bio line was dropped from the grid card (still on the
+  full profile) so the card reads as a clean portfolio thumbnail
+  rather than a dense data row. `.avatar-fallback` (a circle badge
+  everywhere else it's used) is squared off specifically inside a
+  photo frame (`.cc-photo.avatar-fallback`/`.sc-photo.avatar-fallback`)
+  so a creator with no photo yet gets a placeholder rectangle, not a
+  squashed oval. directory.html's hero also gained a subtle decorative
+  accent circle. All additive/CSS-only -- no existing class was
+  renamed and no other page using `.creator-card` needed a markup
+  change to keep working.

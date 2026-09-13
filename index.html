@@ -116,6 +116,26 @@
   </div>
 </section>
 
+<!-- ============ CREATOR SLIDER ============ -->
+<section class="section creator-slider-section" id="creatorSliderSection" style="display:none;">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:36px;">
+      <div data-reveal>
+        <span class="eyebrow on-dark"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Meet the creators</span>
+        <h2 style="margin-top:14px;color:#fff;">Real profiles, ready to collab.</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;" data-reveal>
+        <button class="slider-arrow-btn" id="creatorSliderPrev" aria-label="Previous creators"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+        <button class="slider-arrow-btn" id="creatorSliderNext" aria-label="Next creators"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        <a href="directory.html" class="btn btn-outline on-dark" style="margin-left:6px;">Explore all creators →</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="creator-slider-track" id="creatorSliderTrack"></div>
+  </div>
+</section>
+
 <!-- ============ PLATFORM (two sides) ============ -->
 <section class="section" id="platform">
   <div class="wrap">
@@ -301,10 +321,47 @@
     document.getElementById("spotlightSection").style.display = "block";
   }
 
+  async function loadCreatorSlider() {
+    const { data, error } = await supabaseClient
+      .from("creators_public")
+      .select("id, name, category, profile_image, followers, is_verified")
+      .order("followers", { ascending: false })
+      .limit(12);
+    // Stays hidden below a handful of profiles -- a near-empty slider
+    // reads as a ghost town, not a minimal one.
+    if (error || !data || data.length < 3) return;
+    const track = document.getElementById("creatorSliderTrack");
+    track.innerHTML = data.map((c) => {
+      const photo = c.profile_image
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" class="sc-photo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'sc-photo avatar-fallback',style:'font-size:34px;',textContent:'${initials(c.name)}'}))">`
+        : `<div class="sc-photo avatar-fallback" style="font-size:34px;">${initials(c.name)}</div>`;
+      return `
+        <a href="profile.html?id=${encodeURIComponent(c.id)}" class="slider-card">
+          <div class="sc-photo-wrap">${photo}</div>
+          <div class="sc-name">${escapeHtml(c.name || "Creator")}${c.is_verified ? " ✓" : ""}</div>
+          <div class="sc-meta">${escapeHtml(c.category || "Creator")} · ${formatNumber(c.followers)} followers</div>
+        </a>`;
+    }).join("");
+    document.getElementById("creatorSliderSection").style.display = "block";
+
+    const scrollByCard = () => {
+      const card = track.querySelector(".slider-card");
+      const gap = 20;
+      return card ? card.getBoundingClientRect().width + gap : 270;
+    };
+    document.getElementById("creatorSliderPrev").addEventListener("click", () => {
+      track.scrollBy({ left: -scrollByCard() * 2, behavior: "smooth" });
+    });
+    document.getElementById("creatorSliderNext").addEventListener("click", () => {
+      track.scrollBy({ left: scrollByCard() * 2, behavior: "smooth" });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     renderAuthNav("#authNav");
     loadTrustStripStats();
     loadHomeSpotlight();
+    loadCreatorSlider();
   });
 </script>
 </body>
