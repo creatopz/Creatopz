@@ -65,6 +65,31 @@ async function getCurrentUser() {
   return data.user || null;
 }
 
+// Self-healing: signup can happen without an active session (email
+// confirmation pending), in which case RLS blocks writing the profiles
+// row at signup time. The first time that user is seen with a real
+// session (i.e. here), make sure their profiles/creators/brands rows
+// exist so nothing downstream (dashboards, admin, onboarding) 404s on
+// a profile that was never created.
+async function ensureProfileRow(user) {
+  const role = user.user_metadata?.role === "brand" ? "brand" : "creator";
+  const fullName = user.user_metadata?.full_name || "";
+  const { data: profile } = await supabaseClient
+    .from("profiles")
+    .upsert({ id: user.id, role, full_name: fullName, email: user.email }, { onConflict: "id", ignoreDuplicates: false })
+    .select()
+    .single();
+
+  const table = role === "brand" ? "brands" : "creators";
+  const { data: existing } = await supabaseClient.from(table).select("id").eq("user_id", user.id).maybeSingle();
+  if (!existing) {
+    await supabaseClient.from(table).insert(
+      role === "brand" ? { user_id: user.id, company_name: fullName } : { user_id: user.id, name: fullName }
+    );
+  }
+  return profile || { id: user.id, email: user.email, role, full_name: fullName };
+}
+
 async function getCurrentProfile() {
   const user = await getCurrentUser();
   if (!user) return null;
@@ -73,7 +98,14 @@ async function getCurrentProfile() {
     .select("*")
     .eq("id", user.id)
     .single();
-  if (error) return { id: user.id, email: user.email, role: user.user_metadata?.role };
+  if (error) {
+    // No row yet (e.g. first login after email confirmation) — create it.
+    try {
+      return await ensureProfileRow(user);
+    } catch {
+      return { id: user.id, email: user.email, role: user.user_metadata?.role || "creator" };
+    }
+  }
   return data;
 }
 

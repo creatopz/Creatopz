@@ -17,7 +17,7 @@ function formatDeadline(d) {
 async function fetchOpenCampaigns() {
   const grid = document.getElementById("campaignGrid");
   const emptyState = document.getElementById("campaignEmptyState");
-  grid.innerHTML = `<p style="color:var(--grey);grid-column:1/-1;">Loading campaigns...</p>`;
+  grid.innerHTML = Array.from({ length: 6 }).map(() => `<div class="skeleton" style="height:260px;"></div>`).join("");
 
   const { data, error } = await supabaseClient
     .from("campaigns_public")
@@ -25,13 +25,16 @@ async function fetchOpenCampaigns() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    grid.innerHTML = `<p style="color:#B8493D;grid-column:1/-1;">Couldn't load campaigns. Please try again.</p>`;
+    grid.innerHTML = "";
+    emptyState.innerHTML = `<div class="state-icon">!</div><h3>Something went wrong</h3><p>Couldn't load campaigns right now. Please try refreshing.</p>`;
+    emptyState.style.display = "block";
     console.error(error);
     return;
   }
 
   if (!data.length) {
     grid.innerHTML = "";
+    emptyState.innerHTML = `<div class="state-icon">◎</div><h3>No open campaigns yet</h3><p>Check back soon — new briefs go up regularly.</p>`;
     emptyState.style.display = "block";
     return;
   }
@@ -75,31 +78,35 @@ async function fetchOpenCampaigns() {
 function renderCampaignCard(c, alreadyApplied, profile) {
   const canApply = profile && profile.role === "creator";
   return `
-    <div class="campaign-card" data-id="${c.id}">
-      <div class="campaign-top">
-        <div class="campaign-brand-logo">
-          ${c.brands?.logo_url ? `<img src="${c.brands.logo_url}" alt="${escapeHtml(c.brands.company_name || "")}">` : `<span>${escapeHtml((c.brands?.company_name || "?")[0])}</span>`}
+    <div class="campaign-card card-hover" data-id="${c.id}">
+      <div class="cp-brand">
+        <div class="avatar-fallback" style="width:44px;height:44px;border-radius:var(--r-md);overflow:hidden;font-size:16px;">
+          ${c.brands?.logo_url ? `<img src="${escapeHtml(c.brands.logo_url)}" alt="${escapeHtml(c.brands.company_name || "")}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml((c.brands?.company_name || "?")[0])}
         </div>
+        <div style="min-width:0;">
+          <p class="caption" style="text-transform:uppercase;letter-spacing:.04em;">${escapeHtml(c.brands?.company_name || "Brand")}</p>
+          <h3 class="cp-title">${escapeHtml(c.title)}</h3>
+        </div>
+      </div>
+      <p class="cp-desc">${escapeHtml(c.description || "")}</p>
+      <div class="cp-tags">
+        <span class="badge">${escapeHtml(c.niche || "General")}</span>
+        <span class="badge">${(c.platforms || []).map(escapeHtml).join(", ") || "Any platform"}</span>
+        ${c.location ? `<span class="badge">${escapeHtml(c.location)}</span>` : ""}
+      </div>
+      <div class="cp-foot">
         <div>
-          <p class="campaign-brand-name">${escapeHtml(c.brands?.company_name || "Brand")}</p>
-          <h3 class="campaign-title">${escapeHtml(c.title)}</h3>
+          <div class="cp-budget">${formatBudget(c.budget_min, c.budget_max)}</div>
+          <div class="caption">Deadline: ${formatDeadline(c.deadline)}</div>
         </div>
+        ${
+          canApply
+            ? alreadyApplied
+              ? `<button class="btn btn-outline btn-sm applied-btn" disabled>Applied</button>`
+              : `<button class="btn btn-accent btn-sm apply-btn" data-id="${c.id}">Apply</button>`
+            : `<a href="auth.html?mode=signup&role=creator" class="btn btn-outline btn-sm">Sign up to apply</a>`
+        }
       </div>
-      <p class="campaign-desc">${escapeHtml(c.description || "")}</p>
-      <div class="campaign-meta">
-        <span>${escapeHtml(c.niche || "General")}</span>
-        <span>${(c.platforms || []).map(escapeHtml).join(", ") || "Any platform"}</span>
-        <span>${formatBudget(c.budget_min, c.budget_max)}</span>
-        <span>Deadline: ${formatDeadline(c.deadline)}</span>
-        ${c.location ? `<span>${escapeHtml(c.location)}</span>` : ""}
-      </div>
-      ${
-        canApply
-          ? alreadyApplied
-            ? `<button class="btn btn-outline-dark applied-btn" disabled style="width:100%;margin-top:16px;">Applied</button>`
-            : `<button class="btn btn-red apply-btn" data-id="${c.id}" style="width:100%;margin-top:16px;">Apply</button>`
-          : `<a href="signup.html" class="btn btn-outline-dark" style="width:100%;margin-top:16px;text-align:center;">Sign up to apply</a>`
-      }
     </div>
   `;
 }
@@ -119,12 +126,12 @@ function openApplyDialog(campaignId, triggerBtn) {
   const textarea = document.getElementById("applyMessage");
   textarea.value = "";
   document.getElementById("applyCharCount").textContent = "0";
-  document.getElementById("applyOverlay").classList.add("open");
+  openModal("applyOverlay");
   textarea.focus();
 }
 
 function closeApplyDialog() {
-  document.getElementById("applyOverlay").classList.remove("open");
+  closeModal("applyOverlay");
   pendingApplyCampaignId = null;
   pendingApplyTriggerBtn = null;
 }
@@ -161,7 +168,7 @@ async function submitApplication() {
       }
     } else {
       showToast("Application sent!", "success");
-      triggerBtn.outerHTML = `<button class="btn btn-outline-dark applied-btn" disabled style="width:100%;margin-top:16px;">Applied</button>`;
+      triggerBtn.outerHTML = `<button class="btn btn-outline btn-sm applied-btn" disabled>Applied</button>`;
     }
     closeApplyDialog();
   } catch (err) {
@@ -171,16 +178,13 @@ async function submitApplication() {
   }
 }
 
+// Backdrop click / Escape-to-close are handled generically by js/nav.js
+// (any .modal-backdrop with .is-open) — this just wires the form itself.
 function initApplyModal() {
-  const overlay = document.getElementById("applyOverlay");
   const textarea = document.getElementById("applyMessage");
   textarea.addEventListener("input", () => {
     document.getElementById("applyCharCount").textContent = textarea.value.length;
   });
   document.getElementById("applyCancelBtn").addEventListener("click", closeApplyDialog);
   document.getElementById("applyConfirmBtn").addEventListener("click", submitApplication);
-  overlay.addEventListener("click", (e) => { if (e.target === overlay) closeApplyDialog(); });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && overlay.classList.contains("open")) closeApplyDialog();
-  });
 }
