@@ -97,11 +97,14 @@
   </div>
 </section>
 
-<!-- ============ TRUST STRIP ============ -->
+<!-- ============ TRUST STRIP ============
+     Real counts pulled live from Supabase below — never hardcode a
+     usage number here. Both queries hit public, RLS-safe views
+     (creators_public / campaigns_public), same as directory.html. -->
 <section style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);">
   <div class="wrap" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;padding-block:22px;">
-    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">1,200+</span><span class="body-sm">creator profiles</span></div>
-    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">340+</span><span class="body-sm">campaigns run</span></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" id="statCreators" style="font-size:22px;">—</span><span class="body-sm">creator profiles</span></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" id="statCampaigns" style="font-size:22px;">—</span><span class="body-sm">open campaigns</span></div>
     <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">Beauty · Fitness · Food</span><span class="body-sm">priority niches</span></div>
     <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">0</span><span class="body-sm">cold DMs required</span></div>
   </div>
@@ -239,7 +242,23 @@
 <script src="js/motion.js"></script>
 <script src="js/nav.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => renderAuthNav("#authNav"));
+  async function loadTrustStripStats() {
+    const creatorsEl = document.getElementById("statCreators");
+    const campaignsEl = document.getElementById("statCampaigns");
+    const [creatorsRes, campaignsRes] = await Promise.all([
+      supabaseClient.from("creators_public").select("id", { count: "exact", head: true }),
+      supabaseClient.from("campaigns_public").select("id", { count: "exact", head: true }),
+    ]);
+    // Leave the "—" placeholder rather than show a wrong/fake number if
+    // either query fails — never fall back to a made-up figure here.
+    if (!creatorsRes.error) creatorsEl.textContent = (creatorsRes.count ?? 0).toLocaleString("en-IN");
+    if (!campaignsRes.error) campaignsEl.textContent = (campaignsRes.count ?? 0).toLocaleString("en-IN");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    renderAuthNav("#authNav");
+    loadTrustStripStats();
+  });
 </script>
 </body>
 </html>
