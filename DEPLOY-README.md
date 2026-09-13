@@ -17,10 +17,10 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_015` are already applied there.
+`supabase/migration_002` through `migration_016` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` →
+`008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` → `016` →
 (optionally) `seed.sql` for sample rows on a dev project only.
 
 ## Design system
@@ -154,3 +154,48 @@ from any page's navigation — leave it alone or delete it, your call.
   the moment admin approves -- on top of the existing admin-only
   publish/reopen gate (migration_011) and admin's exclusive ability to
   finalize an application's `agreed_budget`.
+- Rejection Receipt + Creatopz Score (migration_016), Phase 1 of the
+  retention/trust feature set -- purely additive, nothing existing
+  renamed or removed:
+  - `campaign_applications.status` gained one more valid value,
+    `'completed'` (alongside the existing `'invited'`), set only by
+    admin (admin-console.html's "Mark completed" button on an
+    `accepted` row) once a collab has actually happened -- this is what
+    unlocks the brand's rating form for that application.
+  - `application_feedback` (new table): a brand fills a required
+    3-dropdown form (content-format fit / niche fit / reach fit, plus
+    an optional note) when passing on an applicant
+    (dashboard-brand.html's "Pass" button now opens this modal instead
+    of rejecting immediately); the creator sees it inline under that
+    rejected application in dashboard-creator.html. RLS: the owning
+    brand can insert for their own campaign's application, the
+    application's own creator (or admin) can read it, no one can
+    update it after the fact.
+  - `creator_ratings` (new table) + `creators.creatopz_score` /
+    `creators.ratings_count` (new columns, kept in sync by trigger
+    `sync_creatopz_score()` the same way `sync_creator_rate_range()`
+    already keeps `rate_min`/`rate_max` in sync): once admin marks an
+    application `'completed'`, the brand can rate delivery/
+    communication/content-quality (1-5 each) from
+    dashboard-brand.html's Applicants tab; the average becomes the
+    creator's portable Creatopz Score, shown on their own dashboard
+    stat tile and on profile.html's Rates tab, with a "Download my
+    score card" button that renders a shareable PNG client-side via
+    `renderScoreCard()` in js/utils.js (pure Canvas 2D API, no new
+    dependency). RLS: only the owning brand can insert a rating for
+    their own completed collab; creators never get direct table
+    access, only the aggregate cached on their own `creators` row.
+  - admin-console.html's Applications tab gained a read-only "Feedback
+    trends" panel (grouped counts of the last 7 days' dropdown picks)
+    for hand-copying into the anonymized weekly community post -- no
+    Instagram API integration exists or is planned; this is a
+    copy-from-the-admin-panel workflow.
+  - **Known gap, not yet applied:** a creator's Creatopz Score only
+    shows correctly on their *own* profile view (which reads the base
+    `creators` table directly). Viewing another creator's public
+    profile reads the `creators_public` view instead, whose column
+    list predates `creatopz_score`/`ratings_count` and doesn't include
+    them yet -- so the score silently shows "--" there. Fixing this
+    needs `CREATE OR REPLACE VIEW creators_public` to add those two
+    columns; per this project's standing rule, that SQL is shown to
+    the project owner for a literal go-ahead before it's applied.

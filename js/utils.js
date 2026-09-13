@@ -121,6 +121,72 @@ function rateCardSummary(rateCard) {
   return rateCard.map((r) => `${escapeHtml(r.type)}: ₹${Number(r.rate).toLocaleString("en-IN")}`).join(" · ");
 }
 
+// ---------- Shareable score card ----------
+// Draws a 1080x1350 (IG-feed-ratio) card onto a <canvas> the caller
+// supplies, matching the site's palette (White Smoke / bright red /
+// black). Async because it waits on document.fonts.ready first --
+// canvas text draws with whatever font is loaded at call time, and the
+// site's display font loads via a Google Fonts @import that may not
+// have resolved yet on a fast click right after page load.
+async function renderScoreCard(canvas, { name, score, ratingsCount, niche }) {
+  await document.fonts.ready;
+  const W = 1080, H = 1350;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillRect(0, 0, W, H);
+
+  // Wordmark
+  ctx.fillStyle = "#000";
+  ctx.font = "800 40px 'Bricolage Grotesque', sans-serif";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText("Creatopz", 80, 130);
+  ctx.fillStyle = "#e7473c";
+  ctx.beginPath();
+  ctx.arc(80 + ctx.measureText("Creatopz").width + 22, 108, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Big score
+  const scoreLabel = score ? Number(score).toFixed(1) : "—";
+  ctx.fillStyle = "#000";
+  ctx.font = "800 300px 'Bricolage Grotesque', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(scoreLabel, W / 2, 660);
+  ctx.font = "700 44px 'Inter', sans-serif";
+  ctx.fillStyle = "#7d7d7d";
+  ctx.fillText("out of 5", W / 2, 730);
+
+  // Label
+  ctx.fillStyle = "#e7473c";
+  ctx.font = "800 34px 'Inter', sans-serif";
+  ctx.fillText("C R E A T O P Z   S C O R E", W / 2, 830);
+
+  // Divider
+  ctx.strokeStyle = "#dcdcdc";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(240, 900);
+  ctx.lineTo(W - 240, 900);
+  ctx.stroke();
+
+  // Name + niche
+  ctx.fillStyle = "#000";
+  ctx.font = "700 54px 'Bricolage Grotesque', sans-serif";
+  ctx.fillText(name || "Creator", W / 2, 990);
+  ctx.fillStyle = "#4a4a4a";
+  ctx.font = "500 34px 'Inter', sans-serif";
+  ctx.fillText(niche || "Creator", W / 2, 1045);
+
+  // Footer
+  ctx.fillStyle = "#7d7d7d";
+  ctx.font = "600 30px 'Inter', sans-serif";
+  const based = ratingsCount === 1 ? "Based on 1 collab" : `Based on ${ratingsCount || 0} collabs`;
+  ctx.fillText(based + " · creatopz.in", W / 2, H - 90);
+
+  ctx.textAlign = "left";
+}
+
 function formatNumber(n) {
   if (n === null || n === undefined || n === "") return "—";
   const num = Number(n);
