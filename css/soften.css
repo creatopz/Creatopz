@@ -1,0 +1,69 @@
+/* Soften pass — rounds the flat/square "Modernist" system into calmer,
+   lighter curves across the whole site, per direct feedback that the UI
+   felt heavy and boxy. Loaded on every page alongside its own styles.
+
+   Most of the site's boxes/borders are set inline (dc-runtime pages) or
+   in a page's own <style> block (legacy pages), both of which beat a
+   plain stylesheet rule on specificity — so every rule here uses
+   !important on purpose. It only ever touches shape (radius, border
+   width) and never color, layout or spacing, so it's safe to load
+   everywhere without fighting a page's own design. */
+
+/* Cards / panels / modals: rounded corners, clipped content */
+article,
+.card,
+.modal,
+.apply-modal,
+.dc-form-modal,
+dialog{
+  border-radius:16px !important;
+  overflow:hidden;
+}
+
+/* Buttons, inputs and selects: soft rounded instead of square */
+button,
+select,
+input,
+textarea{
+  border-radius:10px !important;
+}
+
+/* Link-styled buttons/CTAs (solid or bordered <a> tags used as buttons) */
+a[style*="background:#FF3300"],
+a[style*="background: #FF3300"],
+a[style*="background:#000"],
+a[style*="background: #000"],
+a[style*="border:2px solid"],
+a[style*="border: 2px solid"],
+a[style*="border:1px solid #000"]{
+  border-radius:10px !important;
+}
+
+/* Status pills / uppercase badges: fully rounded */
+span[style*="text-transform:uppercase"][style*="letter-spacing"]{
+  border-radius:999px !important;
+}
+
+/* Square initials/logo-mark avatar blocks -> soft rounded squares */
+div[style*="font-family:Anton"][style*="justify-content:center"][style*="align-items:center"]{
+  border-radius:14px !important;
+}
+
+/* The responsive card-grid idiom used for creators/campaigns/applicants
+   (auto-fill/auto-fit, minmax(min(...)) — hairline-gap tiles fused with
+   a background seam colour + thick outer border) -> real breathing room
+   between rounded cards instead of a fused, heavy block. Scoped to this
+   exact idiom (not every gap:2px grid) so it doesn't space out tightly-
+   packed UI like the arcade's touch grids or a two-pane layout. */
+[style*="minmax(min("]{
+  gap:16px !important;
+  background:transparent !important;
+  border:none !important;
+}
+
+/* Thin out every remaining thick 2px "brutalist" border/divider */
+[style*="border:2px solid"]{border-width:1.5px !important;}
+[style*="border-top:2px solid"]{border-top-width:1.5px !important;}
+[style*="border-bottom:2px solid"]{border-bottom-width:1.5px !important;}
+[style*="border-left:2px solid"]{border-left-width:1.5px !important;}
+[style*="border-right:2px solid"]{border-right-width:1.5px !important;}
