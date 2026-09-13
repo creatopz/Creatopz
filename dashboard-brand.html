@@ -72,6 +72,9 @@
         <section id="view-shortlist" style="display:none;">
           <h2 style="margin-bottom:20px;">Shortlist</h2>
           <div id="shortlistHost"></div>
+          <h3 style="margin:36px 0 14px;">Saved creators</h3>
+          <p class="body-sm" style="margin-bottom:18px;max-width:560px;">Creators you've bookmarked from their profile, not tied to a specific brief — invite them to one when you're ready.</p>
+          <div class="grid grid-3" id="savedCreatorsHost"></div>
         </section>
       </div>
     </main>
@@ -91,7 +94,8 @@
     <a href="directory.html">Directory</a>
     <a href="messages.html">Messages</a>
   </div>
-  <div class="nav-drawer-actions">
+  <div class="nav-drawer-actions" style="display:flex;flex-direction:column;gap:10px;">
+    <button id="editCompanyBtnMobile" class="btn btn-outline on-dark btn-block btn-lg">Edit company profile</button>
     <button id="logoutBtnMobile" class="btn btn-white btn-block btn-lg">Log out</button>
   </div>
 </div>
@@ -301,13 +305,63 @@ function renderShortlist() {
     </div>`).join("")}</div>`;
 }
 
+let SAVED_CREATORS = [];
+async function loadSavedCreators() {
+  if (!BRAND) return;
+  const { data, error } = await supabaseClient
+    .from("brand_shortlists")
+    .select("id, created_at, creators(id, name, category, profile_image, rate_min, rate_max)")
+    .eq("brand_id", BRAND.id)
+    .order("created_at", { ascending: false });
+  if (error) { showToast("Couldn't load saved creators: " + error.message, "error"); return; }
+  SAVED_CREATORS = data || [];
+  renderSavedCreators();
+}
+
+function renderSavedCreators() {
+  const host = document.getElementById("savedCreatorsHost");
+  if (!SAVED_CREATORS.length) {
+    host.innerHTML = `<div class="state-block" style="grid-column:1/-1;"><div class="state-icon">◎</div><h3>No saved creators yet</h3><p>Visit a creator's profile and hit "Save to shortlist" to bookmark them here.</p></div>`;
+    return;
+  }
+  host.innerHTML = SAVED_CREATORS.map((s) => {
+    const c = s.creators;
+    if (!c) return "";
+    const initials = (c.name || "?").split(" ").map((w) => w[0]).join("");
+    const rate = c.rate_min || c.rate_max ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Rate not published";
+    return `
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="avatar-fallback" style="width:44px;height:44px;background:var(--accent-soft);color:var(--accent-700);">${initials}</span>
+        <div><a href="profile.html?id=${encodeURIComponent(c.id)}" style="font-weight:600;">${escapeHtml(c.name || "Creator")}</a><div class="caption">${escapeHtml(c.category || "—")}</div></div>
+      </div>
+      <div class="caption" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">${rate}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <a href="profile.html?id=${encodeURIComponent(c.id)}" class="btn btn-outline btn-sm" style="flex:1;">View & invite</a>
+        <button class="btn btn-ghost btn-sm remove-saved-btn" data-id="${s.id}">Remove</button>
+      </div>
+    </div>`;
+  }).join("");
+  host.querySelectorAll(".remove-saved-btn").forEach((btn) => btn.addEventListener("click", async () => {
+    const { error } = await supabaseClient.from("brand_shortlists").delete().eq("id", btn.dataset.id);
+    if (error) return showToast("Couldn't remove: " + error.message, "error");
+    await loadSavedCreators();
+  }));
+}
+
 document.getElementById("postCampaignBtn").addEventListener("click", () => openModal("campaignModal"));
-document.getElementById("editCompanyBtn").addEventListener("click", () => {
+function openCompanyModal() {
   document.getElementById("bName").value = BRAND?.company_name || "";
   document.getElementById("bIndustry").value = BRAND?.industry || "";
   document.getElementById("bBio").value = BRAND?.description || "";
   document.getElementById("bError").textContent = "";
   openModal("companyModal");
+}
+document.getElementById("editCompanyBtn").addEventListener("click", openCompanyModal);
+document.getElementById("editCompanyBtnMobile").addEventListener("click", () => {
+  document.querySelector(".nav-drawer")?.classList.remove("is-open");
+  document.body.classList.remove("drawer-open");
+  openCompanyModal();
 });
 
 function renderNicheChips() {
@@ -398,6 +452,7 @@ async function boot() {
     const firstOpen = campaigns.find((c) => c.status === "open") || campaigns[0];
     if (firstOpen) { SELECTED_CAMPAIGN_ID = firstOpen.id; await loadApplicants(firstOpen.id); }
     else renderApplicants();
+    await loadSavedCreators();
   } else {
     renderCampaigns();
     renderApplicants();

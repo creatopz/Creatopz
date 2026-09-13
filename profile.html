@@ -51,10 +51,7 @@
       </div>
       <p class="lede" style="max-width:600px;margin:26px 0 0;" id="bioText"></p>
 
-      <div id="publicActions" style="display:none;gap:14px;flex-wrap:wrap;margin:26px 0 0;">
-        <a href="auth.html" class="btn btn-primary btn-lg">Invite to a brief →</a>
-        <button class="btn btn-outline btn-lg" id="saveShortlistBtn">Save to shortlist</button>
-      </div>
+      <div id="publicActions" style="display:none;gap:14px;flex-wrap:wrap;margin:26px 0 0;"></div>
 
       <div class="grid grid-4" id="metricsGrid" style="margin-top:38px;gap:1px;background:var(--border);"></div>
 
@@ -144,6 +141,27 @@
   </section>
 </div>
 
+<!-- Invite to a brief modal (brands only) -->
+<div class="modal-backdrop" id="inviteModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><span class="eyebrow">Invite</span><h2 style="margin-top:8px;" id="inviteModalTitle">Invite to a brief</h2></div>
+      <button class="modal-close" data-modal-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="inviteForm">
+        <div class="field">
+          <label>Which of your open briefs?</label>
+          <select class="input" id="inviteCampaignSelect" required></select>
+        </div>
+        <div class="field"><label>Note to the creator <span class="hint">(optional)</span></label><textarea class="input" id="inviteMessage" rows="3" placeholder="Why you think they're a fit…"></textarea></div>
+        <div class="error-text" id="inviteError" style="min-height:20px;margin-bottom:10px;"></div>
+        <button type="submit" class="btn btn-accent btn-block" id="inviteSubmitBtn">Send invite</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <footer class="site-footer" style="padding:36px 0;">
   <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
     <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
@@ -156,7 +174,7 @@
 <script src="js/auth.js"></script>
 <script src="js/nav.js"></script>
 <script>
-let CREATOR = null, IS_OWN = false, SESSION = null, SAVED_SHORTLIST = false;
+let CREATOR = null, IS_OWN = false, SESSION = null, SAVED_SHORTLIST = false, VIEWER_BRAND = null;
 
 function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
 
@@ -173,7 +191,7 @@ function renderProfile() {
   const avatarHost = document.getElementById("avatarHost");
   avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}" style="width:100%;height:100%;object-fit:cover;">` : initials(c.name);
 
-  document.getElementById("publicActions").style.display = IS_OWN ? "none" : "flex";
+  renderPublicActions();
   document.getElementById("editAction").innerHTML = IS_OWN ? `<button class="btn btn-outline btn-sm" id="editToggleBtn">Edit profile</button>` : "";
   document.getElementById("editToggleBtn")?.addEventListener("click", toggleEdit);
 
@@ -213,9 +231,86 @@ document.querySelectorAll("#tabBar .tab").forEach((btn) => {
 });
 document.querySelector('#tabBar .tab[data-tab="work"]').style.borderBottom = "2px solid var(--accent)";
 
-document.getElementById("saveShortlistBtn")?.addEventListener("click", (e) => {
-  SAVED_SHORTLIST = !SAVED_SHORTLIST;
-  e.target.textContent = SAVED_SHORTLIST ? "Saved to shortlist ✓" : "Save to shortlist";
+// Public-view action buttons depend on who's looking:
+// - a signed-in brand gets real, persisted actions (invite + shortlist)
+// - anyone else (logged out, or a creator viewing another creator) gets
+//   a path into signing up as a brand rather than a dead decorative button
+function renderPublicActions() {
+  const host = document.getElementById("publicActions");
+  if (IS_OWN) { host.style.display = "none"; return; }
+  host.style.display = "flex";
+  if (VIEWER_BRAND) {
+    host.innerHTML = `
+      <button class="btn btn-primary btn-lg" id="inviteBtn">Invite to a brief →</button>
+      <button class="btn btn-outline btn-lg" id="saveShortlistBtn">${SAVED_SHORTLIST ? "Saved to shortlist ✓" : "Save to shortlist"}</button>
+    `;
+    document.getElementById("inviteBtn").addEventListener("click", openInviteModal);
+    document.getElementById("saveShortlistBtn").addEventListener("click", toggleShortlist);
+  } else {
+    host.innerHTML = `
+      <a href="auth.html?mode=signup" class="btn btn-primary btn-lg">Invite to a brief →</a>
+      <a href="auth.html?mode=signup" class="btn btn-outline btn-lg">Save to shortlist</a>
+    `;
+  }
+}
+
+async function toggleShortlist(e) {
+  if (!VIEWER_BRAND || !CREATOR) return;
+  const btn = e.target;
+  setButtonLoading(btn, true, "Saving…");
+  if (SAVED_SHORTLIST) {
+    const { error } = await supabaseClient.from("brand_shortlists").delete().eq("brand_id", VIEWER_BRAND.id).eq("creator_id", CREATOR.id);
+    setButtonLoading(btn, false);
+    if (error) return showToast(friendlyAuthError(error), "error");
+    SAVED_SHORTLIST = false;
+    showToast("Removed from shortlist", "info");
+  } else {
+    const { error } = await supabaseClient.from("brand_shortlists").insert({ brand_id: VIEWER_BRAND.id, creator_id: CREATOR.id });
+    setButtonLoading(btn, false);
+    if (error && error.code !== "23505") return showToast(friendlyAuthError(error), "error");
+    SAVED_SHORTLIST = true;
+    showToast("Saved to shortlist", "success");
+  }
+  renderPublicActions();
+}
+
+async function openInviteModal() {
+  if (!VIEWER_BRAND) return;
+  document.getElementById("inviteModalTitle").textContent = "Invite " + (CREATOR?.name || "this creator") + " to a brief";
+  const { data: openCampaigns } = await supabaseClient.from("campaigns").select("id, title").eq("brand_id", VIEWER_BRAND.id).eq("status", "open").order("created_at", { ascending: false });
+  const select = document.getElementById("inviteCampaignSelect");
+  document.getElementById("inviteError").textContent = "";
+  if (!openCampaigns || !openCampaigns.length) {
+    select.innerHTML = "";
+    document.getElementById("inviteError").textContent = "You don't have any open briefs right now — post one from your dashboard first.";
+    document.getElementById("inviteSubmitBtn").disabled = true;
+  } else {
+    select.innerHTML = openCampaigns.map((c) => `<option value="${c.id}">${escapeHtml(c.title)}</option>`).join("");
+    document.getElementById("inviteSubmitBtn").disabled = false;
+  }
+  document.getElementById("inviteMessage").value = "";
+  openModal("inviteModal");
+}
+
+document.getElementById("inviteForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!VIEWER_BRAND || !CREATOR) return;
+  const campaignId = document.getElementById("inviteCampaignSelect").value;
+  const message = document.getElementById("inviteMessage").value.trim();
+  const errorEl = document.getElementById("inviteError");
+  if (!campaignId) { errorEl.textContent = "Pick a brief to invite them to."; return; }
+  const btn = document.getElementById("inviteSubmitBtn");
+  setButtonLoading(btn, true, "Sending…");
+  const { error } = await supabaseClient.from("campaign_applications").insert({
+    campaign_id: campaignId, creator_id: CREATOR.id, status: "invited", message: message || null,
+  });
+  setButtonLoading(btn, false);
+  if (error) {
+    errorEl.textContent = error.code === "23505" ? "You've already invited or have an application with this creator on that brief." : friendlyAuthError(error);
+    return;
+  }
+  closeModal("inviteModal");
+  showToast("Invite sent — " + (CREATOR.name || "the creator") + " will see it in their dashboard", "success");
 });
 
 function toggleEdit() {
@@ -343,6 +438,10 @@ async function boot() {
   if (SESSION) {
     const { data } = await supabaseClient.from("creators").select("*").eq("user_id", SESSION.user.id).maybeSingle();
     ownCreator = data;
+    if (!ownCreator) {
+      const { data: brand } = await supabaseClient.from("brands").select("*").eq("user_id", SESSION.user.id).maybeSingle();
+      VIEWER_BRAND = brand;
+    }
   }
 
   if (idParam) {
@@ -353,6 +452,10 @@ async function boot() {
       if (!data) {
         document.getElementById("loadingState").innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>Creator not found</h3><p>This profile may have been removed or made private.</p></div>`;
         return;
+      }
+      if (VIEWER_BRAND) {
+        const { data: saved } = await supabaseClient.from("brand_shortlists").select("id").eq("brand_id", VIEWER_BRAND.id).eq("creator_id", data.id).maybeSingle();
+        SAVED_SHORTLIST = !!saved;
       }
     }
   } else if (ownCreator) {

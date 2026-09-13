@@ -147,7 +147,7 @@ function fmtRange(min, max) {
 function pillClass(status) {
   if (status === "accepted" || status === "open") return "badge-accent";
   if (status === "shortlisted" || status === "closed" || status === "completed") return "badge-dark";
-  if (status === "draft") return "badge-warning";
+  if (status === "draft" || status === "invited") return "badge-warning";
   return "";
 }
 
@@ -185,11 +185,13 @@ function renderApps() {
         <div><div class="caption" style="text-transform:uppercase;">Creator's rate</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.creators?.rate_min, a.creators?.rate_max)}</div></div>
         <div><div class="caption" style="text-transform:uppercase;">Brand's budget</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.campaigns?.budget_min, a.campaigns?.budget_max)}</div></div>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
+      ${a.status === "invited"
+        ? `<div class="caption" style="margin-top:16px;">Brand invited this creator — waiting on their response, nothing for admin to do yet.</div>`
+        : `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
         <input class="admin-input agreed-input" data-id="${a.id}" placeholder="Agreed budget ₹" value="${escapeHtml(AGREED_DRAFTS[a.id] ?? (a.agreed_budget || ""))}" style="width:170px;">
         <button class="btn btn-sm ${a.status === "accepted" ? "btn-accent" : "admin-btn-out"} approve-btn" data-id="${a.id}">${a.status === "accepted" ? "Matched ✓" : "Finalise match"}</button>
         <button class="btn btn-sm admin-btn-out reject-btn" data-id="${a.id}">Decline</button>
-      </div>
+      </div>`}
     </article>`).join("");
   host.querySelectorAll(".agreed-input").forEach((el) => el.addEventListener("input", () => { AGREED_DRAFTS[el.dataset.id] = el.value; }));
   host.querySelectorAll(".approve-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "accepted")));
@@ -315,6 +317,8 @@ async function loadAll() {
     supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true }),
   ]);
   APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
+  // 'invited' rows are a brand's outstanding invite, not yet accepted by
+  // the creator -- nothing for admin to mediate until the creator responds.
   document.getElementById("kpiPending").textContent = APPS.filter((a) => a.status === "pending" || a.status === "shortlisted").length;
   document.getElementById("kpiLive").textContent = CAMPAIGNS.filter((c) => c.status === "open").length;
   document.getElementById("kpiListed").textContent = CREATORS.filter((c) => c.is_public).length;

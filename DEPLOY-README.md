@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_011` are already applied there.
+`supabase/migration_002` through `migration_012` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → `009` → `010` → `011` → (optionally) `seed.sql` for sample rows on
-a dev project only.
+`008` → `009` → `010` → `011` → `012` → (optionally) `seed.sql` for sample
+rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -99,4 +99,13 @@ from any page's navigation — leave it alone or delete it, your call.
   delayed the session past the point RLS would allow the insert) — it
   runs the first time `getCurrentProfile()` finds no row for a logged-in
   user, so a slow-confirming signup can never end up "logged in with no
-  profile" on any dashboard, onboarding page, or admin listing.
+  profile" on any dashboard, onboarding page, or admin listing. It only
+  ever creates a missing row and never overwrites role/email/full_name
+  on one that already exists.
+- A creator applying to an open campaign, a brand inviting a creator to
+  one of its own open briefs (profile.html → dashboard-creator.html,
+  status `invited`), and a brand bookmarking a creator outside any one
+  campaign (`brand_shortlists`, profile.html ↔ dashboard-brand.html) are
+  all backed by real RLS policies and `is_campaign_open()`/
+  `creator_has_applied_to_campaign()` SECURITY DEFINER helpers
+  (migration_012) — none of these are client-side-only state.
