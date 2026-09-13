@@ -12,35 +12,33 @@
 html { scroll-behavior: smooth; }
 
 :root{
-  /* ---- color ---- */
-  --bg:#f6f3ec;
+  /* ---- color ----
+     Brand palette, as specified: White Smoke, bright red, black. */
+  --bg:#f0f0f0;
   --surface:#ffffff;
-  --surface-2:#efe9dc;
-  --surface-3:#e6ded0;
-  --ink:#17140f;
-  --ink-soft:#57524a;
-  --muted:#8c8578;
-  --border:#e5ddcb;
-  --border-strong:#d8cdb4;
+  --surface-2:#e6e6e6;
+  --surface-3:#d9d9d9;
+  --ink:#000000;
+  --ink-soft:#4a4a4a;
+  --muted:#7d7d7d;
+  --border:#dcdcdc;
+  --border-strong:#c7c7c7;
 
-  /* Deep pine/forest green — deliberately NOT the old brand's red-orange.
-     Used sparingly (small badges, one word in a headline, a link) rather
-     than as full-bleed section fills. */
-  --accent:#3d6b52;
-  --accent-600:#325a44;
-  --accent-700:#274434;
-  --accent-soft:#e3ece3;
+  --accent:#e7473c;
+  --accent-600:#c93c32;
+  --accent-700:#992d26;
+  --accent-soft:#fce6e4;
   --accent-ink:#ffffff;
 
-  --dark:#15120e;
-  --dark-2:#1e1a14;
-  --dark-border:#332d24;
-  --on-dark:#f3efe6;
-  --on-dark-soft:#b8b0a0;
+  --dark:#000000;
+  --dark-2:#161616;
+  --dark-border:#2b2b2b;
+  --on-dark:#f0f0f0;
+  --on-dark-soft:#a8a8a8;
 
   --success:#2f6f8f;
   --success-soft:#e2edf1;
-  --danger:#b8493d;
+  --danger:#b3261e;
   --danger-soft:#fbe6e2;
   --warning:#a8721f;
   --warning-soft:#f7ecd8;
@@ -57,9 +55,9 @@ html { scroll-behavior: smooth; }
   --r-pill:999px;
 
   /* ---- shadow ---- */
-  --shadow-sm:0 2px 10px -2px rgba(23,20,15,0.08);
-  --shadow-md:0 16px 40px -18px rgba(23,20,15,0.22);
-  --shadow-lg:0 30px 80px -24px rgba(23,20,15,0.32);
+  --shadow-sm:0 2px 10px -2px rgba(0,0,0,0.08);
+  --shadow-md:0 16px 40px -18px rgba(0,0,0,0.22);
+  --shadow-lg:0 30px 80px -24px rgba(0,0,0,0.32);
 
   /* ---- space ---- */
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
@@ -119,7 +117,7 @@ h4{ font-size:16px; }
   font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
   font-weight:700; color:var(--accent-700);
 }
-.eyebrow.on-dark{ color:#ffb89c; }
+.eyebrow.on-dark{ color:#ff9a90; }
 .lede{ font-size:18px; line-height:1.6; color:var(--ink-soft); }
 .body-sm{ font-size:14px; color:var(--ink-soft); }
 .caption{ font-size:12.5px; color:var(--muted); }
@@ -179,7 +177,7 @@ h4{ font-size:16px; }
 
 /* ---------------- Nav ---------------- */
 .site-header{
-  position:sticky; top:0; z-index:200; background:rgba(246,243,236,.86);
+  position:sticky; top:0; z-index:200; background:rgba(240,240,240,.86);
   backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
 }
@@ -250,7 +248,7 @@ input[type="date"], input[type="tel"], input[type="url"], select, textarea{
 }
 textarea{ resize:vertical; min-height:110px; }
 .input:focus, input:focus, select:focus, textarea:focus{
-  border-color:var(--ink); box-shadow:0 0 0 4px rgba(23,20,15,.08);
+  border-color:var(--ink); box-shadow:0 0 0 4px rgba(0,0,0,.08);
 }
 .field.has-error .input, .field.has-error input, .field.has-error select, .field.has-error textarea{
   border-color:var(--danger); box-shadow:0 0 0 4px rgba(184,73,61,.1);
@@ -295,7 +293,7 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 
 /* ---------------- Modal / dialog ---------------- */
 .modal-backdrop{
-  position:fixed; inset:0; background:rgba(21,18,14,.55); backdrop-filter:blur(3px);
+  position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(3px);
   z-index:400; display:flex; align-items:center; justify-content:center; padding:20px;
   opacity:0; pointer-events:none; transition:opacity .25s ease;
 }
@@ -344,7 +342,7 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
   .dash-main{ padding:24px 20px 100px; }
   .dash-topbar{
     display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:150;
-    background:rgba(246,243,236,.92); backdrop-filter:blur(12px); padding:14px 0; border-bottom:1px solid var(--border); margin-bottom:24px;
+    background:rgba(240,240,240,.92); backdrop-filter:blur(12px); padding:14px 0; border-bottom:1px solid var(--border); margin-bottom:24px;
   }
 }
 

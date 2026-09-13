@@ -217,7 +217,7 @@ document.getElementById("signupPass").addEventListener("input", (e) => {
   const labels = ["Too short", "Weak — add a number", "Decent", "Strong", "Very strong"];
   for (let i = 0; i < 4; i++) {
     const bar = document.getElementById("strengthBar" + i);
-    bar.style.background = s > i ? (s >= 3 ? "var(--accent)" : "#f0b7a2") : "var(--surface-2)";
+    bar.style.background = s > i ? (s >= 3 ? "var(--accent)" : "#f0a89e") : "var(--surface-2)";
   }
   document.getElementById("strengthLabel").textContent = e.target.value ? labels[s] : "Use 8+ characters, mixed case and a number.";
 });

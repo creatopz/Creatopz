@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/theme.css">
 <style>
   body.admin{ background:var(--dark); color:var(--on-dark); }
-  .admin-card{ background:#1b1710; border:1px solid var(--dark-border); border-radius:var(--r-lg); padding:24px; }
+  .admin-card{ background:#1a1a1a; border:1px solid var(--dark-border); border-radius:var(--r-lg); padding:24px; }
   .admin-table-wrap{ overflow-x:auto; border:1px solid var(--dark-border); border-radius:var(--r-lg); }
   table.admin-table{ width:100%; border-collapse:collapse; min-width:760px; }
   .admin-table th{ text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:14px 18px; border-bottom:1px solid var(--dark-border); white-space:nowrap; }
@@ -43,14 +43,14 @@
   </aside>
 
   <div>
-    <div class="dash-topbar" style="background:rgba(21,18,14,.92);border-color:var(--dark-border);">
+    <div class="dash-topbar" style="background:rgba(0,0,0,.9);border-color:var(--dark-border);">
       <a href="index.html" class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="height:26px;">Creatopz<sup style="font-size:9px;">™</sup></a>
       <button class="nav-burger" data-nav-open aria-label="Open menu" style="border-color:var(--dark-border);color:#fff;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     </div>
 
     <main class="dash-main" style="max-width:1280px;">
       <div id="loadingState" class="grid grid-4">
-        <div class="skeleton" style="height:80px;background:#1b1710;"></div><div class="skeleton" style="height:80px;background:#1b1710;"></div><div class="skeleton" style="height:80px;background:#1b1710;"></div><div class="skeleton" style="height:80px;background:#1b1710;"></div>
+        <div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div>
       </div>
 
       <div id="dashContent" style="display:none;">
@@ -208,7 +208,7 @@ function renderCreators() {
       <td>${escapeHtml(c.category || "—")}</td>
       <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
       <td><button class="btn-ghost admin-toggle-public" data-id="${c.id}" data-next="${!c.is_public}" style="background:none;border:none;color:${c.is_public ? "#c9c9c9" : "#6d6d6d"};font-weight:600;cursor:pointer;font-size:12.5px;">${c.is_public ? "Listed" : "Hidden"}</button></td>
-      <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#e7a98f;color:#ffb199;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
+      <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#8a6420;color:#e8b84b;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
       <td><button class="btn btn-sm ${c.is_verified ? "btn-accent" : "admin-btn-out"} toggle-verify-btn" data-id="${c.id}" data-next="${!c.is_verified}">${c.is_verified ? "Verified ✓" : "Verify"}</button></td>
     </tr>`).join("");
   document.querySelectorAll(".admin-toggle-public").forEach((btn) => btn.addEventListener("click", () => togglePublic(btn.dataset.id, btn.dataset.next === "true")));
@@ -251,7 +251,7 @@ function renderGallery() {
   toggleEmpty(filtered.length === 0);
   document.getElementById("galleryGrid").innerHTML = filtered.map((g, i) => `
     <div class="admin-card" style="padding:0;overflow:hidden;">
-      <div style="position:relative;aspect-ratio:1/1;background:#141110;overflow:hidden;">
+      <div style="position:relative;aspect-ratio:1/1;background:#1a1a1a;overflow:hidden;">
         ${g.image_url ? `<img src="${escapeHtml(g.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#333;font-size:32px;">${String(i + 1).padStart(2, "0")}</div>`}
         ${!g.is_published ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);"></div>` : ""}
       </div>
