@@ -17,11 +17,12 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_018` are already applied there.
+`supabase/migration_002` through `migration_021` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
 `008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` → `016` →
-`017` → `018` → (optionally) `seed.sql` for sample rows on a dev project only.
+`017` → `018` → `019` → `020` → `021` → (optionally) `seed.sql` for sample
+rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -57,6 +58,8 @@ from any page's navigation — leave it alone or delete it, your call.
   picks into a real invite from admin-console.html's Campaigns tab.
 - `creator-onboarding.html` / `brand-onboarding.html` — profile builder forms (with a live completion meter on the creator side)
 - `spotlight.html` — public, no login: Creator of the Week + past features, reads `creator_spotlights_public`
+- `briefs.html` — public, no login: open briefs with real rupee budgets shown, reads `campaigns_public`/`brands_public`
+- `earnings-stats.html` — public, no login: anonymized average earnings by niche, reads `niche_earnings_stats` (5-creator minimum enforced in the view)
 - `gallery.html`, `forgot-password.html`, `reset-password.html`, `terms.html`, `privacy.html`
 
 ## Security notes
@@ -220,3 +223,64 @@ from any page's navigation — leave it alone or delete it, your call.
     hidden entirely when nothing's published rather than showing an
     empty placeholder. All existing public pages' nav gained one
     "Spotlight" link each -- no other change to those pages.
+- Referral priority access + rate transparency + public brief board
+  (migrations 019-021), Phase 3 of the retention/trust/growth feature
+  set -- additive columns/views, plus the one deliberate change to an
+  existing view's logic that was called out and approved up front:
+  - `creators.referral_code` (auto-generated, unique, backfilled for
+    all existing creators), `creators.referred_by_creator_id`,
+    `creators.priority_access` (new columns). auth.html's signup step 2
+    gained an optional "Referral code" field (creator role only,
+    prefillable via `?ref=CODE`, e.g. from a copied referral link);
+    `apply_referral_code()` (new SECURITY DEFINER function, narrowly
+    scoped -- only ever touches these two fields, only for a creator's
+    own row or admin, only once) flips `priority_access = true` on
+    **both** the new creator and their referrer, per your decision
+    that referral priority goes both ways. dashboard-creator.html's
+    Overview gained an "Invite a creator" card with a copyable referral
+    link. `ensureProfileRow()` in js/auth.js applies a pending referral
+    code the same way it already threads a signup's niche through a
+    delayed-email-confirmation session.
+  - **The one existing-object change**: `campaigns_public`'s WHERE
+    clause now also requires either 24+ hours since `created_at`, or
+    the viewer being a `priority_access` creator (`auth.uid()` inside
+    the view resolves per-viewer, not to the view's owner) -- exactly
+    the "priority access instead of a normal queue" mechanic you asked
+    for. It also gained `budget_min`/`budget_max` in its column list,
+    used by the new briefs.html below; campaigns.html's own
+    `formatBudget()` ignores its arguments and always shows "discussed
+    via Creatopz" regardless, so this is inert there. **Immediate
+    real-world effect**: any campaign posted within the last 24 hours
+    is now invisible on campaigns.html/dashboard-creator.html to a
+    non-priority creator until that window passes -- confirmed live
+    against the one currently-open campaign, which is mid-window as of
+    this deploy. This is the intended mechanic, not a bug, but it's
+    worth knowing before checking the live site expecting to see every
+    open campaign immediately.
+  - `niche_earnings_stats` (new view, aggregate-only): average
+    `agreed_budget` per niche/month across `accepted`/`completed`
+    applications, with the 5-creator minimum enforced by the view's own
+    `HAVING` clause -- there's no code path that can publish a
+    too-small sample, and no individual creator's number is ever
+    exposed. `earnings-stats.html` (new, public, no login) shows each
+    niche's most recent qualifying month.
+  - `briefs.html` (new, public, no login): open campaigns from
+    `campaigns_public`/`brands_public` **with real budgets shown**,
+    intentionally unlike campaigns.html's "discussed via Creatopz"
+    copy -- campaigns.html itself is untouched. Links into creator
+    signup. All public pages' nav gained "Open Briefs" and "Rate
+    Transparency" links alongside the existing "Spotlight" one.
+
+## Mobile density pass
+Every shared component (headings, `.lede`, `.section`/`.card-pad`/
+`.stat-card` padding, `.btn-lg`, modals, the dashboard shell, grid
+gaps) was sized for desktop and only *reflowed* to one column on
+phones -- it never got smaller, so a phone rendered full desktop type
+and spacing stacked vertically, meaning far more scrolling per page
+than the content needed. `css/theme.css` gained one `@media
+(max-width:640px)` block (plus a couple of already-existing mobile
+breakpoints tightened in place) cutting type scale, padding and grid
+gaps at phone widths specifically -- nothing above ~640px changed.
+admin-console.html's own `.admin-card` padding got the same treatment
+in its page-scoped `<style>` block. Verified via a full-site Playwright
+sweep (320/375/390/430/1280px, every page) with zero new overflow.

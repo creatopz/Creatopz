@@ -113,6 +113,11 @@
             </div>
             <span class="hint" id="strengthLabel">Use 8+ characters, mixed case and a number.</span>
           </div>
+          <div class="field" id="referralField" style="display:none;">
+            <label for="signupReferral">Referral code <span class="hint">(optional)</span></label>
+            <input class="input" id="signupReferral" placeholder="e.g. 8fa3c2d1" maxlength="8">
+            <span class="hint">Got one from another creator? You'll both get priority access to new briefs.</span>
+          </div>
         </div>
 
         <div id="stepNiches" style="display:none;margin-bottom:8px;">
@@ -190,6 +195,7 @@ function renderStep() {
   document.getElementById("stepHint").textContent = step === 1 ? "You can run both later — this just sets your home screen." : step === 2 ? "Takes about forty seconds." : "Pick the niches your content lives in.";
   document.getElementById("nameLabel").textContent = role === "brand" ? "Brand name" : "Your name";
   document.getElementById("signupName").placeholder = role === "brand" ? "e.g. Marwar Skincare" : "e.g. Aanya Rathore";
+  document.getElementById("referralField").style.display = role === "creator" ? "block" : "none";
 }
 
 document.querySelectorAll("#stepRole [data-role]").forEach((btn) => {
@@ -285,6 +291,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
   const pass = document.getElementById("signupPass").value;
+  const referralCode = role === "creator" ? document.getElementById("signupReferral").value.trim() : "";
   const btn = document.getElementById("signupSubmit");
   setButtonLoading(btn, true, "Creating…");
   try {
@@ -300,7 +307,12 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
         // the first pick wins. Rides in user_metadata (not just this
         // page's JS state) so it survives to first login even when
         // email confirmation delays the session -- see ensureProfileRow().
-        data: { role, full_name: name, category: role === "creator" ? (selectedNiches[0] || null) : undefined },
+        // referral_code_used rides along the same way, for the same reason.
+        data: {
+          role, full_name: name,
+          category: role === "creator" ? (selectedNiches[0] || null) : undefined,
+          referral_code_used: referralCode || undefined,
+        },
         emailRedirectTo: window.location.origin + "/auth.html",
       },
     });
@@ -313,6 +325,15 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
       }
       if (role === "brand") {
         await supabaseClient.from("brands").update({ company_name: name }).eq("user_id", data.user.id);
+      }
+      // ensureProfileRow() already applies referralCode for a fresh
+      // creators row, but re-run it here too, harmlessly: it's a no-op
+      // once referred_by_creator_id is set, and this covers the (rare)
+      // case where the creators row already existed for some other
+      // reason before this call.
+      if (role === "creator" && referralCode) {
+        const { data: own } = await supabaseClient.from("creators").select("id").eq("user_id", data.user.id).maybeSingle();
+        if (own) await supabaseClient.rpc("apply_referral_code", { target_creator_id: own.id, code: referralCode });
       }
       showDone(
         role === "brand" ? "Brand profile created." : "Profile created.",
@@ -347,6 +368,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       role = params.get("role");
       step = 2;
       renderStep();
+    }
+    if (params.get("ref")) {
+      document.getElementById("signupReferral").value = params.get("ref").slice(0, 8);
     }
   } else {
     switchMode("login");

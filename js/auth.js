@@ -112,11 +112,19 @@ async function ensureProfileRow(user) {
       // written, and without this it would create the row with no
       // category and silently drop what the creator picked at signup.
       const category = typeof user.user_metadata?.category === "string" ? user.user_metadata.category : null;
-      await supabaseClient.from(table).insert(
+      const { data: inserted } = await supabaseClient.from(table).insert(
         table === "brands"
           ? { user_id: user.id, company_name: profile.full_name || fullName }
           : { user_id: user.id, name: profile.full_name || fullName, category }
-      );
+      ).select().single();
+      // Same reasoning as category above: the referral code entered at
+      // signup (auth.html step 2) only survives to here via
+      // user_metadata, for a signup whose email confirmation delayed
+      // the session past the point RLS would allow this insert.
+      const referralCode = typeof user.user_metadata?.referral_code_used === "string" ? user.user_metadata.referral_code_used : null;
+      if (table === "creators" && inserted && referralCode) {
+        await supabaseClient.rpc("apply_referral_code", { target_creator_id: inserted.id, code: referralCode });
+      }
     }
   }
   return profile;
