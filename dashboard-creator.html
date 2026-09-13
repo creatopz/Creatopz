@@ -70,6 +70,18 @@
 
           <div id="selectedBanner" style="display:none;margin-bottom:32px;"></div>
 
+          <div class="panel" style="padding:24px 28px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div>
+              <span class="eyebrow">Invite a creator</span>
+              <h3 style="margin-top:8px;">Refer a friend, you both get priority access</h3>
+              <p class="body-sm" style="margin-top:4px;">While the community's forming, referred creators (and you) jump the queue on new briefs.</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <code id="referralCodeText" style="background:var(--surface-2);padding:10px 16px;border-radius:var(--r-md);font-size:14px;font-weight:700;">—</code>
+              <button class="btn btn-outline btn-sm" id="copyReferralBtn">Copy link</button>
+            </div>
+          </div>
+
           <h3 style="margin-bottom:14px;">Recent applications</h3>
           <div id="recentApps"></div>
         </section>
@@ -392,6 +404,7 @@ async function boot() {
   document.getElementById("statBriefs").textContent = BRIEFS.length;
   document.getElementById("statBooked").textContent = APPS.filter((a) => a.status === "accepted").length;
   document.getElementById("statScore").textContent = creator?.creatopz_score ? Number(creator.creatopz_score).toFixed(1) : "—";
+  document.getElementById("referralCodeText").textContent = creator?.referral_code || "—";
 
   const strength = profileStrength(creator);
   document.getElementById("strengthPct").textContent = strength;
@@ -415,6 +428,17 @@ async function boot() {
   const initialView = (location.hash || "#overview").replace("#", "");
   setView(["overview", "applications", "campaigns", "notifications"].includes(initialView) ? initialView : "overview");
 }
+
+document.getElementById("copyReferralBtn").addEventListener("click", async (e) => {
+  if (!CREATOR?.referral_code) return;
+  const link = location.origin + "/auth.html?mode=signup&role=creator&ref=" + encodeURIComponent(CREATOR.referral_code);
+  try {
+    await navigator.clipboard.writeText(link);
+    showToast("Referral link copied", "success");
+  } catch {
+    showToast("Couldn't copy — here's your code: " + CREATOR.referral_code, "info");
+  }
+});
 
 document.getElementById("logoutBtn").addEventListener("click", logOut);
 document.getElementById("logoutBtnMobile").addEventListener("click", logOut);
