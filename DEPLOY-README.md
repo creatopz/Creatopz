@@ -300,13 +300,21 @@ sweep (320/375/390/430/1280px, every page) with zero new overflow.
 ## Homepage creator slider + directory redesign
 No schema change -- both read the same `creators_public` view every
 other public page already uses.
-- index.html gained a dark, minimal, horizontally-scrolling "Meet the
-  creators" section (new `.creator-slider-section`/`.slider-card`
-  classes in css/theme.css) between the trust strip and the platform
-  split section: native CSS scroll-snap + two arrow buttons, no
-  carousel library. Shows the top ~12 creators by followers and links
-  to directory.html; stays hidden below 3 creators rather than showing
-  a near-empty slider.
+- index.html's old plain hero (headline + two-column graphic) and the
+  dark "Meet the creators" section that briefly sat below the trust
+  strip were both replaced by one component: a framed "app window"
+  hero at the very top of the page (new `.hero-frame-outer`/
+  `.hero-window`/`.hero-slide*` classes in css/theme.css) -- a soft
+  dot-grid backdrop with corner tick marks, a small three-part meta
+  line, a dark rounded window with a decorative brand/nav chrome bar
+  (real links) and a "Live creators (N)" row, and inside it a
+  horizontally-scrolling slider: one static intro card plus the top
+  ~12 creators by followers, each showing a follower-count badge and
+  name/niche caption over their photo. Three short italic footnotes
+  sit below the window. Native CSS scroll-snap, no carousel library --
+  same approach as the section it replaced, just restyled and moved to
+  the top of the page per a supplied reference design. Links to
+  directory.html throughout.
 - `.creator-card` (directory.html, spotlight.html, index.html's home
   spotlight) lost its border in favor of a soft shadow, gained a
   photo-zoom hover, and directory.html's own card markup gained a

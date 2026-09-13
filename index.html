@@ -70,36 +70,57 @@
   </div>
 </div>
 
-<!-- ============ HERO ============ -->
-<section class="section" style="padding-top:64px;padding-bottom:0;overflow:hidden;">
-  <div class="wrap hero-grid">
-    <div data-enter>
-      <div class="eyebrow" style="margin-bottom:22px;"><span class="badge-dot" style="background:var(--accent);width:7px;height:7px;border-radius:50%;display:inline-block;"></span>Now onboarding creators &amp; brands</div>
-      <h1 class="display-1">Two sides.<br>One place to<br><span style="color:var(--accent);">close the deal.</span></h1>
-      <p class="lede" style="max-width:480px;margin-top:22px;">Creatopz connects creators with real brand campaigns — real briefs, real budgets — without the cold DMs and endless back-and-forth.</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;">
-        <a href="auth.html?mode=signup&role=creator" class="btn btn-primary btn-lg">Join as Creator →</a>
-        <a href="auth.html?mode=signup&role=brand" class="btn btn-outline btn-lg">I'm a Brand</a>
-      </div>
-      <div style="display:flex;gap:40px;flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid var(--border);">
-        <div><b class="font-display" style="font-size:22px;display:block;">Vetted</b><span class="body-sm">every creator, before they're listed</span></div>
-        <div><b class="font-display" style="font-size:22px;display:block;">Mediated</b><span class="body-sm">Creatopz closes every deal</span></div>
-        <div><b class="font-display" style="font-size:22px;display:block;">Zero</b><span class="body-sm">cold DMs required</span></div>
-      </div>
-    </div>
-    <div data-enter style="position:relative;display:flex;align-items:center;justify-content:center;min-height:420px;">
-      <div style="position:absolute;inset:6%;border-radius:50%;background:radial-gradient(circle at 30% 25%, var(--accent-soft), transparent 60%), radial-gradient(circle at 70% 75%, var(--surface-3), transparent 60%);filter:blur(4px);"></div>
-      <div class="card" style="position:relative;width:100%;max-width:380px;border-radius:var(--r-xl);padding:32px;box-shadow:var(--shadow-lg);">
-        <img src="assets/logo.png" alt="Creatopz mark" style="height:52px;margin-bottom:22px;">
-        <div style="font-family:var(--font-display);font-weight:700;font-size:20px;margin-bottom:6px;">Hidden Gems, matched fast</div>
-        <p class="body-sm" style="margin-bottom:18px;">Explore vetted creators across beauty, fitness &amp; food — or post a brief and let applications come to you.</p>
-        <a href="directory.html" class="btn btn-accent btn-block">Explore creators</a>
-      </div>
-      <div class="card hero-float-card" style="padding:16px 20px;border-radius:var(--r-lg);box-shadow:var(--shadow-md);display:flex;gap:12px;align-items:center;">
-        <div class="avatar-fallback" style="width:40px;height:40px;flex-shrink:0;background:var(--accent-soft);color:var(--accent-700);">👍</div>
-        <div><b style="font-size:14px;display:block;">Application accepted</b><span class="caption">Beauty campaign · ₹18,000</span></div>
+<!-- ============ HERO: app-window creator slider ============ -->
+<section class="hero-frame-outer">
+  <div class="hero-corner tl" aria-hidden="true"></div>
+  <div class="hero-corner tr" aria-hidden="true"></div>
+  <div class="hero-corner bl" aria-hidden="true"></div>
+  <div class="hero-corner br" aria-hidden="true"></div>
+
+  <div class="hero-meta-strip">
+    <span>Vetted creator marketplace</span>
+    <span>Real briefs · Real budgets</span>
+    <span id="heroYear">2026</span>
+  </div>
+
+  <div class="hero-window" data-enter>
+    <div class="hero-window-chrome">
+      <div class="hero-window-brand"><img src="assets/logo.png" alt="">Creatopz<sup style="font-size:9px;">™</sup></div>
+      <nav class="hero-window-nav">
+        <a href="directory.html">Creators</a>
+        <a href="campaigns.html">Campaigns</a>
+        <a href="index.html#platform">For Brands</a>
+      </nav>
+      <div class="hero-window-actions">
+        <a href="auth.html" class="hero-ghost-link">Log in</a>
+        <a href="auth.html?mode=signup&role=creator" class="btn btn-primary btn-sm">Join as Creator →</a>
       </div>
     </div>
+
+    <div class="hero-live-row">
+      <div>
+        <div class="hero-live-label"><span class="hero-live-dot"></span>Live creators (<span id="heroLiveCount">—</span>)</div>
+        <div class="hero-live-sub" id="heroLiveDate"></div>
+      </div>
+      <a href="directory.html" class="hero-live-cta">Explore all creators →</a>
+    </div>
+
+    <div class="hero-slider-track" id="heroSliderTrack">
+      <a href="directory.html" class="hero-slide hero-slide-intro">
+        <div>
+          <img src="assets/logo.png" alt="" style="height:30px;filter:invert(1) brightness(2);margin-bottom:14px;">
+          <b style="font-family:var(--font-display);font-size:17px;">Hidden Gems, matched fast</b>
+          <p>Explore vetted creators across beauty, fitness &amp; food — or post a brief and let applications come to you.</p>
+        </div>
+        <span class="btn btn-accent btn-block" style="pointer-events:none;">Explore creators</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-footnotes">
+    <p data-reveal>Every creator here is vetted before they're ever listed — no fake followers, no guesswork.</p>
+    <p data-reveal>We mediate every deal ourselves, so nothing gets lost between a DM and a signed brief.</p>
+    <p data-reveal>New faces every week — this lineup updates as creators join and campaigns close.</p>
   </div>
 </section>
 
@@ -113,26 +134,6 @@
     <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" id="statCampaigns" style="font-size:22px;">—</span><span class="body-sm">open campaigns</span></div>
     <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">Beauty · Fitness · Food</span><span class="body-sm">priority niches</span></div>
     <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">0</span><span class="body-sm">cold DMs required</span></div>
-  </div>
-</section>
-
-<!-- ============ CREATOR SLIDER ============ -->
-<section class="section creator-slider-section" id="creatorSliderSection" style="display:none;">
-  <div class="wrap">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:36px;">
-      <div data-reveal>
-        <span class="eyebrow on-dark"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Meet the creators</span>
-        <h2 style="margin-top:14px;color:#fff;">Real profiles, ready to collab.</h2>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;" data-reveal>
-        <button class="slider-arrow-btn" id="creatorSliderPrev" aria-label="Previous creators"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-        <button class="slider-arrow-btn" id="creatorSliderNext" aria-label="Next creators"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-        <a href="directory.html" class="btn btn-outline on-dark" style="margin-left:6px;">Explore all creators →</a>
-      </div>
-    </div>
-  </div>
-  <div class="wrap">
-    <div class="creator-slider-track" id="creatorSliderTrack"></div>
   </div>
 </section>
 
@@ -321,47 +322,40 @@
     document.getElementById("spotlightSection").style.display = "block";
   }
 
-  async function loadCreatorSlider() {
+  async function loadHeroSlider() {
+    document.getElementById("heroYear").textContent = new Date().getFullYear();
+    document.getElementById("heroLiveDate").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
     const { data, error } = await supabaseClient
       .from("creators_public")
       .select("id, name, category, profile_image, followers, is_verified")
       .order("followers", { ascending: false })
       .limit(12);
-    // Stays hidden below a handful of profiles -- a near-empty slider
-    // reads as a ghost town, not a minimal one.
-    if (error || !data || data.length < 3) return;
-    const track = document.getElementById("creatorSliderTrack");
-    track.innerHTML = data.map((c) => {
-      const photo = c.profile_image
-        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" class="sc-photo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'sc-photo avatar-fallback',style:'font-size:34px;',textContent:'${initials(c.name)}'}))">`
-        : `<div class="sc-photo avatar-fallback" style="font-size:34px;">${initials(c.name)}</div>`;
-      return `
-        <a href="profile.html?id=${encodeURIComponent(c.id)}" class="slider-card">
-          <div class="sc-photo-wrap">${photo}</div>
-          <div class="sc-name">${escapeHtml(c.name || "Creator")}${c.is_verified ? " ✓" : ""}</div>
-          <div class="sc-meta">${escapeHtml(c.category || "Creator")} · ${formatNumber(c.followers)} followers</div>
-        </a>`;
-    }).join("");
-    document.getElementById("creatorSliderSection").style.display = "block";
+    if (error || !data) return;
+    document.getElementById("heroLiveCount").textContent = data.length;
+    if (!data.length) return; // intro slide alone still reads fine
 
-    const scrollByCard = () => {
-      const card = track.querySelector(".slider-card");
-      const gap = 20;
-      return card ? card.getBoundingClientRect().width + gap : 270;
-    };
-    document.getElementById("creatorSliderPrev").addEventListener("click", () => {
-      track.scrollBy({ left: -scrollByCard() * 2, behavior: "smooth" });
-    });
-    document.getElementById("creatorSliderNext").addEventListener("click", () => {
-      track.scrollBy({ left: scrollByCard() * 2, behavior: "smooth" });
-    });
+    const track = document.getElementById("heroSliderTrack");
+    track.insertAdjacentHTML("beforeend", data.map((c) => {
+      const photo = c.profile_image
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'font-size:30px;',textContent:'${initials(c.name)}'}))">`
+        : `<div class="avatar-fallback" style="font-size:30px;">${initials(c.name)}</div>`;
+      return `
+        <a href="profile.html?id=${encodeURIComponent(c.id)}" class="hero-slide">
+          <div class="hero-slide-photo-wrap">
+            ${photo}
+            <span class="hero-slide-badge">${c.is_verified ? "✓ " : ""}${formatNumber(c.followers)} followers</span>
+            <span class="hero-slide-caption"><b>${escapeHtml(c.name || "Creator")}</b><span>${escapeHtml(c.category || "Creator")}</span></span>
+          </div>
+        </a>`;
+    }).join(""));
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     renderAuthNav("#authNav");
     loadTrustStripStats();
     loadHomeSpotlight();
-    loadCreatorSlider();
+    loadHeroSlider();
   });
 </script>
 </body>
