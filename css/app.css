@@ -76,10 +76,20 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:800;line-height:1.02;letter
 /* ---------- Buttons ---------- */
 .btn{
   display:inline-flex;align-items:center;justify-content:flex-start;gap:10px;
-  padding:13px 24px;font-family:var(--font-body);font-weight:700;font-size:14.5px;
-  border-radius:var(--radius-pill);border:1.5px solid transparent;cursor:pointer;
+  padding:12px 22px;font-family:var(--font-body);font-weight:700;font-size:14.5px;
+  border-radius:var(--radius-sm);border:1.5px solid transparent;cursor:pointer;
   -webkit-appearance:none;appearance:none;
   transition:transform .15s ease, background .15s ease, color .15s ease, opacity .15s ease, box-shadow .2s ease;
+}
+/* Marketing-facing CTAs (auth/onboarding/landing "primary action" buttons)
+   get the full pill treatment used across the rest of the redesign;
+   compact in-dashboard row actions (accept/reject/close, table buttons)
+   stay a modest rounded-rect so they don't blow up next to dense rows. */
+.auth-card .btn,
+.role-toggle + .submit-row .btn,
+.hero .btn,
+.btn-pill{
+  border-radius:var(--radius-pill);padding-left:26px;padding-right:26px;
 }
 .btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -14px rgba(24,22,20,.4);}
 .btn-red{background:var(--color-text);color:#fff;}

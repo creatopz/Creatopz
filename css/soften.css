@@ -14,14 +14,14 @@
    match the rounded-card, rounded-photo look of the new reference style. */
 article,
 .card{
-  border-radius:22px !important;
+  border-radius:18px !important;
   overflow:hidden;
 }
 .modal,
 .apply-modal,
 .dc-form-modal,
 dialog{
-  border-radius:22px !important;
+  border-radius:20px !important;
   overflow:hidden;
 }
 
