@@ -71,6 +71,19 @@ function friendlyAuthError(error) {
   if (msg.includes("network") || msg.includes("fetch")) {
     return "Network error — check your connection and try again.";
   }
+  if (msg.includes("row-level security") || msg.includes("permission denied")) {
+    // The DB correctly refused the write, but the raw Postgres message
+    // is meaningless to a user — this almost always means the page had
+    // stale data (e.g. a campaign closed after it was loaded).
+    return "That didn't go through — the page may be out of date. Please refresh and try again.";
+  }
+  if (msg.includes("duplicate key")) {
+    return "You've already done that.";
+  }
+  // Never show a raw database/Postgres error to a user.
+  if (error.code || msg.includes("violates") || msg.includes("constraint")) {
+    return "Something went wrong saving that. Please refresh and try again.";
+  }
   return error.message || "Something went wrong. Please try again.";
 }
 
