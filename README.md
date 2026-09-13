@@ -22,7 +22,7 @@ No build step — every page is plain HTML/CSS/JS.
 1. Go to **Storage** → **New bucket**.
 2. Create a bucket named `creator-avatars`, set it **Public**.
 3. Create a second bucket named `brand-logos`, set it **Public**.
-4. Create a third bucket named `gallery`, set it **Public** — this holds the admin-managed Instagram-style gallery images (`gallery.html`, managed from `admin.html`).
+4. Create a third bucket named `gallery`, set it **Public** — this holds the admin-managed Instagram-style gallery images (`gallery.html`, managed from `admin-console.html`).
 5. The storage policies at the bottom of `schema.sql` already cover all three buckets (they run as part of the same script).
 
 ## 4. Connect the frontend
@@ -45,12 +45,12 @@ these rows before launch — they have no real login attached.
 
 ## 6. Create your first admin
 
-1. Sign up normally through `signup.html` (either role).
+1. Sign up normally through `auth.html` (either role).
 2. In the SQL Editor, run:
    ```sql
    update profiles set role = 'admin' where email = 'you@example.com';
    ```
-3. Log out and back in, then visit `admin.html`.
+3. Log out and back in, then visit `admin-console.html`.
 
 ## 7. Deploy
 
@@ -63,44 +63,55 @@ has your real project values before you deploy.
 ## Project structure
 
 ```
-index.html                 Marketing site (unchanged visual identity)
-creators.html               Public creator directory (Supabase-powered)
-campaigns.html              Public campaign marketplace
+index.html                 Marketing landing page
+directory.html              Public creator directory (search/filter/sort)
+campaigns.html              Public campaign marketplace + apply modal
 gallery.html                Public Instagram-style gallery (admin-managed)
-signup.html / login.html    Auth
+auth.html                   Login + 3-step signup wizard (creator/brand)
 forgot-password.html / reset-password.html
-creator-onboarding.html     Creator profile builder
-creator-dashboard.html      Creator overview, applications, notifications
+creator-onboarding.html     Creator profile builder (live completion meter)
+dashboard-creator.html      Creator dashboard: overview, applications,
+                            browse campaigns, notifications
 brand-onboarding.html       Brand company profile
-brand-dashboard.html        Brand overview, post campaign, manage applications
-admin.html                  Verify/hide creators, close campaigns
+dashboard-brand.html        Brand dashboard: overview, campaigns,
+                            applicants, shortlist
+profile.html                Creator media kit (own + public view)
+admin-console.html          Admin: applications mediation, creators,
+                            campaigns, gallery, messages
+messages.html                Creator/brand inbox with the Creatopz team
+terms.html / privacy.html
 
-css/app.css                 Shared styles for auth pages & dashboards
+css/theme.css                The one design system stylesheet (tokens +
+                            components) every page above links
 js/supabase-client.js       Supabase client config (put your keys here)
-js/auth.js                  Signup/login/logout/password reset/role guards
+js/auth.js                  Signup/login/logout/password reset/role guards,
+                            ensureProfileRow() self-heal
 js/utils.js                 Toasts, loading states, formatting helpers
-js/creators.js              Public directory: fetch/filter/search/modal
-js/campaigns.js             Public campaign feed + apply flow
+js/nav.js                   Shared mobile drawer + modal open/close
+js/motion.js                Scroll-reveal / stagger-in animation helpers
+js/campaigns.js              Public campaign feed + apply flow
 js/dashboard.js             Onboarding forms, image upload, campaign CRUD,
                             applications, notifications
 
 supabase/schema.sql         Full DB schema + RLS policies + storage policies
+supabase/migration_*.sql    Additive migrations, apply in numeric order
 supabase/seed.sql           Optional demo data
 .env.example                Where to find your Supabase keys
 ```
 
 ## How it fits together
 
-**Creator flow:** Website → Join as a creator → Signup (role: creator) →
-Creator onboarding (builds `creators` row + uploads avatar to
-`creator-avatars`) → Dashboard → profile appears in `creators.html` once
-`is_public = true` → browse `campaigns.html` → Apply → status tracked on
-dashboard → notified on accept/reject.
+**Creator flow:** Website → Join as a creator → Signup (`auth.html`, role:
+creator) → Creator onboarding (builds `creators` row + uploads avatar to
+`creator-avatars`) → Dashboard (`dashboard-creator.html`) → profile appears
+in `directory.html` once `is_public = true` → browse `campaigns.html` →
+Apply → status tracked on dashboard → notified on accept/reject.
 
-**Brand flow:** Website → Post a campaign → Signup (role: brand) →
-Company profile (builds `brands` row + logo upload) → Dashboard → Post
-campaign (status: draft or open) → open campaigns show in
-`campaigns.html` → view applications → Accept/Reject → creator notified.
+**Brand flow:** Website → Post a campaign → Signup (`auth.html`, role:
+brand) → Company profile (builds `brands` row + logo upload) → Dashboard
+(`dashboard-brand.html`) → Post campaign (always lands as `draft`, admin
+approves it to `open`) → open campaigns show in `campaigns.html` → view
+applicants → shortlist/pass → admin finalizes the match.
 
 ## Security notes
 
@@ -127,7 +138,7 @@ campaign (status: draft or open) → open campaigns show in
 **Creator**
 - [ ] Create profile, upload avatar, save
 - [ ] Edit profile, replace avatar
-- [ ] Profile appears in `creators.html` when `is_public` is checked
+- [ ] Profile appears in `directory.html` when `is_public` is checked
 - [ ] Uncheck "list in directory" → profile disappears from directory
 - [ ] Filter/search/sort the directory
 
@@ -149,4 +160,4 @@ campaign (status: draft or open) → open campaigns show in
 - [ ] Editing another brand's campaign
 - [ ] Creating a campaign under a `brand_id` you don't own
 - [ ] Applying twice to the same campaign
-- [ ] Non-admin visiting `admin.html` (redirects to their own dashboard)
+- [ ] Non-admin visiting `admin-console.html` (redirects to their own dashboard)
