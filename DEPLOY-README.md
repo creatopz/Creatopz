@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_014` are already applied there.
+`supabase/migration_002` through `migration_015` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → `009` → `010` → `011` → `012` → `013` → `014` → (optionally)
-`seed.sql` for sample rows on a dev project only.
+`008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` →
+(optionally) `seed.sql` for sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -139,3 +139,25 @@ from any page's navigation — leave it alone or delete it, your call.
   option selected there, and re-saving that form would silently blank
   or never-match a category a different page had set. Add a niche in
   one place, add it in all three.
+- Rate-card transparency (migration_015): a brand sees an applicant's/
+  saved creator's full rate card, not just a range, via
+  `creators_for_team_builder` (saved creators, own query) or
+  `get_campaign_applicants()` (the Applicants tab, RPC now returns
+  `creator_rate_card`) -- never a raw `.select()` against `creators`
+  itself, which stays owner-or-admin-only. `rateCardSummary()` in
+  js/utils.js is the one renderer every page uses so the breakdown
+  never drifts between admin/brand views.
+- Platform fee (`PLATFORM_FEE_PCT` in js/utils.js, currently 9%) is a
+  display-only business term, not a charge this app processes --
+  Creatopz has no payment/escrow flow, admin mediates every deal
+  off-platform. `feeBreakdown()` is the one place total/fee/net is
+  computed, used consistently on the brand's post-campaign form, the
+  team builder's allocatable pool (net of fee, not the raw total), and
+  admin's view of every campaign's budget.
+- Admin has the final say on a campaign's budget, not just its
+  publish/decline: approving a draft (admin-console.html's Campaigns
+  tab) includes an editable "final budget" field, pre-filled with the
+  brand's request, that becomes `campaigns.budget_min`/`budget_max`
+  the moment admin approves -- on top of the existing admin-only
+  publish/reopen gate (migration_011) and admin's exclusive ability to
+  finalize an application's `agreed_budget`.

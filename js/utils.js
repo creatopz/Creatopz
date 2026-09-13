@@ -94,6 +94,33 @@ function friendlyAuthError(error) {
   return error.message || "Something went wrong. Please try again.";
 }
 
+// ---------- Platform fee ----------
+// Creatopz doesn't process payments itself (admin mediates every deal
+// off-platform) -- this is a business term shown consistently wherever
+// a budget is entered or reviewed, not a stored/charged amount. Kept in
+// one place so the brand's post-campaign form, the team builder's
+// allocatable pool, and admin's view of a campaign's budget can never
+// drift out of sync on what "9%" means.
+const PLATFORM_FEE_PCT = 0.09;
+function feeBreakdown(totalBudget) {
+  const total = Number(totalBudget) || 0;
+  const fee = Math.round(total * PLATFORM_FEE_PCT);
+  return { total, fee, net: total - fee };
+}
+
+// ---------- Rate card ----------
+// A creator's rate_card is `[{type, rate}]`. One shared renderer so
+// admin's Applications/Creators tabs and a brand's Applicants/Saved
+// creators views all show the exact same breakdown, not three
+// re-implementations that could quietly disagree.
+// Escapes each type name itself (not just the caller's surrounding
+// markup) since this string is built for direct innerHTML use and a
+// creator's rate-card type is their own free text.
+function rateCardSummary(rateCard) {
+  if (!Array.isArray(rateCard) || !rateCard.length) return "Rate card not published";
+  return rateCard.map((r) => `${escapeHtml(r.type)}: ₹${Number(r.rate).toLocaleString("en-IN")}`).join(" · ");
+}
+
 function formatNumber(n) {
   if (n === null || n === undefined || n === "") return "—";
   const num = Number(n);

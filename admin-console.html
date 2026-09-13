@@ -75,7 +75,7 @@
         </section>
 
         <section id="view-creators" style="display:none;">
-          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Instagram</th><th>Niche</th><th>Reach</th><th>Public</th><th>Flag</th><th>Verify</th></tr></thead><tbody id="creatorsBody"></tbody></table></div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Instagram</th><th>Niche</th><th>Reach</th><th>Rate card</th><th>Public</th><th>Flag</th><th>Verify</th></tr></thead><tbody id="creatorsBody"></tbody></table></div>
         </section>
 
         <section id="view-campaigns" style="display:none;">
@@ -179,11 +179,16 @@ function renderApps() {
         <div><b style="font-size:16.5px;color:#fff;">${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption" style="margin-top:4px;">${escapeHtml(a.campaigns?.brands?.company_name || "Brand")} · Applied ${new Date(a.created_at).toLocaleDateString()}</div></div>
         <span class="badge ${pillClass(a.status)}">${escapeHtml(a.status)}</span>
       </div>
-      <div class="grid grid-4" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-border);gap:14px;">
+      <div class="grid grid-3" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-border);gap:14px;">
         <div><div class="caption" style="text-transform:uppercase;">Creator</div><div style="margin-top:5px;color:#fff;">${escapeHtml(a.creators?.name || "Creator")}</div></div>
         <div><div class="caption" style="text-transform:uppercase;">Instagram</div><div style="margin-top:5px;color:#fff;overflow-wrap:anywhere;">${escapeHtml(a.creators?.instagram_url || "Not connected")}</div></div>
-        <div><div class="caption" style="text-transform:uppercase;">Creator's rate</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.creators?.rate_min, a.creators?.rate_max)}</div></div>
-        <div><div class="caption" style="text-transform:uppercase;">Brand's budget</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.campaigns?.budget_min, a.campaigns?.budget_max)}</div></div>
+        <div><div class="caption" style="text-transform:uppercase;">Creator's rate card</div><div style="margin-top:5px;color:#fff;">${rateCardSummary(a.creators?.rate_card)}</div></div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--dark-border);">
+        <div class="caption" style="text-transform:uppercase;margin-bottom:5px;">Brand's budget</div>
+        ${(() => { const { total, fee, net } = feeBreakdown(a.campaigns?.budget_min); return total
+          ? `<div style="color:#fff;">₹${total.toLocaleString("en-IN")} total · 9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
+          : `<div style="color:#fff;">Not set</div>`; })()}
       </div>
       ${Array.isArray(a.deliverables) && a.deliverables.length
         ? `<div class="caption" style="margin-top:14px;">Agreed via team builder: ${a.deliverables.map((d) => `${d.quantity} × ${escapeHtml(d.content_type)} (₹${Number(d.rate).toLocaleString("en-IN")} each)`).join(", ")}</div>`
@@ -212,6 +217,7 @@ function renderCreators() {
       <td style="overflow-wrap:anywhere;">${escapeHtml(c.instagram_url || "Not connected")}</td>
       <td>${escapeHtml(c.category || "—")}</td>
       <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
+      <td class="caption" style="max-width:220px;">${rateCardSummary(c.rate_card)}</td>
       <td><button class="btn-ghost admin-toggle-public" data-id="${c.id}" data-next="${!c.is_public}" style="background:none;border:none;color:${c.is_public ? "#c9c9c9" : "#6d6d6d"};font-weight:600;cursor:pointer;font-size:12.5px;">${c.is_public ? "Listed" : "Hidden"}</button></td>
       <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#8a6420;color:#e8b84b;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
       <td><button class="btn btn-sm ${c.is_verified ? "btn-accent" : "admin-btn-out"} toggle-verify-btn" data-id="${c.id}" data-next="${!c.is_verified}">${c.is_verified ? "Verified ✓" : "Verify"}</button></td>
@@ -261,17 +267,33 @@ function renderCampaigns() {
         <span class="badge ${pillClass(c.status)}">${escapeHtml(c.status)}</span>
       </div>
       <h3 style="color:#fff;font-size:20px;margin:14px 0 12px;">${escapeHtml(c.title)}</h3>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:14px;">
-        <span class="caption">Budget</span><span style="color:#fff;font-weight:700;">${fmtRange(c.budget_min, c.budget_max)}</span>
+      <div style="padding:12px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:14px;">
+        <div style="display:flex;justify-content:space-between;"><span class="caption">Budget</span><span style="color:#fff;font-weight:700;">${fmtRange(c.budget_min, c.budget_max)}</span></div>
+        ${(() => { const { total, fee, net } = feeBreakdown(c.budget_min); return total
+          ? `<div class="caption" style="margin-top:6px;">9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
+          : ""; })()}
       </div>
       <div class="caption" style="margin-top:12px;">${appsLabel}</div>
       ${c.status === "draft"
-        ? `<div style="display:flex;gap:8px;margin-top:14px;"><button class="btn btn-accent btn-sm approve-campaign-btn" data-id="${c.id}" style="flex:1;">Approve</button><button class="btn admin-btn-out btn-sm decline-campaign-btn" data-id="${c.id}" style="flex:1;">Decline</button></div>`
+        ? `<div style="margin-top:14px;">
+             <div class="field" style="margin-bottom:10px;">
+               <label class="caption" style="display:block;margin-bottom:4px;">Final budget (₹) — adjust before approving if needed</label>
+               <input class="admin-input approve-budget-input" data-id="${c.id}" value="${c.budget_min ?? ""}" inputmode="numeric" style="width:100%;">
+             </div>
+             <div style="display:flex;gap:8px;">
+               <button class="btn btn-accent btn-sm approve-campaign-btn" data-id="${c.id}" style="flex:1;">Approve</button>
+               <button class="btn admin-btn-out btn-sm decline-campaign-btn" data-id="${c.id}" style="flex:1;">Decline</button>
+             </div>
+           </div>`
         : `<button class="btn admin-btn-out btn-block btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="margin-top:14px;">${c.status === "closed" ? "Reopen" : "Close"}</button>`}
       ${rosterHtml}
     </article>`;
   }).join("");
-  document.querySelectorAll(".approve-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "open")));
+  document.querySelectorAll(".approve-campaign-btn").forEach((btn) => btn.addEventListener("click", () => {
+    const input = document.querySelector(`.approve-budget-input[data-id="${btn.dataset.id}"]`);
+    const finalBudget = input ? parseInt(String(input.value).replace(/[^0-9]/g, ""), 10) : null;
+    decideCampaign(btn.dataset.id, "open", finalBudget);
+  }));
   document.querySelectorAll(".decline-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "closed")));
   document.querySelectorAll(".toggle-campaign-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status === "closed" ? "open" : "closed")));
   document.querySelectorAll(".approve-pick-btn").forEach((btn) => btn.addEventListener("click", () => approveTeamPick(btn.dataset.campaign, btn.dataset.creator)));
@@ -341,7 +363,7 @@ document.getElementById("clearSearchBtn").addEventListener("click", () => { QUER
 async function loadAll() {
   const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
-      .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
+      .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
     supabaseClient.from("creators").select("*").order("created_at", { ascending: false }),
     supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
@@ -438,8 +460,14 @@ async function approveTeamPick(campaignId, creatorId) {
   showToast("Invite sent to " + (rows[0].creators?.name || "the creator"), "success");
 }
 
-async function decideCampaign(id, next) {
-  const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
+async function decideCampaign(id, next, finalBudget) {
+  // Admin can adjust a brand's requested budget before a draft goes
+  // live -- the number that ends up live, and everything downstream of
+  // it (the team builder's allocatable pool, the platform fee shown
+  // everywhere), is whatever admin confirms here.
+  const patch = { status: next };
+  if (next === "open" && finalBudget) { patch.budget_min = finalBudget; patch.budget_max = finalBudget; }
+  const { error } = await supabaseClient.from("campaigns").update(patch).eq("id", id);
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next === "open" ? "Campaign approved — now live" : "Campaign declined", "success");

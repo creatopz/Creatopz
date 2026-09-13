@@ -112,12 +112,15 @@
       <form id="campaignForm">
         <div class="field"><label>Campaign title</label><input class="input" id="cTitle" placeholder="e.g. Night-routine series for a new serum" required></div>
         <div class="grid grid-2" style="gap:16px;">
-          <div class="field"><label>Budget (₹)</label><input class="input" id="cBudget" placeholder="14000" inputmode="numeric" required></div>
+          <div class="field"><label>Total budget (₹)</label><input class="input" id="cBudget" placeholder="14000" inputmode="numeric" required></div>
           <div class="field"><label>Applications close</label>
             <select class="input" id="cCloses">
               <option>In 3 days</option><option selected>In 7 days</option><option>In 14 days</option><option>In 30 days</option>
             </select>
           </div>
+        </div>
+        <div id="cFeeNote" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--ink-soft);">
+          Creatopz charges a 9% platform fee on your total budget. Enter a budget above to see the breakdown.
         </div>
         <div class="field"><label>Deliverables</label><input class="input" id="cDeliverables" placeholder="e.g. 2 reels + 3 stories, one revision" required></div>
         <div class="field">
@@ -164,6 +167,7 @@
     <div class="modal-body">
       <p class="body-sm" style="margin-bottom:18px;">Pick creators and how much of each you want, at their own per-piece rates. This is a plan for Creatopz admin to review — nobody is invited until admin approves it.</p>
 
+      <div id="teamFeeLine" class="caption" style="margin-bottom:10px;"></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
         <span class="caption" id="teamAllocatedLabel">Allocated ₹0 of ₹0</span>
         <span class="caption" style="font-weight:700;color:var(--accent-700);" id="teamRemainingLabel">₹0 remaining</span>
@@ -290,7 +294,7 @@ function renderApplicants() {
     host.innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No applicants for this brief yet</h3></div>`;
     return;
   }
-  host.innerHTML = `<div class="table-wrap"><table class="table"><thead><tr><th>Creator</th><th>Reach</th><th>Match</th><th>Decision</th></tr></thead><tbody>
+  host.innerHTML = `<div class="table-wrap"><table class="table"><thead><tr><th>Creator</th><th>Reach</th><th>Match</th><th>Rate card</th><th>Decision</th></tr></thead><tbody>
     ${APPLICANTS.map((a) => {
       const initials = (a.creator_name || "?").split(" ").map((w) => w[0]).join("");
       const reach = a.creator_followers >= 1000 ? Math.round(a.creator_followers / 1000) + "K" : String(a.creator_followers || 0);
@@ -299,6 +303,7 @@ function renderApplicants() {
         <td><a href="profile.html?id=${encodeURIComponent(a.creator_id)}" style="display:flex;align-items:center;gap:10px;font-weight:600;"><span class="avatar-fallback" style="width:32px;height:32px;font-size:12px;">${initials}</span>${escapeHtml(a.creator_name || "Creator")}</a><div class="caption" style="margin-left:42px;">${escapeHtml(a.creator_category || "—")}</div></td>
         <td>${reach}</td>
         <td>${match}</td>
+        <td class="caption" style="max-width:220px;">${rateCardSummary(a.creator_rate_card)}</td>
         <td><div style="display:flex;gap:8px;">
           <button class="btn btn-sm ${a.status === "shortlisted" ? "btn-accent" : "btn-outline"} shortlist-btn" data-id="${a.application_id}">${a.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist"}</button>
           <button class="btn btn-sm btn-ghost pass-btn" data-id="${a.application_id}">${a.status === "rejected" ? "Passed" : "Pass"}</button>
@@ -350,11 +355,24 @@ async function loadSavedCreators() {
   if (!BRAND) return;
   const { data, error } = await supabaseClient
     .from("brand_shortlists")
-    .select("id, created_at, creators(id, name, category, profile_image, rate_min, rate_max)")
+    .select("id, created_at, creator_id")
     .eq("brand_id", BRAND.id)
     .order("created_at", { ascending: false });
   if (error) { showToast("Couldn't load saved creators: " + friendlyAuthError(error), "error"); return; }
-  SAVED_CREATORS = data || [];
+  const rows = data || [];
+  // A brand can't SELECT another user's row straight from `creators`
+  // (owner-or-admin only) -- creators_for_team_builder is the view that
+  // grants a brand read access to a creator's public basics + rate card,
+  // so the join has to go through it in a second query instead of an
+  // embedded .select() against the base table (which would just come
+  // back null for every row here).
+  const creatorIds = [...new Set(rows.map((r) => r.creator_id))];
+  let creatorsById = {};
+  if (creatorIds.length) {
+    const { data: creators } = await supabaseClient.from("creators_for_team_builder").select("*").in("id", creatorIds);
+    (creators || []).forEach((c) => { creatorsById[c.id] = c; });
+  }
+  SAVED_CREATORS = rows.map((r) => ({ id: r.id, created_at: r.created_at, creators: creatorsById[r.creator_id] || null }));
   renderSavedCreators();
 }
 
@@ -368,7 +386,7 @@ function renderSavedCreators() {
     const c = s.creators;
     if (!c) return "";
     const initials = (c.name || "?").split(" ").map((w) => w[0]).join("");
-    const rate = c.rate_min || c.rate_max ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Rate not published";
+    const rate = rateCardSummary(c.rate_card);
     return `
     <div class="card card-pad">
       <div style="display:flex;align-items:center;gap:12px;">
@@ -429,7 +447,10 @@ async function loadTeamPicks(campaignId) {
 }
 
 function renderTeamModal() {
-  const budget = Number(TEAM_CAMPAIGN?.budget_min) || 0;
+  const totalBudget = Number(TEAM_CAMPAIGN?.budget_min) || 0;
+  const { fee, net: budget } = feeBreakdown(totalBudget);
+  document.getElementById("teamFeeLine").textContent =
+    `Total budget ₹${totalBudget.toLocaleString("en-IN")} · 9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${budget.toLocaleString("en-IN")} available to allocate`;
   let allocated = 0;
   const creatorIds = Object.keys(TEAM_CREATORS);
 
@@ -562,7 +583,7 @@ async function searchCreatorsForTeam(query) {
   }));
 }
 
-document.getElementById("postCampaignBtn").addEventListener("click", () => openModal("campaignModal"));
+document.getElementById("postCampaignBtn").addEventListener("click", () => { updateFeeNote(); openModal("campaignModal"); });
 function openCompanyModal() {
   document.getElementById("bName").value = BRAND?.company_name || "";
   document.getElementById("bIndustry").value = BRAND?.industry || "";
@@ -584,6 +605,19 @@ function renderNicheChips() {
   document.querySelectorAll("#cNicheChips [data-niche]").forEach((btn) => btn.addEventListener("click", () => { C_NICHE = btn.dataset.niche; renderNicheChips(); }));
 }
 renderNicheChips();
+
+function updateFeeNote() {
+  const raw = document.getElementById("cBudget").value;
+  const num = parseInt(String(raw).replace(/[^0-9]/g, ""), 10);
+  const note = document.getElementById("cFeeNote");
+  if (!num) {
+    note.textContent = "Creatopz charges a 9% platform fee on your total budget. Enter a budget above to see the breakdown.";
+    return;
+  }
+  const { fee, net } = feeBreakdown(num);
+  note.innerHTML = `Creatopz charges a <b>9% platform fee</b> on your total budget: <b>₹${fee.toLocaleString("en-IN")}</b>. You'll have <b>₹${net.toLocaleString("en-IN")}</b> left to run this campaign and select creators.`;
+}
+document.getElementById("cBudget").addEventListener("input", updateFeeNote);
 
 document.getElementById("campaignForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -610,6 +644,7 @@ document.getElementById("campaignForm").addEventListener("submit", async (e) => 
   await loadCampaigns();
   closeModal("campaignModal");
   e.target.reset();
+  updateFeeNote();
   showToast("Brief sent for admin review — it'll go live once approved", "success");
 });
 
