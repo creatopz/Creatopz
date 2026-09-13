@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_016` are already applied there.
+`supabase/migration_002` through `migration_017` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
 `008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` → `016` →
-(optionally) `seed.sql` for sample rows on a dev project only.
+`017` → (optionally) `seed.sql` for sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -190,12 +190,8 @@ from any page's navigation — leave it alone or delete it, your call.
     for hand-copying into the anonymized weekly community post -- no
     Instagram API integration exists or is planned; this is a
     copy-from-the-admin-panel workflow.
-  - **Known gap, not yet applied:** a creator's Creatopz Score only
-    shows correctly on their *own* profile view (which reads the base
-    `creators` table directly). Viewing another creator's public
-    profile reads the `creators_public` view instead, whose column
-    list predates `creatopz_score`/`ratings_count` and doesn't include
-    them yet -- so the score silently shows "--" there. Fixing this
-    needs `CREATE OR REPLACE VIEW creators_public` to add those two
-    columns; per this project's standing rule, that SQL is shown to
-    the project owner for a literal go-ahead before it's applied.
+  - `creators_public` (migration_017) gained `creatopz_score` and
+    `ratings_count` in its column list so the score also shows
+    correctly on a creator's *public* profile view, not just their own
+    (own-profile view reads the base `creators` table directly and
+    already had both columns from migration_016).
