@@ -40,7 +40,7 @@
 
 <div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#000;background:#fff;min-height:100vh;">
 
-  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
+  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1.5px solid #e3e0d9;">
     <nav class="dc-nav" style="max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:32px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
@@ -56,7 +56,7 @@
         <a href="messages.html" style="font-size:13px;color:#5C5C5C;">Messages<sc-if value="{{ unreadCount }}" hint-placeholder-val="{{ false }}"> ({{ unreadCount }})</sc-if></a>
         <span style="font-size:13px;color:#5C5C5C;">{{ creatorName }}</span>
         <div style="width:36px;height:36px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;">{{ creatorInitials }}</div>
-        <button onClick="{{ logout }}" style="background:none;border:2px solid #000;font-size:12.5px;font-weight:600;padding:8px 12px;cursor:pointer;">Log out</button>
+        <button onClick="{{ logout }}" style="background:none;border:1.5px solid #e3e0d9;font-size:12.5px;font-weight:600;padding:8px 12px;cursor:pointer;">Log out</button>
       </div>
     </nav>
   </header>
@@ -83,7 +83,7 @@
     <div style="position:relative;max-width:1280px;margin:32px auto 0;padding:0 32px;">
       <div style="display:flex;gap:0;border-bottom:1px solid #1e1e1e;overflow-x:auto;">
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
-          <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:2px solid {{ t.rule }};color:{{ t.fg }};font-size:14px;font-weight:600;padding:14px 20px;margin-bottom:-1px;white-space:nowrap;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }} <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:12px;color:#FF3300;">{{ t.count }}</span></button>
+          <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:1.5px solid {{ t.rule }};color:{{ t.fg }};font-size:14px;font-weight:600;padding:14px 20px;margin-bottom:-1px;white-space:nowrap;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }} <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:12px;color:#FF3300;">{{ t.count }}</span></button>
         </sc-for>
       </div>
     </div>
@@ -92,7 +92,7 @@
   <section style="max-width:1280px;margin:0 auto;padding:44px 32px 48px;">
     <sc-if value="{{ showApps }}" hint-placeholder-val="{{ true }}">
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:880px;">
-        <div style="display:grid;grid-template-columns:2fr 1.2fr .9fr .8fr .6fr;gap:16px;padding:0 20px 12px;border-bottom:2px solid #000;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;">
+        <div style="display:grid;grid-template-columns:2fr 1.2fr .9fr .8fr .6fr;gap:16px;padding:0 20px 12px;border-bottom:1.5px solid #e3e0d9;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;">
           <div>Campaign</div><div>Brand</div><div>Status</div><div>Applied</div><div></div>
         </div>
         <sc-for list="{{ apps }}" as="a" hint-placeholder-count="5">
@@ -102,9 +102,9 @@
               <div style="font-size:13px;color:#5C5C5C;margin-top:5px;">{{ a.deliverable }}</div>
             </div>
             <div style="font-size:14.5px;font-weight:600;">{{ a.brand }}</div>
-            <div><span style="display:inline-block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:2px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span></div>
+            <div><span style="display:inline-block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:1.5px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span></div>
             <div style="font-size:13.5px;color:#5C5C5C;">{{ a.applied }}</div>
-            <div style="text-align:right;"><a href="profile.html" style="font-size:13px;font-weight:700;border-bottom:2px solid #FF3300;">Open</a></div>
+            <div style="text-align:right;"><a href="profile.html" style="font-size:13px;font-weight:700;border-bottom:1.5px solid #FF3300;">Open</a></div>
           </div>
         </sc-for>
       </div></div>
@@ -114,7 +114,7 @@
     </sc-if>
 
     <sc-if value="{{ showBriefs }}" hint-placeholder-val="{{ false }}">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:2px;background:#E2DFD8;border:2px solid #000;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:16px;">
         <sc-for list="{{ briefs }}" as="b" hint-placeholder-count="3">
           <article style="background:#fff;padding:28px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ b.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#F6F4F1;transform:translateY(-4px)">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
@@ -131,17 +131,17 @@
               <div style="flex:1;height:6px;background:#EFEDE8;overflow:hidden;"><div style="height:100%;background:#FF3300;transform-origin:0 50%;transform:scaleX({{ b.match }});animation:ctzBarIn 1s cubic-bezier(.16,1,.3,1) .2s both;"></div></div>
               <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;">{{ b.matchLabel }}</span>
             </div>
-            <button onClick="{{ b.apply }}" style="width:100%;margin-top:20px;display:flex;align-items:center;justify-content:space-between;background:{{ b.ctaBg }};color:{{ b.ctaFg }};border:2px solid {{ b.ctaBg }};font-weight:700;font-size:14.5px;padding:14px 18px;cursor:pointer;transition:background .2s ease,color .2s ease;">{{ b.ctaLabel }}<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></button>
+            <button onClick="{{ b.apply }}" style="width:100%;margin-top:20px;display:flex;align-items:center;justify-content:space-between;background:{{ b.ctaBg }};color:{{ b.ctaFg }};border:1.5px solid {{ b.ctaBg }};font-weight:700;font-size:14.5px;padding:14px 18px;cursor:pointer;transition:background .2s ease,color .2s ease;">{{ b.ctaLabel }}<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></button>
           </article>
         </sc-for>
       </div>
       <sc-if value="{{ briefsEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="grid-column:1/-1;border:2px solid #000;padding:48px 28px;color:#5C5C5C;">No open briefs right now — check back soon.</div>
+        <div style="grid-column:1/-1;border:1.5px solid #e3e0d9;padding:48px 28px;color:#5C5C5C;">No open briefs right now — check back soon.</div>
       </sc-if>
     </sc-if>
 
     <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;">
+      <div style="border:1.5px solid #e3e0d9;">
         <sc-for list="{{ notes }}" as="n" hint-placeholder-count="4">
           <div style="display:flex;gap:18px;align-items:flex-start;padding:22px 24px;border-bottom:1px solid #E2DFD8;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ n.delay }} both;transition:background .25s ease,padding-left .25s ease;" style-hover="background:#F6F4F1;padding-left:30px">
             <span style="width:10px;height:10px;flex:0 0 10px;margin-top:6px;background:{{ n.dot }};"></span>

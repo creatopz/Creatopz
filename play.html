@@ -44,7 +44,7 @@
 
 <div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#000;">
 
-  <header style="position:sticky;top:0;z-index:120;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);border-bottom:2px solid #1e1e1e;">
+  <header style="position:sticky;top:0;z-index:120;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);border-bottom:1.5px solid #1e1e1e;">
     <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:34px;display:block;filter:invert(1);transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
@@ -56,7 +56,7 @@
         <a href="auth.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#fff">Log in</a>
         <a href="dashboard-creator.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);">Dashboard</a>
       </div>
-      <button onClick="{{ toggleSound }}" style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;padding:10px 18px;border:2px solid {{ soundBorder }};background:{{ soundBg }};color:{{ soundFg }};cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease;">
+      <button onClick="{{ toggleSound }}" style="display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;padding:10px 18px;border:1.5px solid {{ soundBorder }};background:{{ soundBg }};color:{{ soundFg }};cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease;">
         <span style="width:7px;height:7px;background:{{ soundDot }};display:inline-block;"></span>{{ soundLabel }}
       </button>
     </nav>
@@ -72,7 +72,7 @@
     </h1>
     <p style="color:#c9c9c9;font-size:18px;line-height:1.6;max-width:540px;margin:26px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .4s both;">Stamp ink, pluck strings, pop tiles. No score to chase, no timer — just texture and sound while you wait for your next brief.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;margin-top:44px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:44px;">
       <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Blots stamped</div><div ref="{{ statBlots }}" style="font-family:'Bricolage Grotesque',sans-serif;font-size:32px;margin-top:6px;">0</div></div>
       <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Strings plucked</div><div ref="{{ statPlucks }}" style="font-family:'Bricolage Grotesque',sans-serif;font-size:32px;margin-top:6px;">0</div></div>
       <div style="background:#000;padding:20px 22px;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Tiles popped</div><div ref="{{ statPops }}" style="font-family:'Bricolage Grotesque',sans-serif;font-size:32px;margin-top:6px;">0</div></div>
@@ -81,46 +81,46 @@
   </section>
 
   <section style="max-width:1180px;margin:0 auto;padding:0 32px 40px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:1.5px solid #fff;padding:22px 0 18px;">
       <div>
         <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 01</div>
         <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">Ink bloom</h2>
       </div>
       <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Press and drag across the slab. Every stamp blooms, thuds softly and dries away.</div>
     </div>
-    <div ref="{{ inkRef }}" style="position:relative;height:min(58vh,460px);background:#F3F2F2;border:2px solid #fff;overflow:hidden;cursor:crosshair;touch-action:none;">
+    <div ref="{{ inkRef }}" style="position:relative;height:min(58vh,460px);background:#F3F2F2;border:1.5px solid rgba(255,255,255,.28);overflow:hidden;cursor:crosshair;touch-action:none;">
       <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,0,0,.07) 1px, transparent 1px),linear-gradient(90deg, rgba(0,0,0,.07) 1px, transparent 1px);background-size:44px 44px;"></div>
       <div ref="{{ inkHintRef }}" style="position:absolute;left:28px;bottom:24px;font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(24px,4vw,44px);color:rgba(0,0,0,.16);pointer-events:none;transition:opacity .5s ease;">DRAG TO STAMP</div>
     </div>
   </section>
 
   <section style="max-width:1180px;margin:0 auto;padding:0 32px 40px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:1.5px solid #fff;padding:22px 0 18px;">
       <div>
         <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 02</div>
         <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">String rake</h2>
       </div>
       <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Sweep sideways through the strings. Each one you cross plucks a note and springs back.</div>
     </div>
-    <div ref="{{ harpRef }}" style="position:relative;height:min(46vh,340px);background:#0b0b0b;border:2px solid #1e1e1e;display:flex;align-items:stretch;justify-content:space-between;padding:0 14px;overflow:hidden;cursor:ew-resize;touch-action:none;"></div>
+    <div ref="{{ harpRef }}" style="position:relative;height:min(46vh,340px);background:#0b0b0b;border:1.5px solid #1e1e1e;display:flex;align-items:stretch;justify-content:space-between;padding:0 14px;overflow:hidden;cursor:ew-resize;touch-action:none;"></div>
   </section>
 
   <section style="max-width:1180px;margin:0 auto;padding:0 32px 80px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:2px solid #fff;padding:22px 0 18px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-top:1.5px solid #fff;padding:22px 0 18px;">
       <div>
         <div style="font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#FF3300;font-weight:700;">Toy 03</div>
         <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(26px,3vw,38px);margin:10px 0 0;line-height:1;">Pop grid</h2>
       </div>
       <div style="color:#9a9a9a;font-size:14.5px;max-width:420px;">Run your cursor over the field. Tiles pop, the pitch climbs with your combo, then they refill.</div>
     </div>
-    <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;touch-action:none;"></div>
+    <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:2px;background:#1e1e1e;border:1.5px solid #1e1e1e;touch-action:none;"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px;">
       <div ref="{{ comboRef }}" style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;color:#8a8a8a;">COMBO 0</div>
-      <button onClick="{{ resetStats }}" style="border:2px solid #333;background:transparent;color:#9a9a9a;font-size:13px;font-weight:600;padding:11px 18px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Reset my stats</button>
+      <button onClick="{{ resetStats }}" style="border:1.5px solid #333;background:transparent;color:#9a9a9a;font-size:13px;font-weight:600;padding:11px 18px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Reset my stats</button>
     </div>
   </section>
 
-  <div style="background:#FF3300;color:#fff;overflow:hidden;border-top:2px solid #000;border-bottom:2px solid #000;padding:13px 0;">
+  <div style="background:#FF3300;color:#fff;overflow:hidden;border-top:1.5px solid #e3e0d9;border-bottom:1.5px solid #e3e0d9;padding:13px 0;">
     <div style="display:flex;width:max-content;animation:ctzMarquee 24s linear infinite;">
       <div style="display:flex;align-items:center;gap:24px;padding-right:24px;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;letter-spacing:.08em;white-space:nowrap;"><span>BRIEFS DROP DAILY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>PLAY WHILE YOU WAIT</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>JOIN THE COMMUNITY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span></div>
       <div aria-hidden="true" style="display:flex;align-items:center;gap:24px;padding-right:24px;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;letter-spacing:.08em;white-space:nowrap;"><span>BRIEFS DROP DAILY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>PLAY WHILE YOU WAIT</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span><span>JOIN THE COMMUNITY</span><span style="width:7px;height:7px;background:#000;align-self:center;"></span></div>
@@ -131,7 +131,7 @@
     <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(30px,4vw,52px);line-height:1;margin:0;max-width:640px;">Done playing?<br><span style="color:#FF3300;">Go get the deal.</span></h2>
     <div style="display:flex;gap:14px;flex-wrap:wrap;">
       <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Join as a creator<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></a>
-      <a href="directory.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:600;font-size:15px;padding:13px 26px;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#fff;color:#000">Browse creators</a>
+      <a href="directory.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(255,255,255,.45);color:#fff;font-weight:600;font-size:15px;padding:13px 26px;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#fff;color:#000">Browse creators</a>
     </div>
   </section>
 
@@ -311,7 +311,7 @@ class Component extends DCLogic {
       const ring = document.createElement("span");
       ring.style.cssText =
         "position:absolute;left:" + x + "px;top:" + y + "px;width:" + size * 1.1 + "px;height:" + size * 1.1 +
-        "px;border:2px solid #FF3300;pointer-events:none;transform:translate(-50%,-50%) scale(.2);" +
+        "px;border:1.5px solid #FF3300;pointer-events:none;transform:translate(-50%,-50%) scale(.2);" +
         "animation:ctzRing .7s cubic-bezier(.16,1,.3,1) forwards;";
       stage.appendChild(ring);
       stage.appendChild(blot);

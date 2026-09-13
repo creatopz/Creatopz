@@ -40,7 +40,7 @@
 
 <div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#000;background:#fff;">
 
-  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
+  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1.5px solid #e3e0d9;">
     <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;">
         <img src="assets/logo.png" alt="Creatopz mark" style="height:32px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
@@ -52,7 +52,7 @@
         <a href="play.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Play</a>
       </div>
       <sc-if value="{{ isOwn }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ toggleEdit }}" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:2px solid #000;background:{{ editBg }};color:{{ editFg }};cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ editLabel }}</button>
+        <button onClick="{{ toggleEdit }}" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:1.5px solid #e3e0d9;background:{{ editBg }};color:{{ editFg }};cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ editLabel }}</button>
       </sc-if>
     </nav>
   </header>
@@ -86,11 +86,11 @@
       <sc-if value="{{ isPublicView }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .42s both;">
           <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></a>
-          <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
+          <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
         </div>
       </sc-if>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;margin-top:48px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:48px;">
         <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="5">
           <div style="background:#000;padding:20px 22px;transition:background .3s ease;" style-hover="background:#0d0d0d">
             <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">{{ m.label }}</div>
@@ -106,7 +106,7 @@
     </sc-if>
     <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
       <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;">
-        <div style="display:flex;border-bottom:2px solid #1e1e1e;flex-wrap:wrap;">
+        <div style="display:flex;border-bottom:1.5px solid #1e1e1e;flex-wrap:wrap;">
           <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
             <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:3px solid {{ t.rule }};color:{{ t.fg }};font-size:14.5px;font-weight:600;padding:16px 22px;margin-bottom:-2px;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }}</button>
           </sc-for>
@@ -120,11 +120,11 @@
       <div>
         <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:0 0 18px;">Brand collaborations</h3>
         <sc-if value="{{ collabsEmpty }}" hint-placeholder-val="{{ false }}">
-          <div style="border:2px solid #000;padding:48px 28px;color:#5C5C5C;">No past brand collaborations listed yet.</div>
+          <div style="border:1.5px solid #e3e0d9;padding:48px 28px;color:#5C5C5C;">No past brand collaborations listed yet.</div>
         </sc-if>
         <div style="display:flex;flex-wrap:wrap;gap:10px;">
           <sc-for list="{{ work }}" as="w" hint-placeholder-count="6">
-            <div style="border:2px solid #000;padding:14px 20px;font-weight:600;font-size:14.5px;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ w.delay }} both;">{{ w.title }}</div>
+            <div style="border:1.5px solid #e3e0d9;padding:14px 20px;font-weight:600;font-size:14.5px;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ w.delay }} both;">{{ w.title }}</div>
           </sc-for>
         </div>
       </div>
@@ -141,13 +141,13 @@
           </sc-if>
           <div style="display:flex;flex-wrap:wrap;gap:8px;">
             <sc-for list="{{ audienceCities }}" as="c" hint-placeholder-count="5">
-              <span style="border:2px solid #000;padding:8px 14px;font-size:13.5px;font-weight:600;">{{ c.label }}</span>
+              <span style="border:1.5px solid #e3e0d9;padding:8px 14px;font-size:13.5px;font-weight:600;">{{ c.label }}</span>
             </sc-for>
           </div>
         </div>
         <div>
           <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;margin:0 0 22px;">Audience gender split</h3>
-          <div style="display:flex;gap:2px;background:#E2DFD8;border:2px solid #000;">
+          <div style="display:flex;gap:12px;">
             <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin-top:6px;">{{ femalePct }}</div></div>
             <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin-top:6px;">{{ malePct }}</div></div>
           </div>
@@ -156,12 +156,12 @@
     </sc-if>
 
     <sc-if value="{{ showRates }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;padding:30px 28px;">
+      <div style="border:1.5px solid #e3e0d9;padding:30px 28px;">
         <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">Rate per collab</div>
         <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:44px;margin:14px 0 10px;line-height:1;">{{ rateLabel }}</div>
         <div style="font-size:14px;line-height:1.6;color:#5C5C5C;">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</div>
       </div>
-      <div style="border:2px solid #000;border-top:none;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
+      <div style="border:1.5px solid #e3e0d9;border-top:none;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
         <div style="font-size:14.5px;color:#5C5C5C;max-width:560px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</div>
         <a href="auth.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-weight:600;font-size:14.5px;padding:14px 24px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#FF3300">Request a quote<span style="font-family:'Bricolage Grotesque',sans-serif;">→</span></a>
       </div>
@@ -172,72 +172,72 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;">
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Avatar</label>
-            <input type="file" accept="image/*" onChange="{{ onAvatarFile }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;font-size:13.5px;">
+            <input type="file" accept="image/*" onChange="{{ onAvatarFile }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;font-size:13.5px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Full name *</label>
-            <input value="{{ fName }}" onInput="{{ onFName }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input value="{{ fName }}" onInput="{{ onFName }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Niche / category</label>
-            <input value="{{ fCategory }}" onInput="{{ onFCategory }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input value="{{ fCategory }}" onInput="{{ onFCategory }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Base city</label>
-            <input value="{{ fCity }}" onInput="{{ onFCity }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input value="{{ fCity }}" onInput="{{ onFCity }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram username <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private — admin + you only)</span></label>
-            <input value="{{ fUsername }}" onInput="{{ onFUsername }}" placeholder="@yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input value="{{ fUsername }}" onInput="{{ onFUsername }}" placeholder="@yourhandle" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram URL <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private)</span></label>
-            <input type="url" value="{{ fInstagramUrl }}" onInput="{{ onFInstagramUrl }}" placeholder="https://instagram.com/yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input type="url" value="{{ fInstagramUrl }}" onInput="{{ onFInstagramUrl }}" placeholder="https://instagram.com/yourhandle" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Follower count</label>
-            <input type="number" min="0" value="{{ fFollowers }}" onInput="{{ onFFollowers }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input type="number" min="0" value="{{ fFollowers }}" onInput="{{ onFFollowers }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Rate per collab (₹)</label>
-            <input type="number" min="0" value="{{ fRate }}" onInput="{{ onFRate }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input type="number" min="0" value="{{ fRate }}" onInput="{{ onFRate }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — female %</label>
-            <input type="number" min="0" max="100" value="{{ fFemalePct }}" onInput="{{ onFFemalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input type="number" min="0" max="100" value="{{ fFemalePct }}" onInput="{{ onFFemalePct }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
           <div>
             <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — male %</label>
-            <input type="number" min="0" max="100" value="{{ fMalePct }}" onInput="{{ onFMalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+            <input type="number" min="0" max="100" value="{{ fMalePct }}" onInput="{{ onFMalePct }}" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
           </div>
         </div>
 
         <div style="margin-top:24px;">
           <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience cities <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
-          <input value="{{ fAudienceCities }}" onInput="{{ onFAudienceCities }}" placeholder="Jodhpur, Jaipur, Delhi NCR" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          <input value="{{ fAudienceCities }}" onInput="{{ onFAudienceCities }}" placeholder="Jodhpur, Jaipur, Delhi NCR" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
         </div>
         <div style="margin-top:20px;">
           <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Brand collaborations <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
-          <input value="{{ fCollabs }}" onInput="{{ onFCollabs }}" placeholder="Marwar Skincare, Kaapi Kind" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
+          <input value="{{ fCollabs }}" onInput="{{ onFCollabs }}" placeholder="Marwar Skincare, Kaapi Kind" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;">
         </div>
         <div style="margin-top:20px;">
           <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Bio <span style="color:#8a8a8a;font-weight:400;text-transform:none;">({{ bioCount }}/150)</span></label>
-          <textarea value="{{ fBio }}" onInput="{{ onFBio }}" maxlength="150" rows="3" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;resize:vertical;"></textarea>
+          <textarea value="{{ fBio }}" onInput="{{ onFBio }}" maxlength="150" rows="3" style="width:100%;border:1.5px solid #DCD8D1;padding:12px;font-size:15px;resize:vertical;"></textarea>
         </div>
 
-        <div style="margin-top:30px;padding:24px;border:2px solid #000;">
+        <div style="margin-top:30px;padding:24px;border:1.5px solid #e3e0d9;">
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;margin-bottom:6px;">Engagement rate calculator</div>
           <p style="font-size:13px;color:#5C5C5C;margin:0 0 16px;">Enter your last 30 days on one typical post — the rate below is (likes + comments + shares + saves) ÷ reach.</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;">
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Likes</label><input type="number" min="0" value="{{ calcLikes }}" onInput="{{ onCalcLikes }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Comments</label><input type="number" min="0" value="{{ calcComments }}" onInput="{{ onCalcComments }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Shares</label><input type="number" min="0" value="{{ calcShares }}" onInput="{{ onCalcShares }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Saves</label><input type="number" min="0" value="{{ calcSaves }}" onInput="{{ onCalcSaves }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Reach</label><input type="number" min="0" value="{{ calcReach }}" onInput="{{ onCalcReach }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Likes</label><input type="number" min="0" value="{{ calcLikes }}" onInput="{{ onCalcLikes }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Comments</label><input type="number" min="0" value="{{ calcComments }}" onInput="{{ onCalcComments }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Shares</label><input type="number" min="0" value="{{ calcShares }}" onInput="{{ onCalcShares }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Saves</label><input type="number" min="0" value="{{ calcSaves }}" onInput="{{ onCalcSaves }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;"></div>
+            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Reach</label><input type="number" min="0" value="{{ calcReach }}" onInput="{{ onCalcReach }}" style="width:100%;border:1.5px solid #DCD8D1;padding:10px;"></div>
           </div>
           <div style="display:flex;align-items:center;gap:14px;margin-top:16px;">
             <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;">{{ calcRate }}</div>
-            <button type="button" onClick="{{ applyCalc }}" style="border:2px solid #000;background:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Use this as my engagement rate</button>
+            <button type="button" onClick="{{ applyCalc }}" style="border:1.5px solid #e3e0d9;background:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Use this as my engagement rate</button>
           </div>
         </div>
 
@@ -247,11 +247,11 @@
     </sc-if>
 
     <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-      <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:400;background:{{ toastBg }};color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;">{{ toast }}</div>
+      <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:400;background:{{ toastBg }};color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:1.5px solid #e3e0d9;">{{ toast }}</div>
     </sc-if>
   </section>
 
-  <footer style="border-top:2px solid #000;padding:36px 0 44px;">
+  <footer style="border-top:1.5px solid #e3e0d9;padding:36px 0 44px;">
     <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:#5C5C5C;font-size:13px;flex-wrap:wrap;gap:10px;">
       <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
     </div>

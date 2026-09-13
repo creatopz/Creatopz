@@ -87,6 +87,7 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:800;line-height:1.02;letter
    stay a modest rounded-rect so they don't blow up next to dense rows. */
 .auth-card .btn,
 .role-toggle + .submit-row .btn,
+.nav-cta .btn,
 .hero .btn,
 .btn-pill{
   border-radius:var(--radius-pill);padding-left:26px;padding-right:26px;

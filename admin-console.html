@@ -30,7 +30,7 @@
   @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
   @media (max-width:860px){
     .admin-root{display:block !important;}
-    .admin-aside{position:static !important;height:auto !important;border-right:none !important;border-bottom:2px solid #1e1e1e;padding:16px 0 !important;}
+    .admin-aside{position:static !important;height:auto !important;border-right:none !important;border-bottom:1.5px solid #1e1e1e;padding:16px 0 !important;}
     .admin-nav{flex-direction:row !important;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 12px !important;gap:2px;}
     .admin-nav-btn{border-left:none !important;border-bottom:3px solid transparent;white-space:nowrap;flex:0 0 auto;}
     .admin-sidebar-footer{display:none;}
@@ -48,7 +48,7 @@
 
 <div ref="{{ rootRef }}" class="admin-root" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0b0b;min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);">
 
-  <aside class="admin-aside" style="border-right:2px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
+  <aside class="admin-aside" style="border-right:1.5px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
     <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;padding:0 22px 22px;border-bottom:1px solid #1e1e1e;">
       <img src="assets/logo.png" alt="Creatopz mark" style="height:28px;display:block;filter:invert(1);">Creatopz<sup style="font-family:Inter,sans-serif;font-size:9px;">™</sup>
     </a>
@@ -72,7 +72,7 @@
         <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:24px;line-height:1;margin:6px 0 0;">{{ viewTitle }}</h1>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
-        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" class="admin-search" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:14px;padding:9px 0;min-width:200px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" class="admin-search" style="background:transparent;border:none;border-bottom:1.5px solid #333;color:#fff;font-size:14px;padding:9px 0;min-width:200px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
         <div style="width:32px;height:32px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;flex:0 0 auto;">CZ</div>
       </div>
     </header>
@@ -92,7 +92,7 @@
       <sc-if value="{{ isApps }}" hint-placeholder-val="{{ true }}">
         <div>
           <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">You're the middleman on every deal — full creator profile (Instagram included) and the brand's budget, side by side. Neither party sees the other's private details until you finalise a match.</p>
-          <div style="display:flex;flex-direction:column;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
             <sc-for list="{{ apps }}" as="a" hint-placeholder-count="5">
               <article style="background:#000;padding:22px 24px;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ a.delay }} both;">
                 <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;">
@@ -100,7 +100,7 @@
                     <div style="font-size:16.5px;font-weight:600;overflow-wrap:anywhere;">{{ a.campaign }}</div>
                     <div style="font-size:12.5px;color:#7d7d7d;margin-top:4px;">{{ a.brand }} · {{ a.applied }}</div>
                   </div>
-                  <span style="display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:2px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span>
+                  <span style="display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:1.5px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span>
                 </div>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid #1e1e1e;font-size:14px;">
                   <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Creator</div><div style="margin-top:5px;">{{ a.creator }}</div></div>
@@ -109,9 +109,9 @@
                   <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Brand's budget</div><div style="margin-top:5px;">{{ a.brandBudget }}</div></div>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;">
-                  <input value="{{ a.agreedBudget }}" onInput="{{ a.onAgreedBudget }}" placeholder="Agreed budget ₹" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:14px;padding:9px 0;width:170px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
-                  <button onClick="{{ a.approve }}" style="border:2px solid #FF3300;background:{{ a.approveBg }};color:#fff;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease;" style-hover="background:#FF3300">{{ a.approveLabel }}</button>
-                  <button onClick="{{ a.reject }}" style="border:2px solid #333;background:transparent;color:#9a9a9a;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Decline</button>
+                  <input value="{{ a.agreedBudget }}" onInput="{{ a.onAgreedBudget }}" placeholder="Agreed budget ₹" style="background:transparent;border:none;border-bottom:1.5px solid #333;color:#fff;font-size:14px;padding:9px 0;width:170px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
+                  <button onClick="{{ a.approve }}" style="border:1.5px solid #FF3300;background:{{ a.approveBg }};color:#fff;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease;" style-hover="background:#FF3300">{{ a.approveLabel }}</button>
+                  <button onClick="{{ a.reject }}" style="border:1.5px solid #333;background:transparent;color:#9a9a9a;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Decline</button>
                 </div>
               </article>
             </sc-for>
@@ -122,7 +122,7 @@
       <sc-if value="{{ isCreators }}" hint-placeholder-val="{{ false }}">
         <div>
           <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:880px;">
-          <div style="display:grid;grid-template-columns:1.3fr .9fr .9fr .7fr .7fr auto auto;gap:14px;padding:0 20px 12px;border-bottom:2px solid #fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">
+          <div style="display:grid;grid-template-columns:1.3fr .9fr .9fr .7fr .7fr auto auto;gap:14px;padding:0 20px 12px;border-bottom:1.5px solid #fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">
             <div>Name</div><div>Instagram</div><div>Niche</div><div>Reach</div><div>Public</div><div>Flag</div><div>Verify</div>
           </div>
           <sc-for list="{{ creators }}" as="c" hint-placeholder-count="6">
@@ -141,7 +141,7 @@
               <sc-if value="{{ c.flagged }}" hint-placeholder-val="{{ false }}">
                 <button onClick="{{ c.clearFlag }}" title="Auto-flagged: stats look implausible for the follower tier — hidden from the directory until cleared" style="font-size:11px;font-weight:700;color:#ffb199;border:1px solid #ffb199;background:none;padding:4px 8px;cursor:pointer;">⚠ Review</button>
               </sc-if>
-              <button onClick="{{ c.toggle }}" style="border:2px solid {{ c.vBorder }};background:{{ c.vBg }};color:{{ c.vFg }};font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ c.vLabel }}</button>
+              <button onClick="{{ c.toggle }}" style="border:1.5px solid {{ c.vBorder }};background:{{ c.vBg }};color:{{ c.vFg }};font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ c.vLabel }}</button>
             </div>
           </sc-for>
           </div></div>
@@ -149,12 +149,12 @@
       </sc-if>
 
       <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:16px;">
           <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
             <article style="background:#000;padding:26px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#121212;transform:translateY(-4px)">
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
                 <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">{{ c.brand }}</div>
-                <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:5px 9px;border:2px solid {{ c.pillBorder }};background:{{ c.pillBg }};color:{{ c.pillFg }};">{{ c.status }}</span>
+                <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:5px 9px;border:1.5px solid {{ c.pillBorder }};background:{{ c.pillBg }};color:{{ c.pillFg }};">{{ c.status }}</span>
               </div>
               <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:22px;line-height:1.08;margin:14px 0 12px;">{{ c.title }}</h3>
               <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;font-size:14px;">
@@ -166,12 +166,12 @@
               </div>
               <sc-if value="{{ c.isDraft }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;gap:8px;margin-top:16px;">
-                  <button onClick="{{ c.approve }}" style="flex:1;border:2px solid #FF3300;background:#FF3300;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e62e00">Approve</button>
-                  <button onClick="{{ c.decline }}" style="flex:1;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:border-color .2s ease;" style-hover="border-color:#fff">Decline</button>
+                  <button onClick="{{ c.approve }}" style="flex:1;border:1.5px solid #FF3300;background:#FF3300;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e62e00">Approve</button>
+                  <button onClick="{{ c.decline }}" style="flex:1;border:1.5px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:border-color .2s ease;" style-hover="border-color:#fff">Decline</button>
                 </div>
               </sc-if>
               <sc-if value="{{ c.isNotDraft }}" hint-placeholder-val="{{ true }}">
-                <button onClick="{{ c.toggleStatus }}" style="width:100%;margin-top:16px;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff">{{ c.toggleLabel }}</button>
+                <button onClick="{{ c.toggleStatus }}" style="width:100%;margin-top:16px;border:1.5px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff">{{ c.toggleLabel }}</button>
               </sc-if>
             </article>
           </sc-for>
@@ -181,7 +181,7 @@
       <sc-if value="{{ isGallery }}" hint-placeholder-val="{{ false }}">
         <div>
           <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">Toggle a tile to publish or hide it on the public gallery. Changes go live immediately.</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
             <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="8">
               <div style="background:#000;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ g.delay }} both;">
                 <div style="position:relative;aspect-ratio:1/1;background:#141414;display:flex;align-items:center;justify-content:center;overflow:hidden;">
@@ -190,7 +190,7 @@
                 </div>
                 <div style="padding:14px 16px;">
                   <div style="font-size:13.5px;color:#c9c9c9;line-height:1.45;min-height:38px;">{{ g.caption }}</div>
-                  <button onClick="{{ g.toggle }}" style="width:100%;margin-top:12px;border:2px solid {{ g.border }};background:{{ g.bg }};color:{{ g.fg }};font-size:12.5px;font-weight:700;padding:10px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ g.label }}</button>
+                  <button onClick="{{ g.toggle }}" style="width:100%;margin-top:12px;border:1.5px solid {{ g.border }};background:{{ g.bg }};color:{{ g.fg }};font-size:12.5px;font-weight:700;padding:10px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ g.label }}</button>
                 </div>
               </div>
             </sc-for>
@@ -199,14 +199,14 @@
       </sc-if>
 
       <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="border:2px solid #1e1e1e;padding:64px 28px;">
+        <div style="border:1.5px solid #1e1e1e;padding:64px 28px;">
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;margin-bottom:10px;">Nothing matches “{{ query }}”.</div>
-          <button onClick="{{ clearQuery }}" style="border:2px solid #fff;background:transparent;color:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Clear search</button>
+          <button onClick="{{ clearQuery }}" style="border:1.5px solid rgba(255,255,255,.28);background:transparent;color:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Clear search</button>
         </div>
       </sc-if>
 
       <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
-        <div class="admin-messages-grid" style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;min-height:520px;">
+        <div class="admin-messages-grid" style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:1.5px solid #1e1e1e;min-height:520px;">
           <div class="admin-convo-list" style="background:#000;overflow-y:auto;max-height:640px;">
             <sc-if value="{{ conversationsEmpty }}" hint-placeholder-val="{{ false }}">
               <div style="padding:24px;color:#7d7d7d;font-size:13.5px;">No conversations yet.</div>
@@ -248,7 +248,7 @@
   </main>
 
   <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:200;background:#FF3300;color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;animation:ctzToast 2.6s ease forwards;">{{ toast }}</div>
+    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:200;background:#FF3300;color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:1.5px solid #e3e0d9;animation:ctzToast 2.6s ease forwards;">{{ toast }}</div>
   </sc-if>
 </div>
 
