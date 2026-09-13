@@ -68,6 +68,8 @@
             <div id="todoList" style="margin-top:20px;display:flex;flex-direction:column;gap:2px;"></div>
           </div>
 
+          <div id="selectedBanner" style="display:none;margin-bottom:32px;"></div>
+
           <h3 style="margin-bottom:14px;">Recent applications</h3>
           <div id="recentApps"></div>
         </section>
@@ -111,6 +113,8 @@
     <button id="logoutBtnMobile" class="btn btn-white btn-block btn-lg">Log out</button>
   </div>
 </div>
+
+<canvas id="selectedBadgeCanvas" style="display:none;"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/supabase-client.js"></script>
@@ -189,6 +193,74 @@ function renderApplicationsTable() {
   host.querySelectorAll(".invite-decline-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, false)));
   recentHost.querySelectorAll(".invite-accept-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, true)));
   recentHost.querySelectorAll(".invite-decline-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, false)));
+  renderSelectedBanner();
+}
+
+// ===== "You're selected!" banner =====
+// Shows for the most recently accepted application. Dismissing it is
+// session-only (no new column/table for this) -- it comes back if the
+// creator revisits later, which is fine for a one-off congratulations
+// moment rather than a persistent to-do.
+let DISMISSED_SELECTED_ID = null;
+function renderSelectedBanner() {
+  const host = document.getElementById("selectedBanner");
+  const latest = APPS.find((a) => a.status === "accepted" && a.id !== DISMISSED_SELECTED_ID);
+  if (!latest) { host.style.display = "none"; host.innerHTML = ""; return; }
+  host.style.display = "block";
+  host.innerHTML = `
+    <div class="panel" style="padding:28px;background:var(--ink);color:#fff;position:relative;">
+      <button id="dismissSelectedBtn" aria-label="Dismiss" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer;line-height:1;">×</button>
+      <span class="eyebrow" style="color:var(--accent);">You're selected! 🎉</span>
+      <h2 style="margin-top:8px;color:#fff;">${escapeHtml(latest.campaigns?.title || "A new brief")}</h2>
+      <p class="body-sm" style="margin-top:6px;color:rgba(255,255,255,.75);">with ${escapeHtml(latest.campaigns?.brands?.company_name || "a brand")} — share the news.</p>
+      <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;">
+        <button class="btn btn-accent" id="downloadSelectedBtn">Download image →</button>
+        <button class="btn btn-outline on-dark" id="shareSelectedBtn" style="display:none;">Share to Instagram Story</button>
+      </div>
+    </div>`;
+  document.getElementById("dismissSelectedBtn").addEventListener("click", () => { DISMISSED_SELECTED_ID = latest.id; renderSelectedBanner(); });
+  const shareBtn = document.getElementById("shareSelectedBtn");
+  if (navigator.share && navigator.canShare) shareBtn.style.display = "inline-flex";
+
+  async function buildSelectedBadge() {
+    const canvas = document.getElementById("selectedBadgeCanvas");
+    await renderSelectedBadge(canvas, {
+      creatorName: CREATOR?.name || "Creator",
+      campaignTitle: latest.campaigns?.title,
+      brandName: latest.campaigns?.brands?.company_name,
+      niche: CREATOR?.category,
+    });
+    return canvas;
+  }
+
+  document.getElementById("downloadSelectedBtn").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    setButtonLoading(btn, true, "Preparing…");
+    const canvas = await buildSelectedBadge();
+    const link = document.createElement("a");
+    link.download = "creatopz-selected.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    setButtonLoading(btn, false);
+  });
+
+  shareBtn.addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    setButtonLoading(btn, true, "Preparing…");
+    try {
+      const canvas = await buildSelectedBadge();
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      const file = new File([blob], "creatopz-selected.png", { type: "image/png" });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "I'm selected on Creatopz!" });
+      } else {
+        showToast("Sharing images isn't supported here — try Download instead.", "info");
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") showToast("Couldn't open share sheet — try Download instead.", "error");
+    }
+    setButtonLoading(btn, false);
+  });
 }
 
 // A brand's invite lands as an application row with status='invited'.

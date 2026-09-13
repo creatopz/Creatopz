@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_017` are already applied there.
+`supabase/migration_002` through `migration_018` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
 `008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` → `016` →
-`017` → (optionally) `seed.sql` for sample rows on a dev project only.
+`017` → `018` → (optionally) `seed.sql` for sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -56,6 +56,7 @@ from any page's navigation — leave it alone or delete it, your call.
   and admin — nothing reaches a creator until admin approves a creator's
   picks into a real invite from admin-console.html's Campaigns tab.
 - `creator-onboarding.html` / `brand-onboarding.html` — profile builder forms (with a live completion meter on the creator side)
+- `spotlight.html` — public, no login: Creator of the Week + past features, reads `creator_spotlights_public`
 - `gallery.html`, `forgot-password.html`, `reset-password.html`, `terms.html`, `privacy.html`
 
 ## Security notes
@@ -202,3 +203,27 @@ from any page's navigation — leave it alone or delete it, your call.
     correctly on a creator's *public* profile view, not just their own
     (own-profile view reads the base `creators` table directly and
     already had both columns from migration_016).
+- Selected badge + Creator of the Week (migration_018), Phase 2 of the
+  retention/trust feature set -- additive only:
+  - The "Selected" share badge needs no schema at all -- it's pure UI
+    over an `accepted` `campaign_applications` row. dashboard-creator.html
+    shows a dismissible "You're selected!" banner (session-only dismiss,
+    no new column) with Download and, where the browser supports the
+    Web Share API with file sharing (`navigator.canShare({files})`),
+    Share buttons -- both render the same canvas card via
+    `renderSelectedBadge()` in js/utils.js. Being upfront: Share opens
+    the device's native share sheet, not a guaranteed one-tap Instagram
+    Stories deep link -- that needs a proprietary URL scheme Instagram
+    only partially documents and doesn't work consistently cross-browser.
+  - `creator_spotlights` (new table, admin-only via RLS) +
+    `creator_spotlights_public` (new view, published rows only, same
+    "safe view" pattern as `creators_public`/`campaigns_public`):
+    admin-console.html's new Spotlight tab lets admin pick a creator
+    (ranked by Creatopz Score/ratings as a starting suggestion, the
+    pick is always admin's), add an optional headline/stat, and
+    publish/unpublish/remove. `spotlight.html` (new, public, no login)
+    lists the current feature plus an archive of past ones; index.html
+    gained one new homepage section pulling this week's feature,
+    hidden entirely when nothing's published rather than showing an
+    empty placeholder. All existing public pages' nav gained one
+    "Spotlight" link each -- no other change to those pages.

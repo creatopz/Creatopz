@@ -31,6 +31,7 @@
       <a href="campaigns.html">Campaigns</a>
       <a href="index.html#how">How it works</a>
       <a href="gallery.html">Gallery</a>
+      <a href="spotlight.html">Spotlight</a>
     </div>
     <div class="nav-actions" id="authNav">
       <a href="auth.html" class="btn btn-outline btn-sm">Log in</a>
@@ -56,6 +57,7 @@
     <a href="campaigns.html">Campaigns</a>
     <a href="index.html#how">How it works</a>
     <a href="gallery.html">Gallery</a>
+    <a href="spotlight.html">Spotlight</a>
     <a href="dashboard-creator.html">Dashboard</a>
   </div>
   <div class="nav-drawer-actions" data-auth-sync>
@@ -172,6 +174,20 @@
   </div>
 </section>
 
+<!-- ============ CREATOR OF THE WEEK ============ -->
+<section class="section" id="spotlightSection" style="display:none;">
+  <div class="wrap">
+    <div class="section-head" data-reveal style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+      <div>
+        <span class="eyebrow">Creator of the Week</span>
+        <h2 style="margin-top:14px;">Featured on Creatopz right now</h2>
+      </div>
+      <a href="spotlight.html" class="btn btn-outline">See all features →</a>
+    </div>
+    <div id="homeSpotlight" style="margin-top:8px;"></div>
+  </div>
+</section>
+
 <!-- ============ COMMUNITY CTA ============ -->
 <section class="section section-tint">
   <div class="wrap split-grid">
@@ -255,9 +271,36 @@
     if (!campaignsRes.error) campaignsEl.textContent = (campaignsRes.count ?? 0).toLocaleString("en-IN");
   }
 
+  function initials(name) {
+    return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  }
+  async function loadHomeSpotlight() {
+    const { data, error } = await supabaseClient
+      .from("creator_spotlights_public")
+      .select("*")
+      .order("week_start", { ascending: false })
+      .limit(1);
+    if (error || !data || !data.length) return; // stays hidden -- no fake placeholder
+    const s = data[0];
+    const photo = s.profile_image
+      ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;height:260px;',textContent:'${initials(s.name)}'}))">`
+      : `<div class="cc-photo avatar-fallback" style="font-size:44px;height:260px;">${initials(s.name)}</div>`;
+    document.getElementById("homeSpotlight").innerHTML = `
+      <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" data-reveal style="text-decoration:none;color:inherit;max-width:360px;">
+        ${photo}
+        <div class="cc-body">
+          <div class="cc-name">${escapeHtml(s.name || "Creator")}</div>
+          <div class="cc-meta">${escapeHtml(s.category || "")}</div>
+          ${s.headline ? `<p class="body-sm" style="margin-top:8px;">${escapeHtml(s.headline)}</p>` : ""}
+        </div>
+      </a>`;
+    document.getElementById("spotlightSection").style.display = "block";
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     renderAuthNav("#authNav");
     loadTrustStripStats();
+    loadHomeSpotlight();
   });
 </script>
 </body>
