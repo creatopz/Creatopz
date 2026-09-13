@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_013` are already applied there.
+`supabase/migration_002` through `migration_014` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → `009` → `010` → `011` → `012` → `013` → (optionally) `seed.sql` for
-sample rows on a dev project only.
+`008` → `009` → `010` → `011` → `012` → `013` → `014` → (optionally)
+`seed.sql` for sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -130,3 +130,12 @@ from any page's navigation — leave it alone or delete it, your call.
   snapshot of exactly what was picked). That's also the first INSERT
   policy that lets admin create an application directly, for this
   purpose specifically.
+- creators.category is one shared value written from three different
+  pages -- auth.html's signup niche picker, creator-onboarding.html's
+  `#category` dropdown, and (as campaigns.niche, matched against it for
+  dashboard-creator.html's "match %") dashboard-brand.html's campaign
+  niche chips. All three keep the exact same option list on purpose: a
+  value from one that isn't also an option in another renders as no
+  option selected there, and re-saving that form would silently blank
+  or never-match a category a different page had set. Add a niche in
+  one place, add it in all three.

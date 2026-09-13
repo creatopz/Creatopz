@@ -481,7 +481,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 
   const { data: updated, error } = await supabaseClient.from("creators").update(patch).eq("user_id", SESSION.user.id).select().single();
   setButtonLoading(btn, false);
-  if (error) return (errorEl.textContent = error.message);
+  if (error) return (errorEl.textContent = friendlyAuthError(error));
   CREATOR = updated;
   toggleEdit();
   renderProfile();

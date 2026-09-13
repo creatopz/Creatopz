@@ -149,7 +149,11 @@
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
 <script>
-const NICHES = ["Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel", "Gaming", "Lifestyle"];
+// Must match creator-onboarding.html's #category <select> options exactly --
+// this picks a creator's category (they're the same column), and a value
+// here that isn't also one of onboarding's options renders as no option
+// selected there, so re-saving onboarding would silently blank it out.
+const NICHES = ["Fashion & Style", "Beauty", "Skincare", "Makeup", "Haircare", "Food", "Travel", "Fitness", "Tech", "Comedy", "Lifestyle", "Parenting", "Home & Decor", "Finance", "Gaming", "Other"];
 let mode = "login";
 let step = 1;
 let role = null;
@@ -286,14 +290,26 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   try {
     const { data, error } = await supabaseClient.auth.signUp({
       email, password: pass,
-      options: { data: { role, full_name: name }, emailRedirectTo: window.location.origin + "/auth.html" }
+      options: {
+        // The niche picked here is creators.category (a single value,
+        // same field directory.html filters by and profile.html's edit
+        // form calls "Niche / category") -- NOT content_types, which
+        // means content *format* (Reels/Stories/...) and is set on
+        // creator-onboarding.html instead. Multiple chips can be picked
+        // here but the schema only has room for one primary niche, so
+        // the first pick wins. Rides in user_metadata (not just this
+        // page's JS state) so it survives to first login even when
+        // email confirmation delays the session -- see ensureProfileRow().
+        data: { role, full_name: name, category: role === "creator" ? (selectedNiches[0] || null) : undefined },
+        emailRedirectTo: window.location.origin + "/auth.html",
+      },
     });
     if (error) throw error;
     const hasSession = !!data.session;
     if (hasSession) {
       await ensureProfileRow(data.user);
       if (role === "creator" && selectedNiches.length) {
-        await supabaseClient.from("creators").update({ content_types: selectedNiches, name }).eq("user_id", data.user.id);
+        await supabaseClient.from("creators").update({ category: selectedNiches[0], name }).eq("user_id", data.user.id);
       }
       if (role === "brand") {
         await supabaseClient.from("brands").update({ company_name: name }).eq("user_id", data.user.id);

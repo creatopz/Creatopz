@@ -71,7 +71,7 @@ document.getElementById("msgForm").addEventListener("submit", async (e) => {
   setButtonLoading(btn, true, "Sending…");
   const { error } = await supabaseClient.from("messages").insert({ conversation_id: CONVERSATION_ID, sender_id: SESSION.user.id, body });
   setButtonLoading(btn, false);
-  if (error) { document.getElementById("pageError").textContent = error.message; return; }
+  if (error) { document.getElementById("pageError").textContent = friendlyAuthError(error); return; }
   input.value = "";
   await loadMessages();
 });
@@ -87,7 +87,7 @@ async function boot() {
   let { data: convo } = await supabaseClient.from("conversations").select("*").eq("participant_id", SESSION.user.id).maybeSingle();
   if (!convo) {
     const { data: created, error } = await supabaseClient.from("conversations").insert({ participant_id: SESSION.user.id }).select().single();
-    if (error) { document.getElementById("pageError").textContent = "Couldn't start a conversation: " + error.message; return; }
+    if (error) { document.getElementById("pageError").textContent = "Couldn't start a conversation: " + friendlyAuthError(error); return; }
     convo = created;
   }
   CONVERSATION_ID = convo.id;

@@ -105,10 +105,17 @@ async function ensureProfileRow(user) {
     const table = profile.role === "brand" ? "brands" : "creators";
     const { data: existingSub } = await supabaseClient.from(table).select("id").eq("user_id", user.id).maybeSingle();
     if (!existingSub) {
+      // The niche picked during signup (auth.html step 3) lives in
+      // user_metadata.category, not just that page's own JS state,
+      // specifically so it survives here -- this is the only place a
+      // delayed-email-confirmation signup ever gets its creators row
+      // written, and without this it would create the row with no
+      // category and silently drop what the creator picked at signup.
+      const category = typeof user.user_metadata?.category === "string" ? user.user_metadata.category : null;
       await supabaseClient.from(table).insert(
         table === "brands"
           ? { user_id: user.id, company_name: profile.full_name || fullName }
-          : { user_id: user.id, name: profile.full_name || fullName }
+          : { user_id: user.id, name: profile.full_name || fullName, category }
       );
     }
   }
