@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="css/theme.css">
 <style>
   .auth-shell{ min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
-  .auth-aside{ background:var(--dark); color:#fff; padding:44px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; }
-  .auth-aside::before{ content:""; position:absolute; inset:-20% -20% auto auto; width:60%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, rgba(227,74,29,.25), transparent 70%); }
+  .auth-aside{ background:var(--surface-2); color:var(--ink); padding:44px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; border-right:1px solid var(--border); }
+  .auth-aside::before{ content:""; position:absolute; inset:-20% -20% auto auto; width:60%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, var(--accent-soft), transparent 70%); }
   .auth-main{ display:flex; align-items:center; justify-content:center; padding:44px; }
   .auth-form-wrap{ width:100%; max-width:420px; }
   @media (max-width:860px){
@@ -26,16 +26,16 @@
 
 <div class="auth-shell">
   <aside class="auth-aside">
-    <a href="index.html" class="brand" style="color:#fff;position:relative;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></a>
+    <a href="index.html" class="brand" style="position:relative;"><img src="assets/logo.png" alt="">Creatopz<sup>™</sup></a>
     <div style="position:relative;">
-      <h1 style="color:#fff;font-size:clamp(32px,4.4vw,48px);">One profile.<br><span style="color:var(--accent);">Every brief.</span></h1>
+      <h1 style="font-size:clamp(32px,4.4vw,48px);">One profile.<br>Every brief.</h1>
       <div class="auth-perks" style="margin-top:30px;">
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--dark-border);font-size:15px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>Vetted before you're listed</div>
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--dark-border);font-size:15px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>Briefs land in your dashboard, daily</div>
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:15px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>No cold DMs, ever</div>
+        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>Vetted before you're listed</div>
+        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>Briefs land in your dashboard, daily</div>
+        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>No cold DMs, ever</div>
       </div>
     </div>
-    <div class="eyebrow on-dark" style="position:relative;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Beta cohort forming · Jodhpur</div>
+    <div class="eyebrow" style="position:relative;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Beta cohort forming · Jodhpur</div>
   </aside>
 
   <main class="auth-main">

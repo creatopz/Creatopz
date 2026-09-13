@@ -97,17 +97,15 @@
   </div>
 </section>
 
-<div style="background:var(--dark);color:#fff;overflow:hidden;padding:14px 0;margin-top:64px;">
-  <div style="display:flex;width:max-content;animation:ctzMarquee 28s linear infinite;">
-    <div style="display:flex;gap:26px;padding-right:26px;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:.04em;white-space:nowrap;text-transform:uppercase;">
-      <span>Real briefs</span><span style="color:var(--accent);">✦</span><span>Real budgets</span><span style="color:var(--accent);">✦</span><span>No cold DMs</span><span style="color:var(--accent);">✦</span><span>Vetted creators</span><span style="color:var(--accent);">✦</span><span>Beauty</span><span style="color:var(--accent);">✦</span><span>Fitness</span><span style="color:var(--accent);">✦</span><span>Food</span><span style="color:var(--accent);">✦</span>
-    </div>
-    <div aria-hidden="true" style="display:flex;gap:26px;padding-right:26px;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:.04em;white-space:nowrap;text-transform:uppercase;">
-      <span>Real briefs</span><span style="color:var(--accent);">✦</span><span>Real budgets</span><span style="color:var(--accent);">✦</span><span>No cold DMs</span><span style="color:var(--accent);">✦</span><span>Vetted creators</span><span style="color:var(--accent);">✦</span><span>Beauty</span><span style="color:var(--accent);">✦</span><span>Fitness</span><span style="color:var(--accent);">✦</span><span>Food</span><span style="color:var(--accent);">✦</span>
-    </div>
+<!-- ============ TRUST STRIP ============ -->
+<section style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);">
+  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;padding-block:22px;">
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">1,200+</span><span class="body-sm">creator profiles</span></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">340+</span><span class="body-sm">campaigns run</span></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">Beauty · Fitness · Food</span><span class="body-sm">priority niches</span></div>
+    <div style="display:flex;align-items:center;gap:10px;"><span class="font-display" style="font-size:22px;">0</span><span class="body-sm">cold DMs required</span></div>
   </div>
-</div>
-<style>@keyframes ctzMarquee{from{transform:translate3d(0,0,0);}to{transform:translate3d(-50%,0,0);}}</style>
+</section>
 
 <!-- ============ PLATFORM (two sides) ============ -->
 <section class="section" id="platform">
@@ -118,27 +116,27 @@
       <p class="lede" style="margin-top:14px;">No more scattered DMs and screenshots. Creators build a real profile once — brands post exactly what they need, once.</p>
     </div>
     <div class="grid grid-2">
-      <div class="card card-pad card-hover" data-reveal id="creators" style="display:flex;flex-direction:column;">
-        <span class="badge badge-accent" style="align-self:flex-start;margin-bottom:18px;">For creators</span>
+      <div class="card card-pad card-hover" data-reveal id="creators" style="display:flex;flex-direction:column;border-top:4px solid var(--ink);">
+        <span class="badge badge-dark" style="align-self:flex-start;margin-bottom:18px;">For creators</span>
         <h3 style="font-size:26px;margin-bottom:14px;">Your work, your rates, your reputation — one profile.</h3>
         <p class="body-sm" style="margin-bottom:22px;">Set up your media kit once and let it do the talking every time a brand comes looking.</p>
         <ul style="list-style:none;margin:0 0 24px;padding:0;display:flex;flex-direction:column;gap:0;">
-          <li style="padding:14px 0;border-top:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent);">—</span>List your following across Instagram, YouTube &amp; more</li>
-          <li style="padding:14px 0;border-top:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent);">—</span>Show past collabs and content samples</li>
-          <li style="padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent);">—</span>Get discovered — or apply straight to open briefs</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--ink);">↳</span>List your following across Instagram, YouTube &amp; more</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--ink);">↳</span>Show past collabs and content samples</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--ink);">↳</span>Get discovered — or apply straight to open briefs</li>
         </ul>
         <a href="auth.html?mode=signup&role=creator" class="btn btn-primary" style="margin-top:auto;align-self:flex-start;">Join as a creator</a>
       </div>
-      <div class="card card-pad card-hover" data-reveal id="brands" style="display:flex;flex-direction:column;background:var(--dark);color:#fff;border-color:var(--dark-border);">
-        <span class="badge" style="align-self:flex-start;margin-bottom:18px;background:rgba(255,255,255,.1);color:#fff;">For brands</span>
-        <h3 style="font-size:26px;margin-bottom:14px;color:#fff;">Post the brief. Pick the creator. Skip the back-and-forth.</h3>
-        <p class="body-sm" style="margin-bottom:22px;color:var(--on-dark-soft);">Every creator is checked before they're listed, so you're choosing from people who can actually deliver.</p>
+      <div class="card card-pad card-hover" data-reveal id="brands" style="display:flex;flex-direction:column;border-top:4px solid var(--accent);background:var(--accent-soft);">
+        <span class="badge badge-accent" style="align-self:flex-start;margin-bottom:18px;">For brands</span>
+        <h3 style="font-size:26px;margin-bottom:14px;">Post the brief. Pick the creator. Skip the back-and-forth.</h3>
+        <p class="body-sm" style="margin-bottom:22px;">Every creator is checked before they're listed, so you're choosing from people who can actually deliver.</p>
         <ul style="list-style:none;margin:0 0 24px;padding:0;">
-          <li style="padding:14px 0;border-top:1px solid var(--dark-border);display:flex;gap:10px;font-size:14.5px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>Post a brief with budget &amp; deliverables</li>
-          <li style="padding:14px 0;border-top:1px solid var(--dark-border);display:flex;gap:10px;font-size:14.5px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>Filter by niche, following size &amp; location</li>
-          <li style="padding:14px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);display:flex;gap:10px;font-size:14.5px;color:var(--on-dark-soft);"><span style="color:var(--accent);">—</span>Review applicants and let Creatopz close the loop</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border-strong);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent-700);">↳</span>Post a brief with budget &amp; deliverables</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border-strong);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent-700);">↳</span>Filter by niche, following size &amp; location</li>
+          <li style="padding:14px 0;border-top:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);display:flex;gap:10px;font-size:14.5px;"><span style="color:var(--accent-700);">↳</span>Review applicants and let Creatopz close the loop</li>
         </ul>
-        <a href="auth.html?mode=signup&role=brand" class="btn btn-white" style="margin-top:auto;align-self:flex-start;">Post a campaign</a>
+        <a href="auth.html?mode=signup&role=brand" class="btn btn-accent" style="margin-top:auto;align-self:flex-start;">Post a campaign</a>
       </div>
     </div>
   </div>
@@ -172,29 +170,31 @@
 </section>
 
 <!-- ============ COMMUNITY CTA ============ -->
-<section class="section" style="background:var(--accent);color:#fff;">
+<section class="section section-tint">
   <div class="wrap" style="display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;">
     <div data-reveal>
-      <span class="eyebrow" style="color:#ffe0d3;">The community</span>
-      <h2 style="margin-top:14px;color:#fff;">Collabs land here first — before they're anywhere else.</h2>
-      <p style="margin:18px 0 28px;color:#ffe0d3;font-size:17px;max-width:480px;">Join the Creatopz community for daily updates on new briefs and what brands are actually looking for right now.</p>
-      <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20join%20the%20community" target="_blank" rel="noopener" class="btn btn-white btn-lg">Join the community →</a>
+      <span class="eyebrow">The community</span>
+      <h2 style="margin-top:14px;">Collabs land here first — before they're anywhere else.</h2>
+      <p class="lede" style="margin:18px 0 28px;max-width:480px;">Join the Creatopz community for daily updates on new briefs and what brands are actually looking for right now.</p>
+      <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20join%20the%20community" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Join the community →</a>
     </div>
-    <div class="card" data-reveal style="background:rgba(0,0,0,.15);border-color:rgba(255,255,255,.3);padding:8px 24px;">
-      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.2);font-size:14.5px;"><span style="color:#ffe0d3;">Status</span><b>Cohort forming</b></div>
-      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.2);font-size:14.5px;"><span style="color:#ffe0d3;">Priority niches</span><b>Beauty, Fitness, Food</b></div>
-      <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:14.5px;"><span style="color:#ffe0d3;">How we reply</span><b>Directly, on WhatsApp</b></div>
+    <div class="card card-pad" data-reveal>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:14.5px;"><span class="text-muted">Status</span><b>Cohort forming</b></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:14.5px;"><span class="text-muted">Priority niches</span><b>Beauty, Fitness, Food</b></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:14.5px;"><span class="text-muted">How we reply</span><b>Directly, in your dashboard</b></div>
     </div>
   </div>
 </section>
 
 <!-- ============ FINAL CTA ============ -->
-<section class="section-dark section" style="padding-bottom:80px;">
-  <div class="wrap" style="display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;">
-    <h2 data-reveal style="color:#fff;max-width:640px;">The collab economy needed a front door.<br><span style="color:var(--accent);">This is it.</span></h2>
-    <div data-reveal style="display:flex;gap:14px;flex-wrap:wrap;">
-      <a href="auth.html?mode=signup&role=creator" class="btn btn-accent btn-lg">Join as Creator</a>
-      <a href="auth.html?mode=signup&role=brand" class="btn btn-outline on-dark btn-lg">I'm a Brand</a>
+<section class="section" style="padding-bottom:100px;">
+  <div class="wrap">
+    <div class="panel" style="padding:56px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;background:var(--ink);border-color:var(--ink);">
+      <h2 data-reveal style="color:#fff;max-width:600px;">The collab economy needed a front door. This is it.</h2>
+      <div data-reveal style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="auth.html?mode=signup&role=creator" class="btn btn-white btn-lg">Join as Creator</a>
+        <a href="auth.html?mode=signup&role=brand" class="btn btn-outline on-dark btn-lg">I'm a Brand</a>
+      </div>
     </div>
   </div>
 </section>
@@ -202,8 +202,8 @@
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
-      <a href="index.html" class="brand" style="color:#fff;">
-        <img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup>
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="">Creatopz<sup>™</sup>
       </a>
       <div style="display:flex;gap:56px;flex-wrap:wrap;">
         <div>

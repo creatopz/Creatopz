@@ -50,19 +50,12 @@ function initScrollReveal() {
 }
 
 // ---------- Hero / above-fold entrance ----------
-// Elements with data-enter animate immediately on load, staggered in DOM order.
-function initEnterAnimation() {
-  const els = document.querySelectorAll("[data-enter]");
-  if (!els.length) return;
-  if (PREFERS_REDUCED_MOTION) {
-    els.forEach((el) => el.classList.add("is-visible"));
-    return;
-  }
-  els.forEach((el, i) => {
-    el.style.transitionDelay = i * 100 + "ms";
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => el.classList.add("is-visible"));
-    });
+// Elements with data-enter fade in via a pure CSS keyframe animation
+// (see [data-enter] in theme.css) — no JS involved, so hero content can
+// never end up stuck invisible. This just staggers them in DOM order.
+function initEnterStagger() {
+  document.querySelectorAll("[data-enter]").forEach((el, i) => {
+    el.style.animationDelay = i * 100 + "ms";
   });
 }
 
@@ -135,5 +128,6 @@ function staggerInGrid(gridSelector, itemSelector) {
 
 document.addEventListener("DOMContentLoaded", () => {
   initScrollReveal();
+  initEnterStagger();
   initScrollProgress();
 });
