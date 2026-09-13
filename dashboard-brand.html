@@ -191,6 +191,73 @@
   </div>
 </div>
 
+<!-- Rejection feedback modal -->
+<div class="modal-backdrop" id="feedbackModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><span class="eyebrow">Before you pass</span><h2 style="margin-top:8px;">Quick feedback for the creator</h2></div>
+      <button class="modal-close" data-modal-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="body-sm" style="margin-bottom:18px;">Three quick picks — this is the only thing the creator sees about why they weren't chosen, so it genuinely helps them.</p>
+      <form id="feedbackForm">
+        <div class="field">
+          <label>Content format</label>
+          <select class="input" id="fbFormat" required>
+            <option value="">Select…</option>
+            <option>Wanted shorter/vertical format</option>
+            <option>Wanted different content style</option>
+            <option>Good fit, just not selected this time</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Niche fit</label>
+          <select class="input" id="fbNiche" required>
+            <option value="">Select…</option>
+            <option>Strong niche match</option>
+            <option>Off-niche for this brief</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Reach fit</label>
+          <select class="input" id="fbReach" required>
+            <option value="">Select…</option>
+            <option>Reach was right</option>
+            <option>Wanted larger reach</option>
+            <option>Wanted smaller/more niche reach</option>
+          </select>
+        </div>
+        <div class="field"><label>Anything specific to improve? <span class="hint">(optional)</span></label><input class="input" id="fbNote" maxlength="200"></div>
+        <div class="error-text" id="fbError" style="min-height:20px;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:12px;">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-accent btn-block" id="fbSubmit">Send feedback & pass</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Rate & complete modal -->
+<div class="modal-backdrop" id="rateModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><span class="eyebrow">Creatopz Score</span><h2 style="margin-top:8px;" id="rateModalTitle">Rate this collab</h2></div>
+      <button class="modal-close" data-modal-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="body-sm" style="margin-bottom:18px;">Rate 1 (poor) to 5 (excellent) — this feeds their portable Creatopz Score.</p>
+      <form id="rateForm">
+        <div class="field"><label>Delivery / timeliness</label><select class="input" id="rDelivery" required><option value="">Select…</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+        <div class="field"><label>Communication</label><select class="input" id="rCommunication" required><option value="">Select…</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+        <div class="field"><label>Content quality</label><select class="input" id="rQuality" required><option value="">Select…</option><option value="1">1 — Poor</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 — Excellent</option></select></div>
+        <div class="error-text" id="rError" style="min-height:20px;margin-bottom:10px;"></div>
+        <button type="submit" class="btn btn-accent btn-block" id="rSubmit">Submit rating</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/utils.js"></script>
@@ -304,15 +371,20 @@ function renderApplicants() {
         <td>${reach}</td>
         <td>${match}</td>
         <td class="caption" style="max-width:220px;">${rateCardSummary(a.creator_rate_card)}</td>
-        <td><div style="display:flex;gap:8px;">
-          <button class="btn btn-sm ${a.status === "shortlisted" ? "btn-accent" : "btn-outline"} shortlist-btn" data-id="${a.application_id}">${a.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist"}</button>
-          <button class="btn btn-sm btn-ghost pass-btn" data-id="${a.application_id}">${a.status === "rejected" ? "Passed" : "Pass"}</button>
+        <td><div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${a.status === "completed"
+            ? RATED_APPLICATION_IDS.has(a.application_id)
+              ? `<button class="btn btn-sm btn-outline" disabled>Rated ✓</button>`
+              : `<button class="btn btn-sm btn-accent rate-btn" data-id="${a.application_id}" data-creator="${escapeHtml(a.creator_name || "Creator")}">Rate this collab</button>`
+            : `<button class="btn btn-sm ${a.status === "shortlisted" ? "btn-accent" : "btn-outline"} shortlist-btn" data-id="${a.application_id}">${a.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist"}</button>
+               <button class="btn btn-sm btn-ghost pass-btn" data-id="${a.application_id}">${a.status === "rejected" ? "Passed" : "Pass"}</button>`}
         </div></td>
       </tr>`;
     }).join("")}
   </tbody></table></div>`;
   host.querySelectorAll(".shortlist-btn").forEach((btn) => btn.addEventListener("click", () => decide(btn.dataset.id, "shortlisted")));
-  host.querySelectorAll(".pass-btn").forEach((btn) => btn.addEventListener("click", () => decide(btn.dataset.id, "rejected")));
+  host.querySelectorAll(".pass-btn").forEach((btn) => btn.addEventListener("click", () => openFeedbackModal(btn.dataset.id)));
+  host.querySelectorAll(".rate-btn").forEach((btn) => btn.addEventListener("click", () => openRateModal(btn.dataset.id, btn.dataset.creator)));
 }
 
 async function decide(applicationId, status) {
@@ -321,6 +393,76 @@ async function decide(applicationId, status) {
   await loadApplicants(SELECTED_CAMPAIGN_ID);
   showToast(status === "shortlisted" ? "Shortlisted — Creatopz will set up the intro" : "Applicant passed", "success");
 }
+
+// ===== Rejection feedback =====
+let PENDING_FEEDBACK_APP_ID = null;
+function openFeedbackModal(applicationId) {
+  PENDING_FEEDBACK_APP_ID = applicationId;
+  document.getElementById("feedbackForm").reset();
+  document.getElementById("fbError").textContent = "";
+  openModal("feedbackModal");
+}
+document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("fbError");
+  const format = document.getElementById("fbFormat").value;
+  const niche = document.getElementById("fbNiche").value;
+  const reach = document.getElementById("fbReach").value;
+  const note = document.getElementById("fbNote").value.trim();
+  if (!format || !niche || !reach) { errorEl.textContent = "Pick all three before sending."; return; }
+  const btn = document.getElementById("fbSubmit");
+  setButtonLoading(btn, true, "Sending…");
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const { error: fbError } = await supabaseClient.from("application_feedback").insert({
+    application_id: PENDING_FEEDBACK_APP_ID,
+    content_format_fit: format, niche_fit: niche, reach_fit: reach,
+    note: note || null, created_by: sessionData.session.user.id,
+  });
+  if (fbError) {
+    setButtonLoading(btn, false);
+    errorEl.textContent = friendlyAuthError(fbError);
+    return;
+  }
+  const { error: statusError } = await supabaseClient.from("campaign_applications").update({ status: "rejected" }).eq("id", PENDING_FEEDBACK_APP_ID);
+  setButtonLoading(btn, false);
+  if (statusError) { errorEl.textContent = friendlyAuthError(statusError); return; }
+  closeModal("feedbackModal");
+  await loadApplicants(SELECTED_CAMPAIGN_ID);
+  showToast("Feedback sent — applicant passed", "success");
+});
+
+// ===== Rate & complete =====
+let PENDING_RATE_APP_ID = null;
+const RATED_APPLICATION_IDS = new Set();
+function openRateModal(applicationId, creatorName) {
+  PENDING_RATE_APP_ID = applicationId;
+  document.getElementById("rateModalTitle").textContent = "Rate " + creatorName;
+  document.getElementById("rateForm").reset();
+  document.getElementById("rError").textContent = "";
+  openModal("rateModal");
+}
+document.getElementById("rateForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("rError");
+  const delivery = document.getElementById("rDelivery").value;
+  const communication = document.getElementById("rCommunication").value;
+  const quality = document.getElementById("rQuality").value;
+  if (!delivery || !communication || !quality) { errorEl.textContent = "Rate all three."; return; }
+  const applicant = APPLICANTS.find((a) => a.application_id === PENDING_RATE_APP_ID);
+  if (!applicant) { errorEl.textContent = "Couldn't find this application — refresh and try again."; return; }
+  const btn = document.getElementById("rSubmit");
+  setButtonLoading(btn, true, "Saving…");
+  const { error } = await supabaseClient.from("creator_ratings").insert({
+    application_id: PENDING_RATE_APP_ID, creator_id: applicant.creator_id, brand_id: BRAND.id,
+    delivery_score: Number(delivery), communication_score: Number(communication), content_quality_score: Number(quality),
+  });
+  setButtonLoading(btn, false);
+  if (error) { errorEl.textContent = friendlyAuthError(error); return; }
+  RATED_APPLICATION_IDS.add(PENDING_RATE_APP_ID);
+  closeModal("rateModal");
+  renderApplicants();
+  showToast("Rating saved — thanks!", "success");
+});
 
 async function loadApplicants(campaignId) {
   if (!campaignId) { APPLICANTS = []; renderApplicants(); return; }

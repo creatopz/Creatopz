@@ -71,6 +71,13 @@
 
         <section id="view-apps">
           <p class="body-sm" style="max-width:680px;margin-bottom:20px;color:var(--on-dark-soft);">You're the middleman on every deal — full creator profile (Instagram included) and the brand's budget, side by side. Neither party sees the other's private details until you finalise a match.</p>
+          <div class="admin-card" style="margin-bottom:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+              <b style="color:#fff;font-size:15px;">Feedback trends — last 7 days</b>
+              <span class="caption">Raw counts, for the anonymized weekly post — no auto-posting, copy these by hand.</span>
+            </div>
+            <div id="feedbackTrends" class="grid grid-3" style="margin-top:14px;gap:14px;"></div>
+          </div>
           <div id="appsList" style="display:flex;flex-direction:column;gap:12px;"></div>
         </section>
 
@@ -195,15 +202,23 @@ function renderApps() {
         : ""}
       ${a.status === "invited"
         ? `<div class="caption" style="margin-top:16px;">Brand invited this creator — waiting on their response, nothing for admin to do yet.</div>`
+        : a.status === "completed"
+        ? `<div class="caption" style="margin-top:16px;">Marked completed — the brand can now rate this collab.</div>`
+        : a.status === "accepted"
+        ? `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
+        <span class="badge badge-accent">Matched ✓</span>
+        <button class="btn btn-sm btn-accent complete-btn" data-id="${a.id}">Mark completed</button>
+      </div>`
         : `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
         <input class="admin-input agreed-input" data-id="${a.id}" placeholder="Agreed budget ₹" value="${escapeHtml(AGREED_DRAFTS[a.id] ?? (a.agreed_budget || ""))}" style="width:170px;">
-        <button class="btn btn-sm ${a.status === "accepted" ? "btn-accent" : "admin-btn-out"} approve-btn" data-id="${a.id}">${a.status === "accepted" ? "Matched ✓" : "Finalise match"}</button>
+        <button class="btn btn-sm admin-btn-out approve-btn" data-id="${a.id}">Finalise match</button>
         <button class="btn btn-sm admin-btn-out reject-btn" data-id="${a.id}">Decline</button>
       </div>`}
     </article>`).join("");
   host.querySelectorAll(".agreed-input").forEach((el) => el.addEventListener("input", () => { AGREED_DRAFTS[el.dataset.id] = el.value; }));
   host.querySelectorAll(".approve-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "accepted")));
   host.querySelectorAll(".reject-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "rejected")));
+  host.querySelectorAll(".complete-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "completed")));
 }
 
 function renderCreators() {
@@ -361,7 +376,8 @@ document.getElementById("searchInput").addEventListener("input", (e) => { QUERY 
 document.getElementById("clearSearchBtn").addEventListener("click", () => { QUERY = ""; document.getElementById("searchInput").value = ""; renderAll(); });
 
 async function loadAll() {
-  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes] = await Promise.all([
+  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
       .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
@@ -369,6 +385,7 @@ async function loadAll() {
     supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
     supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true }),
     supabaseClient.from("campaign_team_picks").select("*, creators(id,name)").order("created_at", { ascending: true }),
+    supabaseClient.from("application_feedback").select("content_format_fit, niche_fit, reach_fit, created_at").gte("created_at", sevenDaysAgo),
   ]);
   APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
   TEAM_PICKS = teamPicksRes.data || [];
@@ -378,7 +395,29 @@ async function loadAll() {
   document.getElementById("kpiLive").textContent = CAMPAIGNS.filter((c) => c.status === "open").length;
   document.getElementById("kpiListed").textContent = CREATORS.filter((c) => c.is_public).length;
   document.getElementById("kpiUnverified").textContent = CREATORS.filter((c) => !c.is_verified).length;
+  renderFeedbackTrends(feedbackRes.data || []);
   renderAll();
+}
+
+function renderFeedbackTrends(rows) {
+  const host = document.getElementById("feedbackTrends");
+  if (!rows.length) {
+    host.innerHTML = `<p class="body-sm" style="grid-column:1/-1;color:var(--on-dark-soft);">No rejection feedback sent in the last 7 days.</p>`;
+    return;
+  }
+  const groups = [
+    { key: "content_format_fit", label: "Content format" },
+    { key: "niche_fit", label: "Niche fit" },
+    { key: "reach_fit", label: "Reach fit" },
+  ];
+  host.innerHTML = groups.map((g) => {
+    const counts = {};
+    rows.forEach((r) => { counts[r[g.key]] = (counts[r[g.key]] || 0) + 1; });
+    const lines = Object.entries(counts).sort((a, b) => b[1] - a[1])
+      .map(([label, count]) => `<div style="display:flex;justify-content:space-between;font-size:13.5px;padding:4px 0;"><span style="color:var(--on-dark-soft);">${escapeHtml(label)}</span><span style="color:#fff;font-weight:700;">${count}</span></div>`)
+      .join("");
+    return `<div><div class="caption" style="text-transform:uppercase;margin-bottom:6px;">${g.label}</div>${lines}</div>`;
+  }).join("");
 }
 
 async function loadConversations() {
@@ -419,7 +458,7 @@ async function decideApplication(id, status) {
   const { error } = await supabaseClient.from("campaign_applications").update(patch).eq("id", id);
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
-  showToast(status === "accepted" ? "Match finalised — intro sent" : "Application declined", "success");
+  showToast(status === "accepted" ? "Match finalised — intro sent" : status === "completed" ? "Marked completed — brand can rate this collab now" : "Application declined", "success");
 }
 async function toggleVerified(id, next) {
   const { error } = await supabaseClient.from("creators").update({ is_verified: next }).eq("id", id);

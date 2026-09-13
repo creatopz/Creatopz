@@ -49,10 +49,11 @@
 
         <!-- ===== OVERVIEW ===== -->
         <section id="view-overview">
-          <div class="grid grid-3" style="margin-bottom:32px;">
+          <div class="grid grid-4" style="margin-bottom:32px;">
             <div class="stat-card"><div class="stat-value" id="statApps">0</div><div class="stat-label">Applications sent</div></div>
             <div class="stat-card"><div class="stat-value" id="statBriefs">0</div><div class="stat-label">Open briefs</div></div>
             <div class="stat-card"><div class="stat-value" id="statBooked">0</div><div class="stat-label">Collabs booked</div></div>
+            <div class="stat-card"><div class="stat-value" id="statScore">—</div><div class="stat-label">Creatopz Score</div></div>
           </div>
 
           <div class="panel" style="padding:28px;margin-bottom:32px;">
@@ -166,8 +167,15 @@ function renderApplicationsTable() {
     const deliverablesNote = Array.isArray(a.deliverables) && a.deliverables.length
       ? `<div class="caption" style="margin-top:2px;">${a.deliverables.map((d) => `${d.quantity} × ${escapeHtml(d.content_type)}`).join(", ")} — ₹${a.deliverables.reduce((s, d) => s + d.quantity * Number(d.rate), 0).toLocaleString("en-IN")}</div>`
       : "";
+    const feedback = Array.isArray(a.application_feedback) ? a.application_feedback[0] : a.application_feedback;
+    const feedbackNote = a.status === "rejected" && feedback
+      ? `<div class="caption" style="margin-top:6px;padding:8px 10px;background:var(--surface-2);border-radius:var(--r-sm);max-width:320px;">
+           <b>Feedback:</b> ${escapeHtml(feedback.content_format_fit)} · ${escapeHtml(feedback.niche_fit)} · ${escapeHtml(feedback.reach_fit)}
+           ${feedback.note ? `<div style="margin-top:4px;">"${escapeHtml(feedback.note)}"</div>` : ""}
+         </div>`
+      : "";
     return `<tr>
-      <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div>${deliverablesNote}</td>
+      <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div>${deliverablesNote}${feedbackNote}</td>
       <td>${escapeHtml(a.campaigns?.brands?.company_name || "Brand")}</td>
       <td><span class="badge ${p.cls}">${p.label}</span></td>
       <td class="caption">${new Date(a.created_at).toLocaleDateString()}</td>
@@ -267,7 +275,7 @@ async function refreshApplications() {
   if (!CREATOR) return;
   const { data } = await supabaseClient
     .from("campaign_applications")
-    .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name))")
+    .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name)), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
     .eq("creator_id", CREATOR.id)
     .order("created_at", { ascending: false });
   APPS = data || [];
@@ -293,7 +301,7 @@ async function boot() {
   if (creator) {
     const { data: appsRaw } = await supabaseClient
       .from("campaign_applications")
-      .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name))")
+      .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name)), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
       .eq("creator_id", creator.id)
       .order("created_at", { ascending: false });
     APPS = appsRaw || [];
@@ -311,6 +319,7 @@ async function boot() {
   document.getElementById("statApps").textContent = APPS.length;
   document.getElementById("statBriefs").textContent = BRIEFS.length;
   document.getElementById("statBooked").textContent = APPS.filter((a) => a.status === "accepted").length;
+  document.getElementById("statScore").textContent = creator?.creatopz_score ? Number(creator.creatopz_score).toFixed(1) : "—";
 
   const strength = profileStrength(creator);
   document.getElementById("strengthPct").textContent = strength;
