@@ -127,6 +127,7 @@ function pillFor(status) {
     rejected: { label: "declined", cls: "" },
     withdrawn: { label: "withdrawn", cls: "" },
     pending: { label: "in review", cls: "" },
+    invited: { label: "brand invited you", cls: "badge-warning" },
   };
   return map[status] || map.pending;
 }
@@ -159,16 +160,35 @@ function renderApplicationsTable() {
   }
   const rows = (list) => list.map((a) => {
     const p = pillFor(a.status);
+    const actions = a.status === "invited"
+      ? `<div style="display:flex;gap:6px;"><button class="btn btn-sm btn-accent invite-accept-btn" data-id="${a.id}">Accept</button><button class="btn btn-sm btn-ghost invite-decline-btn" data-id="${a.id}">Decline</button></div>`
+      : "";
     return `<tr>
       <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div></td>
       <td>${escapeHtml(a.campaigns?.brands?.company_name || "Brand")}</td>
       <td><span class="badge ${p.cls}">${p.label}</span></td>
       <td class="caption">${new Date(a.created_at).toLocaleDateString()}</td>
+      <td>${actions}</td>
     </tr>`;
   }).join("");
-  const table = (list) => `<div class="table-wrap"><table class="table"><thead><tr><th>Campaign</th><th>Brand</th><th>Status</th><th>Applied</th></tr></thead><tbody>${rows(list)}</tbody></table></div>`;
+  const table = (list) => `<div class="table-wrap"><table class="table"><thead><tr><th>Campaign</th><th>Brand</th><th>Status</th><th>Applied</th><th></th></tr></thead><tbody>${rows(list)}</tbody></table></div>`;
   host.innerHTML = table(APPS);
   recentHost.innerHTML = table(APPS.slice(0, 4));
+  host.querySelectorAll(".invite-accept-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, true)));
+  host.querySelectorAll(".invite-decline-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, false)));
+  recentHost.querySelectorAll(".invite-accept-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, true)));
+  recentHost.querySelectorAll(".invite-decline-btn").forEach((btn) => btn.addEventListener("click", () => respondToInvite(btn.dataset.id, false)));
+}
+
+// A brand's invite lands as an application row with status='invited'.
+// Accepting moves it into the normal 'pending' mediation flow (same as
+// if the creator had applied themselves); declining withdraws it.
+async function respondToInvite(applicationId, accept) {
+  const { error } = await supabaseClient.from("campaign_applications").update({ status: accept ? "pending" : "withdrawn" }).eq("id", applicationId);
+  if (error) return showToast(friendlyAuthError(error), "error");
+  showToast(accept ? "Invite accepted — it's now with Creatopz admin to confirm" : "Invite declined", "success");
+  await refreshApplications();
+  renderBriefs();
 }
 
 function renderBriefs() {
@@ -178,8 +198,11 @@ function renderBriefs() {
     return;
   }
   grid.innerHTML = BRIEFS.map((b) => {
-    const already = APPS.some((a) => a.campaign_id === b.id);
+    const existing = APPS.find((a) => a.campaign_id === b.id);
+    const invited = existing?.status === "invited";
+    const already = !!existing && !invited;
     const match = CREATOR && b.niche === CREATOR.category ? 90 : 60;
+    const btnLabel = invited ? "Respond to invite →" : already ? "Application sent" : "Apply to this brief";
     return `
     <div class="campaign-card card-hover">
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
@@ -194,11 +217,14 @@ function renderBriefs() {
           <div class="progress-track" style="flex:1;"><div class="progress-fill" style="width:${match}%;"></div></div>
           <span class="caption">${match}%</span>
         </div>
-        <button class="btn ${already ? "btn-outline" : "btn-accent"} btn-block apply-brief-btn" data-id="${b.id}" ${already ? "disabled" : ""}>${already ? "Application sent" : "Apply to this brief"}</button>
+        <button class="btn ${already ? "btn-outline" : "btn-accent"} btn-block apply-brief-btn" data-id="${b.id}" data-invited="${invited}" ${already ? "disabled" : ""}>${btnLabel}</button>
       </div>
     </div>`;
   }).join("");
-  grid.querySelectorAll(".apply-brief-btn").forEach((btn) => btn.addEventListener("click", () => applyToBrief(btn.dataset.id, btn)));
+  grid.querySelectorAll(".apply-brief-btn").forEach((btn) => btn.addEventListener("click", () => {
+    if (btn.dataset.invited === "true") { setView("applications"); history.replaceState(null, "", "#applications"); return; }
+    applyToBrief(btn.dataset.id, btn);
+  }));
 }
 
 function renderNotes() {
