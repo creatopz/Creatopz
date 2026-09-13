@@ -81,6 +81,7 @@ html { scroll-behavior: smooth; }
 
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
+html{ overflow-x:hidden; }
 body{
   font-family:var(--font-body);
   background:var(--bg);
@@ -88,6 +89,8 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   line-height:1.5;
+  overflow-x:hidden;
+  width:100%;
 }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
@@ -202,11 +205,14 @@ h4{ font-size:16px; }
 
 @media (max-width:900px){
   .nav-links{ display:none; }
+  /* The drawer covers login/join/dashboard/logout on mobile — showing
+     both the pill buttons AND the burger at once is what was pushing
+     the header (and the whole page) wider than the viewport. */
+  .nav-actions{ display:none; }
   .nav-burger{ display:inline-flex; }
 }
 @media (max-width:640px){
   .site-nav{ padding:12px 20px; }
-  .nav-actions .btn span.hide-xs{ display:none; }
 }
 
 /* Fullscreen mobile drawer */
@@ -338,7 +344,7 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
   .dash-main{ padding:24px 20px 100px; }
   .dash-topbar{
     display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:150;
-    background:rgba(246,243,236,.92); backdrop-filter:blur(12px); padding:14px 20px; border-bottom:1px solid var(--border); margin:-24px -20px 24px;
+    background:rgba(246,243,236,.92); backdrop-filter:blur(12px); padding:14px 0; border-bottom:1px solid var(--border); margin-bottom:24px;
   }
 }
 
@@ -350,9 +356,40 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 @media (max-width:980px){ .grid-4{ grid-template-columns:repeat(2,1fr); } .grid-3{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:640px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; } }
 
+/* Hero's two-column split (text + visual). Unlike .grid-2 this needs its
+   own rule because the two sides aren't equal-width — but it must still
+   collapse on narrow screens, or the visual column gets squeezed into a
+   sliver and its content (fixed max-width cards) overflows the viewport
+   instead of shrinking. */
+.hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; }
+/* Grid items default to min-width:auto, which refuses to shrink below
+   their content's min-content size — with a fixed-max-width card inside,
+   that "blows out" the single mobile column wider than the viewport
+   instead of letting it shrink. min-width:0 is the standard fix. */
+.hero-grid > *{ min-width:0; }
+@media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; gap:40px; } }
+
+/* The floating stat card in the hero visual: pinned to a corner on the
+   roomy desktop layout, constrained to a sane width so it can never
+   force the page wider than the viewport, and simply placed in flow
+   (not absolutely positioned) once the hero stacks to one column. */
+.hero-float-card{ position:absolute; bottom:-6%; left:-4%; max-width:260px; }
+@media (max-width:900px){ .hero-float-card{ position:static; margin-top:16px; max-width:none; } }
+
+/* Generic unequal-width two-column split (copy + a card/panel) — same
+   blowout-safe pattern as .hero-grid, reused wherever a section pairs
+   text with a card instead of two even columns. */
+.split-grid{ display:grid; grid-template-columns:1.2fr .8fr; gap:48px; align-items:center; }
+.split-grid > *{ min-width:0; }
+@media (max-width:860px){ .split-grid{ grid-template-columns:1fr; gap:32px; } }
+
 /* ---------------- Creator / campaign cards ---------------- */
 .creator-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; display:flex; flex-direction:column; }
 .creator-card .cc-photo{ aspect-ratio:4/5; width:100%; object-fit:cover; background:var(--surface-2); }
+/* On a single-column mobile grid a card is full viewport width, so a 4:5
+   photo gets very tall relative to the screen — use a shorter ratio so
+   the card doesn't dominate the whole first screen. */
+@media (max-width:640px){ .creator-card .cc-photo{ aspect-ratio:4/3; } }
 .creator-card .cc-body{ padding:18px 18px 20px; display:flex; flex-direction:column; gap:6px; flex:1; }
 .creator-card .cc-name{ font-family:var(--font-display); font-size:17px; font-weight:700; display:flex; align-items:center; gap:6px; }
 .creator-card .cc-meta{ font-size:13px; color:var(--muted); }
@@ -407,5 +444,9 @@ html:not(.reveal-armed) [data-reveal]{ opacity:1; transform:none; }
 @media (max-width:768px){ .hide-mobile{ display:none !important; } }
 .hide-desktop{ display:none !important; }
 @media (max-width:768px){ .hide-desktop{ display:revert !important; } }
+/* For a label that needs to shorten (not disappear) on very narrow
+   phones — e.g. "← Back to dashboard" → "← Back" — rather than let a
+   nowrap button force the page wider than the viewport. */
+@media (max-width:400px){ .hide-xs{ display:none !important; } }
 
 @keyframes toastIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }

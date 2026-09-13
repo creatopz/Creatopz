@@ -58,7 +58,7 @@
     <a href="gallery.html">Gallery</a>
     <a href="dashboard-creator.html">Dashboard</a>
   </div>
-  <div class="nav-drawer-actions">
+  <div class="nav-drawer-actions" data-auth-sync>
     <a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a>
     <a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join as Creator</a>
   </div>
@@ -66,7 +66,7 @@
 
 <!-- ============ HERO ============ -->
 <section class="section" style="padding-top:64px;padding-bottom:0;overflow:hidden;">
-  <div class="wrap" style="display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;">
+  <div class="wrap hero-grid">
     <div data-enter>
       <div class="eyebrow" style="margin-bottom:22px;"><span class="badge-dot" style="background:var(--accent);width:7px;height:7px;border-radius:50%;display:inline-block;"></span>Now onboarding creators &amp; brands</div>
       <h1 class="display-1">Two sides.<br>One place to<br><span style="color:var(--accent);">close the deal.</span></h1>
@@ -89,8 +89,8 @@
         <p class="body-sm" style="margin-bottom:18px;">Explore vetted creators across beauty, fitness &amp; food — or post a brief and let applications come to you.</p>
         <a href="directory.html" class="btn btn-accent btn-block">Explore creators</a>
       </div>
-      <div class="card" style="position:absolute;bottom:-6%;left:-4%;padding:16px 20px;border-radius:var(--r-lg);box-shadow:var(--shadow-md);display:flex;gap:12px;align-items:center;">
-        <div class="avatar-fallback" style="width:40px;height:40px;background:var(--accent-soft);color:var(--accent-700);">👍</div>
+      <div class="card hero-float-card" style="padding:16px 20px;border-radius:var(--r-lg);box-shadow:var(--shadow-md);display:flex;gap:12px;align-items:center;">
+        <div class="avatar-fallback" style="width:40px;height:40px;flex-shrink:0;background:var(--accent-soft);color:var(--accent-700);">👍</div>
         <div><b style="font-size:14px;display:block;">Application accepted</b><span class="caption">Beauty campaign · ₹18,000</span></div>
       </div>
     </div>
@@ -171,7 +171,7 @@
 
 <!-- ============ COMMUNITY CTA ============ -->
 <section class="section section-tint">
-  <div class="wrap" style="display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center;">
+  <div class="wrap split-grid">
     <div data-reveal>
       <span class="eyebrow">The community</span>
       <h2 style="margin-top:14px;">Collabs land here first — before they're anywhere else.</h2>

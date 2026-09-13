@@ -137,14 +137,33 @@ async function requireAuth(requiredRole = null) {
 }
 
 // Updates the nav bar (if present on the page) to reflect logged-in state.
+// Also syncs the mobile drawer's action buttons (.nav-drawer-actions), if
+// the page has one — it starts out with static "Log in / Join" markup so
+// a logged-in visitor doesn't see the wrong buttons after opening the
+// hamburger menu.
 async function renderAuthNav(navSelector = "#authNav") {
   const nav = document.querySelector(navSelector);
-  if (!nav) return;
+  const drawerActions = document.querySelector(".nav-drawer-actions[data-auth-sync]");
+  if (!nav && !drawerActions) return;
   const profile = await getCurrentProfile();
+
+  const wireLogout = (id) => {
+    document.getElementById(id)?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await logOut();
+    });
+  };
+
   if (!profile) {
-    nav.innerHTML = `<a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
+    if (nav) {
+      nav.innerHTML = `<a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
+    }
+    if (drawerActions) {
+      drawerActions.innerHTML = `<a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a><a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>`;
+    }
     return;
   }
+
   const dashboardHref =
     profile.role === "admin"
       ? "admin-console.html"
@@ -152,12 +171,19 @@ async function renderAuthNav(navSelector = "#authNav") {
       ? "dashboard-brand.html"
       : "dashboard-creator.html";
   const onDashboardAlready = window.location.pathname.endsWith(dashboardHref);
-  nav.innerHTML = `
-    ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline btn-sm">Dashboard</a>`}
-    <a href="#" id="navLogout" class="btn btn-primary btn-sm">Log out</a>
-  `;
-  document.getElementById("navLogout")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    await logOut();
-  });
+
+  if (nav) {
+    nav.innerHTML = `
+      ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline btn-sm">Dashboard</a>`}
+      <a href="#" id="navLogout" class="btn btn-primary btn-sm">Log out</a>
+    `;
+    wireLogout("navLogout");
+  }
+  if (drawerActions) {
+    drawerActions.innerHTML = `
+      ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline on-dark btn-block btn-lg">Dashboard</a>`}
+      <a href="#" id="navLogoutDrawer" class="btn btn-white btn-block btn-lg">Log out</a>
+    `;
+    wireLogout("navLogoutDrawer");
+  }
 }
