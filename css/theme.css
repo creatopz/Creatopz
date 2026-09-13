@@ -333,7 +333,26 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 .stat-card .stat-label{ font-size:13px; color:var(--muted); margin-top:8px; font-weight:600; }
 
 /* ---------------- Dashboard shell ---------------- */
+/* Grid items default to min-width:auto, so a wide descendant anywhere
+   inside the content column (a data table with its own min-width, a
+   long unbroken string) refuses to let that column shrink below its
+   content's size -- which blows out the whole shell wider than the
+   viewport instead of leaving it to that descendant's own
+   overflow-x:auto. min-width:0 hands sizing back to the descendants,
+   who each own their own horizontal scroll (.table-wrap,
+   .admin-table-wrap) instead of dragging the sticky topbar/sidebar
+   and the hamburger button off-screen with them. */
+/* Grid items default to min-width:auto, so a wide descendant anywhere
+   inside the content column (a data table with its own min-width, a
+   long unbroken string) refuses to let that column shrink below its
+   content's size -- which blows out the whole shell wider than the
+   viewport instead of leaving it to that descendant's own
+   overflow-x:auto. min-width:0 hands sizing back to the descendants,
+   who each own their own horizontal scroll (.table-wrap,
+   .admin-table-wrap) instead of dragging the sticky topbar/sidebar
+   and the hamburger button off-screen with them. */
 .dash-shell{ display:grid; grid-template-columns:264px 1fr; min-height:100vh; }
+.dash-shell > *{ min-width:0; }
 .dash-sidebar{ background:var(--dark); color:var(--on-dark); padding:24px 18px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
 .dash-sidebar-brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:19px; color:#fff; padding:8px 10px 22px; }
 .dash-sidebar-brand img{ height:26px; filter:invert(1) brightness(2); }
