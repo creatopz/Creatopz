@@ -17,12 +17,12 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_021` are already applied there.
+`supabase/migration_002` through `migration_022` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
 `008` → `009` → `010` → `011` → `012` → `013` → `014` → `015` → `016` →
-`017` → `018` → `019` → `020` → `021` → (optionally) `seed.sql` for sample
-rows on a dev project only.
+`017` → `018` → `019` → `020` → `021` → `022` → (optionally) `seed.sql`
+for sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -248,22 +248,27 @@ from any page's navigation — leave it alone or delete it, your call.
     link. `ensureProfileRow()` in js/auth.js applies a pending referral
     code the same way it already threads a signup's niche through a
     delayed-email-confirmation session.
-  - **The one existing-object change**: `campaigns_public`'s WHERE
-    clause now also requires either 24+ hours since `created_at`, or
-    the viewer being a `priority_access` creator (`auth.uid()` inside
-    the view resolves per-viewer, not to the view's owner) -- exactly
-    the "priority access instead of a normal queue" mechanic you asked
-    for. It also gained `budget_min`/`budget_max` in its column list,
-    used by the new briefs.html below; campaigns.html's own
-    `formatBudget()` ignores its arguments and always shows "discussed
-    via Creatopz" regardless, so this is inert there. **Immediate
-    real-world effect**: any campaign posted within the last 24 hours
-    is now invisible on campaigns.html/dashboard-creator.html to a
-    non-priority creator until that window passes -- confirmed live
-    against the one currently-open campaign, which is mid-window as of
-    this deploy. This is the intended mechanic, not a bug, but it's
-    worth knowing before checking the live site expecting to see every
-    open campaign immediately.
+  - **The one existing-object change (since reverted -- see
+    migration_022 below)**: `campaigns_public`'s WHERE clause briefly
+    also required either 24+ hours since `created_at`, or the viewer
+    being a `priority_access` creator, as the "priority access instead
+    of a normal queue" mechanic. In production this meant *every* new
+    campaign was invisible to *every* creator for a full day, because
+    zero creators held priority access yet (the referral feature had
+    just launched) -- discovered within minutes of deploy, when a
+    just-approved campaign didn't show up anywhere. migration_022
+    reverted the gate entirely: `campaigns_public` now shows every open
+    campaign immediately again, exactly as it did before this phase.
+    The referral system itself (codes, `priority_access` tracking,
+    `apply_referral_code()`) is untouched and still fully functional --
+    only this view's visibility gate was reverted. A future "priority
+    access" perk should be something narrower (a short early-access
+    window, or a sort-order/badge boost) rather than hiding content
+    from every non-priority creator by default. It also gained
+    `budget_min`/`budget_max` in its column list, used by the new
+    briefs.html below; campaigns.html's own `formatBudget()` ignores
+    its arguments and always shows "discussed via Creatopz" regardless,
+    so this is inert there.
   - `niche_earnings_stats` (new view, aggregate-only): average
     `agreed_budget` per niche/month across `accepted`/`completed`
     applications, with the 5-creator minimum enforced by the view's own
