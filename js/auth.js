@@ -71,23 +71,48 @@ async function getCurrentUser() {
 // session (i.e. here), make sure their profiles/creators/brands rows
 // exist so nothing downstream (dashboards, admin, onboarding) 404s on
 // a profile that was never created.
+//
+// IMPORTANT: this must only ever CREATE a missing row, never touch an
+// existing one's role/email/full_name. auth.html calls this on every
+// login (not just first login) — an upsert here previously reset
+// `role` back to the signup-time default from user_metadata on every
+// login, which silently downgraded the one admin account back to
+// 'creator' every time it logged in.
 async function ensureProfileRow(user) {
-  const role = user.user_metadata?.role === "brand" ? "brand" : "creator";
+  const metaRole = user.user_metadata?.role === "brand" ? "brand" : "creator";
   const fullName = user.user_metadata?.full_name || "";
-  const { data: profile } = await supabaseClient
-    .from("profiles")
-    .upsert({ id: user.id, role, full_name: fullName, email: user.email }, { onConflict: "id", ignoreDuplicates: false })
-    .select()
-    .single();
 
-  const table = role === "brand" ? "brands" : "creators";
-  const { data: existing } = await supabaseClient.from(table).select("id").eq("user_id", user.id).maybeSingle();
-  if (!existing) {
-    await supabaseClient.from(table).insert(
-      role === "brand" ? { user_id: user.id, company_name: fullName } : { user_id: user.id, name: fullName }
-    );
+  let { data: profile } = await supabaseClient.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  if (!profile) {
+    const { data: inserted, error } = await supabaseClient
+      .from("profiles")
+      .insert({ id: user.id, role: metaRole, full_name: fullName, email: user.email })
+      .select()
+      .single();
+    if (error) {
+      // Lost a race to create it (e.g. two tabs) — read back whatever's there.
+      const { data: raced } = await supabaseClient.from("profiles").select("*").eq("id", user.id).maybeSingle();
+      if (!raced) throw error;
+      profile = raced;
+    } else {
+      profile = inserted;
+    }
   }
-  return profile || { id: user.id, email: user.email, role, full_name: fullName };
+
+  // Only creators/brands have a matching sub-table row — never create
+  // one for an admin account.
+  if (profile.role === "creator" || profile.role === "brand") {
+    const table = profile.role === "brand" ? "brands" : "creators";
+    const { data: existingSub } = await supabaseClient.from(table).select("id").eq("user_id", user.id).maybeSingle();
+    if (!existingSub) {
+      await supabaseClient.from(table).insert(
+        table === "brands"
+          ? { user_id: user.id, company_name: profile.full_name || fullName }
+          : { user_id: user.id, name: profile.full_name || fullName }
+      );
+    }
+  }
+  return profile;
 }
 
 async function getCurrentProfile() {
