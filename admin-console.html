@@ -1,578 +1,432 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/soften.css">
-<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/supabase-client.js"></script>
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — Creatopz™</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/theme.css">
 <style>
-  body{margin:0;background:#0b0b0b;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-  *{box-sizing:border-box;}
-  a{color:inherit;text-decoration:none;}
-  a:hover{color:#FF3300;}
-  ::selection{background:#FF3300;color:#fff;}
-  button,input{font-family:inherit;}
-  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
-  @keyframes ctzRise{from{transform:translateY(22px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  @keyframes ctzRowIn{from{transform:translateX(-16px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-  @keyframes ctzBlink{0%,60%{opacity:1;}80%{opacity:.25;}100%{opacity:1;}}
-  @keyframes ctzToast{0%{transform:translateY(20px);opacity:0;}12%{transform:translateY(0);opacity:1;}82%{transform:translateY(0);opacity:1;}100%{transform:translateY(-10px);opacity:0;}}
-  @keyframes ctzSpark{from{transform:scaleX(0);}to{transform:scaleX(1);}}
-  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
-  @media (max-width:860px){
-    .admin-root{display:block !important;}
-    .admin-aside{position:static !important;height:auto !important;border-right:none !important;border-bottom:2px solid #1e1e1e;padding:16px 0 !important;}
-    .admin-nav{flex-direction:row !important;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 12px !important;gap:2px;}
-    .admin-nav-btn{border-left:none !important;border-bottom:3px solid transparent;white-space:nowrap;flex:0 0 auto;}
-    .admin-sidebar-footer{display:none;}
-    .admin-header{padding:16px 20px !important;}
-    .admin-search{min-width:0 !important;flex:1;}
-    .admin-section{padding-left:20px !important;padding-right:20px !important;}
-    .admin-messages-grid{grid-template-columns:1fr !important;}
-    .admin-convo-list{max-height:220px;}
-  }
-  @view-transition{navigation:auto;}
-  html{scroll-behavior:smooth;}
-  a,button,input,select,textarea{transition:background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(.16,1,.3,1), opacity .2s ease;}
+  body.admin{ background:var(--dark); color:var(--on-dark); }
+  .admin-card{ background:#1a1a1a; border:1px solid var(--dark-border); border-radius:var(--r-lg); padding:24px; }
+  .admin-table-wrap{ overflow-x:auto; border:1px solid var(--dark-border); border-radius:var(--r-lg); }
+  table.admin-table{ width:100%; border-collapse:collapse; min-width:760px; }
+  .admin-table th{ text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:14px 18px; border-bottom:1px solid var(--dark-border); white-space:nowrap; }
+  .admin-table td{ padding:14px 18px; border-bottom:1px solid var(--dark-border); font-size:14px; vertical-align:middle; }
+  .admin-table tr:hover td{ background:rgba(255,255,255,.03); }
+  .admin-input{ background:transparent; border:1.5px solid var(--dark-border); border-radius:var(--r-md); color:#fff; padding:10px 14px; font-size:14px; outline:none; }
+  .admin-input:focus{ border-color:var(--accent); }
+  .admin-btn-out{ border:1.5px solid var(--dark-border); background:transparent; color:#fff; border-radius:var(--r-pill); padding:9px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+  .admin-btn-out:hover{ border-color:#fff; }
+  .messages-grid{ grid-template-columns:280px 1fr; }
+  .messages-grid > *{ min-width:0; }
+  @media (max-width:760px){ .messages-grid{ grid-template-columns:1fr; } }
 </style>
-</helmet>
+</head>
+<body class="admin">
 
-<div ref="{{ rootRef }}" class="admin-root" style="font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b0b0b;min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);">
-
-  <aside class="admin-aside" style="border-right:2px solid #1e1e1e;padding:22px 0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;">
-    <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:19px;padding:0 22px 22px;border-bottom:1px solid #1e1e1e;">
-      <img src="assets/logo.png" alt="Creatopz mark" style="height:28px;display:block;filter:invert(1);">Creatopz<sup style="font-family:Inter,sans-serif;font-size:9px;">™</sup>
-    </a>
-    <div class="admin-nav" style="padding:18px 0;display:flex;flex-direction:column;">
-      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
-        <button onClick="{{ n.pick }}" class="admin-nav-btn" style="display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:{{ n.bg }};border:none;border-left:3px solid {{ n.rule }};color:{{ n.fg }};font-size:14.5px;font-weight:600;padding:14px 20px;cursor:pointer;transition:background .25s ease,color .25s ease,border-color .25s ease,padding-left .25s ease;" style-hover="padding-left:26px;color:#fff">{{ n.label }}<span style="font-family:Anton,sans-serif;font-size:13px;color:#FF3300;">{{ n.count }}</span></button>
-      </sc-for>
-    </div>
-    <div class="admin-sidebar-footer" style="margin-top:auto;padding:20px 22px;border-top:1px solid #1e1e1e;">
-      <div style="display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">
-        <span style="width:6px;height:6px;background:#FF3300;border-radius:50%;"></span>Mediation on
-      </div>
-      <button onClick="{{ logout }}" style="margin-top:14px;background:none;border:1px solid #333;color:#fff;font-size:12.5px;font-weight:600;padding:9px 12px;cursor:pointer;width:100%;">Log out</button>
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="index.html" class="dash-sidebar-brand"><img src="assets/logo.png" alt="">Creatopz<sup style="font-size:9px;">™</sup></a>
+    <nav class="dash-nav">
+      <a href="#apps" data-view="apps" class="active">Applications <span class="badge badge-accent" id="countApps" style="margin-left:auto;">0</span></a>
+      <a href="#creators" data-view="creators">Creators <span class="badge" id="countCreators" style="margin-left:auto;">0</span></a>
+      <a href="#campaigns" data-view="campaigns">Campaigns <span class="badge" id="countCampaigns" style="margin-left:auto;">0</span></a>
+      <a href="#gallery" data-view="gallery">Gallery <span class="badge" id="countGallery" style="margin-left:auto;">0</span></a>
+      <a href="#messages" data-view="messages">Messages <span class="badge badge-accent" id="countMessages" style="margin-left:auto;display:none;">0</span></a>
+    </nav>
+    <div class="dash-sidebar-foot">
+      <div class="eyebrow on-dark" style="margin-bottom:12px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Mediation on</div>
+      <button id="logoutBtn" class="btn btn-outline on-dark btn-block btn-sm">Log out</button>
     </div>
   </aside>
 
-  <main style="min-width:0;">
-    <header class="admin-header" style="position:sticky;top:0;z-index:60;background:rgba(11,11,11,.92);backdrop-filter:blur(10px);border-bottom:1px solid #1e1e1e;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
-      <div>
-        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">Admin</div>
-        <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;line-height:1;margin:6px 0 0;">{{ viewTitle }}</h1>
-      </div>
-      <div style="display:flex;gap:12px;align-items:center;">
-        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search everything…" class="admin-search" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:14px;padding:9px 0;min-width:200px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
-        <div style="width:32px;height:32px;background:#FF3300;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:13px;flex:0 0 auto;">CZ</div>
-      </div>
-    </header>
+  <div>
+    <div class="dash-topbar" style="background:rgba(0,0,0,.9);border-color:var(--dark-border);">
+      <a href="index.html" class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="height:26px;">Creatopz<sup style="font-size:9px;">™</sup></a>
+      <button class="nav-burger" data-nav-open aria-label="Open menu" style="border-color:var(--dark-border);color:#fff;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
 
-    <section class="admin-section" style="padding:24px 32px 0;">
-      <div style="display:flex;flex-wrap:wrap;gap:36px;padding-bottom:22px;border-bottom:1px solid #1e1e1e;">
-        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+    <main class="dash-main" style="max-width:1280px;">
+      <div id="loadingState" class="grid grid-4">
+        <div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div><div class="skeleton" style="height:80px;background:#1a1a1a;"></div>
+      </div>
+
+      <div id="dashContent" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
           <div>
-            <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#7d7d7d;font-weight:600;">{{ k.label }}</div>
-            <div ref="{{ k.ref }}" style="font-family:Anton,sans-serif;font-size:26px;line-height:1;margin-top:6px;">0</div>
+            <span class="eyebrow on-dark">Admin</span>
+            <h1 style="color:#fff;margin-top:8px;" id="viewTitle">Applications</h1>
           </div>
-        </sc-for>
-      </div>
-    </section>
-
-    <section class="admin-section" style="padding:34px 32px 80px;">
-      <sc-if value="{{ isApps }}" hint-placeholder-val="{{ true }}">
-        <div>
-          <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">You're the middleman on every deal — full creator profile (Instagram included) and the brand's budget, side by side. Neither party sees the other's private details until you finalise a match.</p>
-          <div style="display:flex;flex-direction:column;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
-            <sc-for list="{{ apps }}" as="a" hint-placeholder-count="5">
-              <article style="background:#000;padding:22px 24px;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ a.delay }} both;">
-                <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;">
-                  <div>
-                    <div style="font-size:16.5px;font-weight:600;overflow-wrap:anywhere;">{{ a.campaign }}</div>
-                    <div style="font-size:12.5px;color:#7d7d7d;margin-top:4px;">{{ a.brand }} · {{ a.applied }}</div>
-                  </div>
-                  <span style="display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:6px 10px;border:2px solid {{ a.pillBorder }};background:{{ a.pillBg }};color:{{ a.pillFg }};">{{ a.status }}</span>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid #1e1e1e;font-size:14px;">
-                  <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Creator</div><div style="margin-top:5px;">{{ a.creator }}</div></div>
-                  <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Instagram</div><div style="margin-top:5px;overflow-wrap:anywhere;">{{ a.instagram }}</div></div>
-                  <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Creator's rate</div><div style="margin-top:5px;">{{ a.creatorRate }}</div></div>
-                  <div><div style="color:#7d7d7d;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;">Brand's budget</div><div style="margin-top:5px;">{{ a.brandBudget }}</div></div>
-                </div>
-                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;">
-                  <input value="{{ a.agreedBudget }}" onInput="{{ a.onAgreedBudget }}" placeholder="Agreed budget ₹" style="background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:14px;padding:9px 0;width:170px;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
-                  <button onClick="{{ a.approve }}" style="border:2px solid #FF3300;background:{{ a.approveBg }};color:#fff;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease;" style-hover="background:#FF3300">{{ a.approveLabel }}</button>
-                  <button onClick="{{ a.reject }}" style="border:2px solid #333;background:transparent;color:#9a9a9a;font-size:12.5px;font-weight:700;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff;color:#fff">Decline</button>
-                </div>
-              </article>
-            </sc-for>
-          </div>
+          <input class="admin-input" id="searchInput" placeholder="Search everything…" style="min-width:220px;">
         </div>
-      </sc-if>
 
-      <sc-if value="{{ isCreators }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div style="min-width:880px;">
-          <div style="display:grid;grid-template-columns:1.3fr .9fr .9fr .7fr .7fr auto auto;gap:14px;padding:0 20px 12px;border-bottom:2px solid #fff;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">
-            <div>Name</div><div>Instagram</div><div>Niche</div><div>Reach</div><div>Public</div><div>Flag</div><div>Verify</div>
-          </div>
-          <sc-for list="{{ creators }}" as="c" hint-placeholder-count="6">
-            <div style="display:grid;grid-template-columns:1.3fr .9fr .9fr .7fr .7fr auto auto;gap:14px;align-items:center;padding:18px 20px;border-bottom:1px solid #1e1e1e;animation:ctzRowIn .5s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .25s ease,padding-left .25s ease;" style-hover="background:#121212;padding-left:26px">
-              <div style="display:flex;align-items:center;gap:12px;min-width:0;">
-                <span style="width:34px;height:34px;flex:0 0 34px;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:13px;">{{ c.initials }}</span>
-                <div style="min-width:0;">
-                  <a href="{{ c.profileHref }}" style="font-size:15px;font-weight:600;display:block;min-width:0;overflow-wrap:anywhere;">{{ c.name }}</a>
-                  <div style="font-size:12.5px;color:#7d7d7d;">{{ c.city }}</div>
-                </div>
-              </div>
-              <div style="font-size:13px;color:#c9c9c9;overflow-wrap:anywhere;">{{ c.instagram }}</div>
-              <div style="font-size:14px;color:#c9c9c9;">{{ c.niche }}</div>
-              <div style="font-family:Anton,sans-serif;font-size:18px;">{{ c.reachLabel }}</div>
-              <button onClick="{{ c.togglePublic }}" style="border:none;background:none;font-size:12.5px;color:{{ c.publicColor }};font-weight:600;cursor:pointer;text-align:left;padding:0;">{{ c.publicLabel }}</button>
-              <sc-if value="{{ c.flagged }}" hint-placeholder-val="{{ false }}">
-                <button onClick="{{ c.clearFlag }}" title="Auto-flagged: stats look implausible for the follower tier — hidden from the directory until cleared" style="font-size:11px;font-weight:700;color:#ffb199;border:1px solid #ffb199;background:none;padding:4px 8px;cursor:pointer;">⚠ Review</button>
-              </sc-if>
-              <button onClick="{{ c.toggle }}" style="border:2px solid {{ c.vBorder }};background:{{ c.vBg }};color:{{ c.vFg }};font-size:12.5px;font-weight:700;padding:9px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ c.vLabel }}</button>
-            </div>
-          </sc-for>
-          </div></div>
+        <div class="grid grid-4" style="margin-bottom:30px;">
+          <div class="admin-card"><div class="caption" style="text-transform:uppercase;letter-spacing:.08em;">Pending matches</div><div class="font-display" style="color:#fff;font-size:26px;margin-top:6px;" id="kpiPending">0</div></div>
+          <div class="admin-card"><div class="caption" style="text-transform:uppercase;letter-spacing:.08em;">Live campaigns</div><div class="font-display" style="color:#fff;font-size:26px;margin-top:6px;" id="kpiLive">0</div></div>
+          <div class="admin-card"><div class="caption" style="text-transform:uppercase;letter-spacing:.08em;">Creators listed</div><div class="font-display" style="color:#fff;font-size:26px;margin-top:6px;" id="kpiListed">0</div></div>
+          <div class="admin-card"><div class="caption" style="text-transform:uppercase;letter-spacing:.08em;">Awaiting verify</div><div class="font-display" style="color:#fff;font-size:26px;margin-top:6px;" id="kpiUnverified">0</div></div>
         </div>
-      </sc-if>
 
-      <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
-          <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="4">
-            <article style="background:#000;padding:26px;animation:ctzRise .55s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .3s ease,transform .45s cubic-bezier(.16,1,.3,1);" style-hover="background:#121212;transform:translateY(-4px)">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
-                <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">{{ c.brand }}</div>
-                <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:5px 9px;border:2px solid {{ c.pillBorder }};background:{{ c.pillBg }};color:{{ c.pillFg }};">{{ c.status }}</span>
-              </div>
-              <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:22px;line-height:1.08;margin:14px 0 12px;">{{ c.title }}</h3>
-              <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;font-size:14px;">
-                <span style="color:#8a8a8a;">Budget</span><span style="font-family:Anton,sans-serif;font-size:18px;">{{ c.budget }}</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
-                <span style="font-size:12px;color:#8a8a8a;white-space:nowrap;">{{ c.appsLabel }}</span>
-                <div style="flex:1;height:5px;background:#1e1e1e;overflow:hidden;"><div style="height:100%;background:#FF3300;transform-origin:0 50%;transform:scaleX({{ c.fill }});animation:ctzSpark .9s cubic-bezier(.16,1,.3,1) .2s both;"></div></div>
-              </div>
-              <sc-if value="{{ c.isDraft }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;gap:8px;margin-top:16px;">
-                  <button onClick="{{ c.approve }}" style="flex:1;border:2px solid #FF3300;background:#FF3300;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease;" style-hover="background:#e62e00">Approve</button>
-                  <button onClick="{{ c.decline }}" style="flex:1;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:border-color .2s ease;" style-hover="border-color:#fff">Decline</button>
-                </div>
-              </sc-if>
-              <sc-if value="{{ c.isNotDraft }}" hint-placeholder-val="{{ true }}">
-                <button onClick="{{ c.toggleStatus }}" style="width:100%;margin-top:16px;border:2px solid #333;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:11px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;" style-hover="border-color:#fff">{{ c.toggleLabel }}</button>
-              </sc-if>
-            </article>
-          </sc-for>
-        </div>
-      </sc-if>
+        <section id="view-apps">
+          <p class="body-sm" style="max-width:680px;margin-bottom:20px;color:var(--on-dark-soft);">You're the middleman on every deal — full creator profile (Instagram included) and the brand's budget, side by side. Neither party sees the other's private details until you finalise a match.</p>
+          <div id="appsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </section>
 
-      <sc-if value="{{ isGallery }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <p style="font-size:14px;color:#9a9a9a;max-width:680px;margin:0 0 22px;line-height:1.6;">Toggle a tile to publish or hide it on the public gallery. Changes go live immediately.</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;">
-            <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="8">
-              <div style="background:#000;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ g.delay }} both;">
-                <div style="position:relative;aspect-ratio:1/1;background:#141414;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                  <span style="font-family:Anton,sans-serif;font-size:46px;color:#242424;">{{ g.order }}</span>
-                  <div style="position:absolute;inset:0;background:{{ g.veil }};transition:background .3s ease;"></div>
-                </div>
-                <div style="padding:14px 16px;">
-                  <div style="font-size:13.5px;color:#c9c9c9;line-height:1.45;min-height:38px;">{{ g.caption }}</div>
-                  <button onClick="{{ g.toggle }}" style="width:100%;margin-top:12px;border:2px solid {{ g.border }};background:{{ g.bg }};color:{{ g.fg }};font-size:12.5px;font-weight:700;padding:10px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ g.label }}</button>
-                </div>
-              </div>
-            </sc-for>
-          </div>
-        </div>
-      </sc-if>
+        <section id="view-creators" style="display:none;">
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Instagram</th><th>Niche</th><th>Reach</th><th>Public</th><th>Flag</th><th>Verify</th></tr></thead><tbody id="creatorsBody"></tbody></table></div>
+        </section>
 
-      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="border:2px solid #1e1e1e;padding:64px 28px;">
-          <div style="font-family:Anton,sans-serif;font-size:28px;margin-bottom:10px;">Nothing matches “{{ query }}”.</div>
-          <button onClick="{{ clearQuery }}" style="border:2px solid #fff;background:transparent;color:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#fff;color:#000">Clear search</button>
-        </div>
-      </sc-if>
+        <section id="view-campaigns" style="display:none;">
+          <div class="grid grid-3" id="campaignsGrid"></div>
+        </section>
 
-      <sc-if value="{{ isMessages }}" hint-placeholder-val="{{ false }}">
-        <div class="admin-messages-grid" style="display:grid;grid-template-columns:280px 1fr;gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;min-height:520px;">
-          <div class="admin-convo-list" style="background:#000;overflow-y:auto;max-height:640px;">
-            <sc-if value="{{ conversationsEmpty }}" hint-placeholder-val="{{ false }}">
-              <div style="padding:24px;color:#7d7d7d;font-size:13.5px;">No conversations yet.</div>
-            </sc-if>
-            <sc-for list="{{ conversations }}" as="cv" hint-placeholder-count="4">
-              <button onClick="{{ cv.pick }}" style="display:block;width:100%;text-align:left;background:{{ cv.bg }};border:none;border-bottom:1px solid #1e1e1e;padding:16px 18px;cursor:pointer;">
-                <div style="display:flex;justify-content:space-between;gap:8px;">
-                  <span style="font-size:14.5px;font-weight:600;color:#fff;overflow-wrap:anywhere;">{{ cv.name }}</span>
-                  <sc-if value="{{ cv.hasUnread }}" hint-placeholder-val="{{ false }}">
-                    <span style="background:#FF3300;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;flex:0 0 auto;">{{ cv.unread }}</span>
-                  </sc-if>
-                </div>
-                <div style="font-size:12px;color:#7d7d7d;margin-top:4px;">{{ cv.role }}</div>
-              </button>
-            </sc-for>
-          </div>
-          <div style="background:#000;display:flex;flex-direction:column;">
-            <sc-if value="{{ hasActiveThread }}" hint-placeholder-val="{{ false }}">
-              <div style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:52vh;">
-                <sc-for list="{{ thread }}" as="m" hint-placeholder-count="4">
-                  <div style="align-self:{{ m.align }};max-width:78%;">
-                    <div style="font-size:11px;color:#7d7d7d;margin-bottom:4px;">{{ m.who }} · {{ m.when }}</div>
-                    <div style="background:{{ m.bg }};color:{{ m.fg }};border:1px solid #1e1e1e;padding:12px 16px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere;">{{ m.body }}</div>
-                  </div>
-                </sc-for>
-              </div>
-              <form onSubmit="{{ sendMsg }}" style="border-top:1px solid #1e1e1e;display:flex;gap:10px;padding:16px;">
-                <input value="{{ msgDraft }}" onInput="{{ onMsgDraft }}" placeholder="Reply as the Creatopz team…" style="flex:1;background:transparent;border:1px solid #333;color:#fff;padding:12px 14px;font-size:14.5px;outline:none;">
-                <button type="submit" style="background:#FF3300;color:#fff;border:none;font-weight:700;padding:12px 22px;cursor:pointer;">Send</button>
+        <section id="view-gallery" style="display:none;">
+          <p class="body-sm" style="max-width:680px;margin-bottom:20px;color:var(--on-dark-soft);">Toggle a tile to publish or hide it on the public gallery. Changes go live immediately.</p>
+          <div class="grid grid-4" id="galleryGrid"></div>
+        </section>
+
+        <section id="view-messages" style="display:none;">
+          <div class="grid messages-grid" style="gap:16px;min-height:520px;">
+            <div class="admin-card" style="padding:0;overflow-y:auto;max-height:640px;" id="convoList"></div>
+            <div class="admin-card" style="display:flex;flex-direction:column;padding:0;">
+              <div id="threadBody" style="flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:14px;max-height:52vh;"></div>
+              <form id="msgForm" style="border-top:1px solid var(--dark-border);display:flex;gap:10px;padding:16px;">
+                <input class="admin-input" id="msgDraft" placeholder="Reply as the Creatopz team…" style="flex:1;">
+                <button type="submit" class="btn btn-accent">Send</button>
               </form>
-            </sc-if>
-            <sc-if value="{{ noActiveThread }}" hint-placeholder-val="{{ true }}">
-              <div style="flex:1;display:flex;align-items:center;justify-content:center;color:#7d7d7d;font-size:14px;">Pick a conversation on the left.</div>
-            </sc-if>
+            </div>
           </div>
-        </div>
-      </sc-if>
-    </section>
-  </main>
+        </section>
 
-  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:200;background:#FF3300;color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;animation:ctzToast 2.6s ease forwards;">{{ toast }}</div>
-  </sc-if>
+        <div id="emptyState" class="state-block" style="display:none;">
+          <div class="state-icon">◎</div>
+          <h3 id="emptyTitle">Nothing matches that search</h3>
+          <button class="btn btn-outline on-dark" id="clearSearchBtn">Clear search</button>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
 
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{}">
-function fmtMoney(v) {
-  if (!v && v !== 0) return "—";
-  return "₹" + Number(v).toLocaleString("en-IN");
-}
+<div class="nav-drawer">
+  <div class="nav-drawer-top">
+    <span class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></span>
+    <button class="nav-drawer-close" data-nav-close aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="#apps" data-view="apps">Applications</a>
+    <a href="#creators" data-view="creators">Creators</a>
+    <a href="#campaigns" data-view="campaigns">Campaigns</a>
+    <a href="#gallery" data-view="gallery">Gallery</a>
+    <a href="#messages" data-view="messages">Messages</a>
+  </div>
+  <div class="nav-drawer-actions">
+    <button id="logoutBtnMobile" class="btn btn-white btn-block btn-lg">Log out</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let SESSION = null, VIEW = "apps", QUERY = "";
+let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {};
+let ACTIVE_CONVO_ID = null, THREAD = [];
+const AGREED_DRAFTS = {};
+
+function fmtMoney(v) { return (!v && v !== 0) ? "—" : "₹" + Number(v).toLocaleString("en-IN"); }
 function fmtRange(min, max) {
   if (!min && !max) return "Not set";
   if (min && max && min !== max) return fmtMoney(min) + "–" + fmtMoney(max);
   return fmtMoney(min || max);
 }
-class Component extends DCLogic {
-  state = {
-    view: "apps", query: "", toast: "", loading: true,
-    apps: [], creators: [], campaigns: [], gallery: [], agreedDrafts: {},
-    session: null, conversations: [], activeConversationId: null, thread: [], msgDraft: "", unreadByConvo: {}
-  };
-  rootRef = React.createRef();
-  kpiRefs = [React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+function pillClass(status) {
+  if (status === "accepted" || status === "open") return "badge-accent";
+  if (status === "shortlisted" || status === "closed" || status === "completed") return "badge-dark";
+  if (status === "draft") return "badge-warning";
+  return "";
+}
 
-  async loadConversations() {
-    const { data: convos } = await supabaseClient.from("conversations").select("*, profiles(full_name, role)").order("updated_at", { ascending: false });
-    const { data: unreadMsgs } = await supabaseClient.from("messages").select("conversation_id, sender_id").is("read_at", null);
-    const unreadByConvo = {};
-    (unreadMsgs || []).forEach((m) => {
-      // Only count messages sent by the participant (not by admin themselves) as unread for admin.
-      unreadByConvo[m.conversation_id] = (unreadByConvo[m.conversation_id] || 0) + 1;
-    });
-    this.setState({ conversations: convos || [], unreadByConvo });
+function setView(view) {
+  ["apps", "creators", "campaigns", "gallery", "messages"].forEach((v) => {
+    document.getElementById("view-" + v).style.display = v === view ? "block" : "none";
+  });
+  document.querySelectorAll("[data-view]").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
+  document.getElementById("viewTitle").textContent = {
+    apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", messages: "Messages",
+  }[view];
+  VIEW = view;
+  renderAll();
+}
+document.querySelectorAll("[data-view]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); setView(a.dataset.view); history.replaceState(null, "", "#" + a.dataset.view); }));
+
+function hit(s) { return !QUERY || s.toLowerCase().includes(QUERY.toLowerCase()); }
+
+function renderApps() {
+  const filtered = APPS.filter((a) => hit((a.campaigns?.title || "") + " " + (a.creators?.name || "") + " " + (a.campaigns?.brands?.company_name || "")));
+  document.getElementById("countApps").textContent = filtered.length;
+  const host = document.getElementById("appsList");
+  if (VIEW !== "apps") return;
+  toggleEmpty(filtered.length === 0);
+  if (!filtered.length) { host.innerHTML = ""; return; }
+  host.innerHTML = filtered.map((a) => `
+    <article class="admin-card">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline;">
+        <div><b style="font-size:16.5px;color:#fff;">${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption" style="margin-top:4px;">${escapeHtml(a.campaigns?.brands?.company_name || "Brand")} · Applied ${new Date(a.created_at).toLocaleDateString()}</div></div>
+        <span class="badge ${pillClass(a.status)}">${escapeHtml(a.status)}</span>
+      </div>
+      <div class="grid grid-4" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-border);gap:14px;">
+        <div><div class="caption" style="text-transform:uppercase;">Creator</div><div style="margin-top:5px;color:#fff;">${escapeHtml(a.creators?.name || "Creator")}</div></div>
+        <div><div class="caption" style="text-transform:uppercase;">Instagram</div><div style="margin-top:5px;color:#fff;overflow-wrap:anywhere;">${escapeHtml(a.creators?.instagram_url || "Not connected")}</div></div>
+        <div><div class="caption" style="text-transform:uppercase;">Creator's rate</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.creators?.rate_min, a.creators?.rate_max)}</div></div>
+        <div><div class="caption" style="text-transform:uppercase;">Brand's budget</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.campaigns?.budget_min, a.campaigns?.budget_max)}</div></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
+        <input class="admin-input agreed-input" data-id="${a.id}" placeholder="Agreed budget ₹" value="${escapeHtml(AGREED_DRAFTS[a.id] ?? (a.agreed_budget || ""))}" style="width:170px;">
+        <button class="btn btn-sm ${a.status === "accepted" ? "btn-accent" : "admin-btn-out"} approve-btn" data-id="${a.id}">${a.status === "accepted" ? "Matched ✓" : "Finalise match"}</button>
+        <button class="btn btn-sm admin-btn-out reject-btn" data-id="${a.id}">Decline</button>
+      </div>
+    </article>`).join("");
+  host.querySelectorAll(".agreed-input").forEach((el) => el.addEventListener("input", () => { AGREED_DRAFTS[el.dataset.id] = el.value; }));
+  host.querySelectorAll(".approve-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "accepted")));
+  host.querySelectorAll(".reject-btn").forEach((btn) => btn.addEventListener("click", () => decideApplication(btn.dataset.id, "rejected")));
+}
+
+function renderCreators() {
+  const filtered = CREATORS.filter((c) => hit((c.name || "") + " " + (c.category || "") + " " + (c.locations || []).join(" ")));
+  document.getElementById("countCreators").textContent = filtered.length;
+  if (VIEW !== "creators") return;
+  toggleEmpty(filtered.length === 0);
+  document.getElementById("creatorsBody").innerHTML = filtered.map((c) => `
+    <tr>
+      <td><a href="profile.html?id=${encodeURIComponent(c.id)}" style="display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;"><span class="avatar-fallback" style="width:32px;height:32px;background:#fff;color:#000;font-size:12px;">${(c.name || "?").split(" ").map((w) => w[0]).join("")}</span>${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
+      <td style="overflow-wrap:anywhere;">${escapeHtml(c.instagram_url || "Not connected")}</td>
+      <td>${escapeHtml(c.category || "—")}</td>
+      <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
+      <td><button class="btn-ghost admin-toggle-public" data-id="${c.id}" data-next="${!c.is_public}" style="background:none;border:none;color:${c.is_public ? "#c9c9c9" : "#6d6d6d"};font-weight:600;cursor:pointer;font-size:12.5px;">${c.is_public ? "Listed" : "Hidden"}</button></td>
+      <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#8a6420;color:#e8b84b;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
+      <td><button class="btn btn-sm ${c.is_verified ? "btn-accent" : "admin-btn-out"} toggle-verify-btn" data-id="${c.id}" data-next="${!c.is_verified}">${c.is_verified ? "Verified ✓" : "Verify"}</button></td>
+    </tr>`).join("");
+  document.querySelectorAll(".admin-toggle-public").forEach((btn) => btn.addEventListener("click", () => togglePublic(btn.dataset.id, btn.dataset.next === "true")));
+  document.querySelectorAll(".clear-flag-btn").forEach((btn) => btn.addEventListener("click", () => clearFlag(btn.dataset.id)));
+  document.querySelectorAll(".toggle-verify-btn").forEach((btn) => btn.addEventListener("click", () => toggleVerified(btn.dataset.id, btn.dataset.next === "true")));
+}
+
+function renderCampaigns() {
+  const filtered = CAMPAIGNS.filter((c) => hit((c.title || "") + " " + (c.brands?.company_name || "")));
+  document.getElementById("countCampaigns").textContent = filtered.length;
+  if (VIEW !== "campaigns") return;
+  toggleEmpty(filtered.length === 0);
+  document.getElementById("campaignsGrid").innerHTML = filtered.map((c) => {
+    const appsLabel = c.status === "draft" ? "Pending your approval" : APPS.filter((a) => a.campaigns?.id === c.id).length + " applications";
+    return `
+    <article class="admin-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+        <span class="eyebrow on-dark">${escapeHtml(c.brands?.company_name || "Brand")}</span>
+        <span class="badge ${pillClass(c.status)}">${escapeHtml(c.status)}</span>
+      </div>
+      <h3 style="color:#fff;font-size:20px;margin:14px 0 12px;">${escapeHtml(c.title)}</h3>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:14px;">
+        <span class="caption">Budget</span><span style="color:#fff;font-weight:700;">${fmtRange(c.budget_min, c.budget_max)}</span>
+      </div>
+      <div class="caption" style="margin-top:12px;">${appsLabel}</div>
+      ${c.status === "draft"
+        ? `<div style="display:flex;gap:8px;margin-top:14px;"><button class="btn btn-accent btn-sm approve-campaign-btn" data-id="${c.id}" style="flex:1;">Approve</button><button class="btn admin-btn-out btn-sm decline-campaign-btn" data-id="${c.id}" style="flex:1;">Decline</button></div>`
+        : `<button class="btn admin-btn-out btn-block btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="margin-top:14px;">${c.status === "closed" ? "Reopen" : "Close"}</button>`}
+    </article>`;
+  }).join("");
+  document.querySelectorAll(".approve-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "open")));
+  document.querySelectorAll(".decline-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "closed")));
+  document.querySelectorAll(".toggle-campaign-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status === "closed" ? "open" : "closed")));
+}
+
+function renderGallery() {
+  const filtered = GALLERY.filter((g) => hit(g.caption || ""));
+  document.getElementById("countGallery").textContent = filtered.length;
+  if (VIEW !== "gallery") return;
+  toggleEmpty(filtered.length === 0);
+  document.getElementById("galleryGrid").innerHTML = filtered.map((g, i) => `
+    <div class="admin-card" style="padding:0;overflow:hidden;">
+      <div style="position:relative;aspect-ratio:1/1;background:#1a1a1a;overflow:hidden;">
+        ${g.image_url ? `<img src="${escapeHtml(g.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#333;font-size:32px;">${String(i + 1).padStart(2, "0")}</div>`}
+        ${!g.is_published ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);"></div>` : ""}
+      </div>
+      <div style="padding:14px 16px;">
+        <div class="caption" style="min-height:32px;">${escapeHtml(g.caption || "")}</div>
+        <button class="btn btn-sm ${g.is_published ? "btn-accent" : "admin-btn-out"} btn-block toggle-gallery-btn" data-id="${g.id}" data-next="${!g.is_published}" style="margin-top:10px;">${g.is_published ? "Live — hide it" : "Hidden — publish"}</button>
+      </div>
+    </div>`).join("");
+  document.querySelectorAll(".toggle-gallery-btn").forEach((btn) => btn.addEventListener("click", () => toggleGallery(btn.dataset.id, btn.dataset.next === "true")));
+}
+
+function toggleEmpty(isEmpty) {
+  document.getElementById("emptyState").style.display = isEmpty && VIEW !== "messages" ? "block" : "none";
+}
+
+function renderMessages() {
+  const totalUnread = Object.values(UNREAD_BY_CONVO).reduce((a, b) => a + b, 0);
+  const badge = document.getElementById("countMessages");
+  badge.style.display = totalUnread ? "inline-flex" : "none";
+  badge.textContent = totalUnread;
+  if (VIEW !== "messages") return;
+  const list = document.getElementById("convoList");
+  if (!CONVERSATIONS.length) {
+    list.innerHTML = `<div style="padding:24px;color:var(--muted);font-size:13.5px;">No conversations yet.</div>`;
+  } else {
+    list.innerHTML = CONVERSATIONS.map((cv) => `
+      <button class="convo-btn" data-id="${cv.id}" style="display:block;width:100%;text-align:left;background:${cv.id === ACTIVE_CONVO_ID ? "rgba(255,255,255,.06)" : "transparent"};border:none;border-bottom:1px solid var(--dark-border);padding:16px 18px;cursor:pointer;color:#fff;">
+        <div style="display:flex;justify-content:space-between;gap:8px;"><span style="font-size:14.5px;font-weight:600;overflow-wrap:anywhere;">${escapeHtml(cv.profiles?.full_name || "User")}</span>${UNREAD_BY_CONVO[cv.id] ? `<span class="badge badge-accent">${UNREAD_BY_CONVO[cv.id]}</span>` : ""}</div>
+        <div class="caption" style="margin-top:4px;">${escapeHtml(cv.profiles?.role || "")}</div>
+      </button>`).join("");
+    list.querySelectorAll(".convo-btn").forEach((btn) => btn.addEventListener("click", () => openConversation(btn.dataset.id)));
   }
-
-  async openConversation(id) {
-    this.setState({ activeConversationId: id });
-    const { data } = await supabaseClient.from("messages").select("*").eq("conversation_id", id).order("sent_at", { ascending: true });
-    this.setState({ thread: data || [] });
-    const unreadIds = (data || []).filter((m) => !m.read_at && m.sender_id !== this.state.session.user.id).map((m) => m.id);
-    if (unreadIds.length) {
-      await supabaseClient.from("messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
-      await this.loadConversations();
-    }
-  }
-
-  sendMsg = async (e) => {
-    e.preventDefault();
-    const { msgDraft, activeConversationId, session } = this.state;
-    if (!msgDraft.trim() || !activeConversationId) return;
-    const { error } = await supabaseClient.from("messages").insert({ conversation_id: activeConversationId, sender_id: session.user.id, body: msgDraft.trim() });
-    if (error) return this.flash("Couldn't send: " + error.message);
-    this.setState({ msgDraft: "" });
-    await this.openConversation(activeConversationId);
-  };
-
-  flash(msg) {
-    this.setState({ toast: msg });
-    clearTimeout(this._t);
-    this._t = setTimeout(() => this.setState({ toast: "" }), 2600);
-  }
-
-  pill(status) {
-    if (status === "accepted") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
-    if (status === "rejected" || status === "withdrawn") return { pillBg: "transparent", pillFg: "#6d6d6d", pillBorder: "#333" };
-    if (status === "shortlisted") return { pillBg: "#fff", pillFg: "#000", pillBorder: "#fff" };
-    if (status === "open") return { pillBg: "#FF3300", pillFg: "#fff", pillBorder: "#FF3300" };
-    if (status === "draft") return { pillBg: "transparent", pillFg: "#FF3300", pillBorder: "#FF3300" };
-    if (status === "closed" || status === "completed") return { pillBg: "#fff", pillFg: "#000", pillBorder: "#fff" };
-    return { pillBg: "transparent", pillFg: "#fff", pillBorder: "#fff" };
-  }
-
-  async loadAll() {
-    const [appsRes, creatorsRes, campaignsRes, galleryRes] = await Promise.all([
-      supabaseClient.from("campaign_applications")
-        .select("id, status, message, created_at, agreed_budget, admin_notes, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
-        .order("created_at", { ascending: false }),
-      supabaseClient.from("creators").select("*").order("created_at", { ascending: false }),
-      supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
-      supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true })
-    ]);
-    this.setState({
-      loading: false,
-      apps: appsRes.data || [],
-      creators: creatorsRes.data || [],
-      campaigns: campaignsRes.data || [],
-      gallery: galleryRes.data || []
-    });
-  }
-
-  async decideApplication(id, status) {
-    const agreedBudget = this.state.agreedDrafts[id];
-    const patch = { status };
-    if (status === "accepted" && agreedBudget) patch.agreed_budget = Number(agreedBudget);
-    const { error } = await supabaseClient.from("campaign_applications").update(patch).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(status === "accepted" ? "Match finalised — intro sent on WhatsApp" : "Application declined");
-  }
-
-  async toggleVerified(id, next) {
-    const { error } = await supabaseClient.from("creators").update({ is_verified: next }).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(next ? "Creator verified" : "Creator unverified");
-  }
-
-  async togglePublic(id, next) {
-    const { error } = await supabaseClient.from("creators").update({ is_public: next }).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(next ? "Listed in the directory" : "Hidden from the directory");
-  }
-
-  async clearFlag(id) {
-    const { error } = await supabaseClient.from("creators").update({ flagged_for_review: false, is_public: true }).eq("id", id);
-    if (error) return this.flash("Couldn't clear flag: " + error.message);
-    await this.loadAll();
-    this.flash("Cleared for review — listed in the directory");
-  }
-
-  async toggleCampaignStatus(id, next) {
-    const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(next === "closed" ? "Campaign closed" : "Campaign reopened");
-  }
-
-  async decideCampaign(id, next) {
-    const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(next === "open" ? "Campaign approved — now live to creators" : "Campaign declined");
-  }
-
-  async toggleGallery(id, next) {
-    const { error } = await supabaseClient.from("gallery_posts").update({ is_published: next }).eq("id", id);
-    if (error) return this.flash("Couldn't update: " + error.message);
-    await this.loadAll();
-    this.flash(next ? "Published to the gallery" : "Hidden from the gallery");
-  }
-
-  renderVals() {
-    const { view, query, toast, apps: appsRaw, creators: creatorsRaw, campaigns: campaignsRaw, gallery: galleryRaw, agreedDrafts, loading } = this.state;
-    const q = query.trim().toLowerCase();
-    const hit = (s) => !q || s.toLowerCase().includes(q);
-
-    const apps = appsRaw
-      .filter((a) => hit((a.campaigns?.title || "") + " " + (a.creators?.name || "") + " " + (a.campaigns?.brands?.company_name || "")))
-      .map((a, i) => Object.assign({}, this.pill(a.status), {
-        status: a.status,
-        campaign: a.campaigns?.title || "Campaign",
-        brand: a.campaigns?.brands?.company_name || "Brand",
-        applied: "Applied " + new Date(a.created_at).toLocaleDateString(),
-        creator: a.creators?.name || "Creator",
-        instagram: a.creators?.instagram_url || "Not connected",
-        creatorRate: fmtRange(a.creators?.rate_min, a.creators?.rate_max),
-        brandBudget: fmtRange(a.campaigns?.budget_min, a.campaigns?.budget_max),
-        delay: i * 60 + "ms",
-        agreedBudget: agreedDrafts[a.id] ?? (a.agreed_budget || ""),
-        onAgreedBudget: (e) => this.setState({ agreedDrafts: Object.assign({}, agreedDrafts, { [a.id]: e.target.value }) }),
-        approveLabel: a.status === "accepted" ? "Matched ✓" : "Finalise match",
-        approveBg: a.status === "accepted" ? "#FF3300" : "transparent",
-        approve: () => this.decideApplication(a.id, "accepted"),
-        reject: () => this.decideApplication(a.id, "rejected")
-      }));
-
-    const creators = creatorsRaw.filter((c) => hit((c.name || "") + " " + (c.category || "") + " " + (c.locations || []).join(" "))).map((c, i) => ({
-      delay: i * 55 + "ms",
-      initials: (c.name || "?").split(" ").map((w) => w[0]).join(""),
-      name: c.name || "Unnamed",
-      city: (c.locations && c.locations[0]) || "—",
-      profileHref: "profile.html?id=" + encodeURIComponent(c.id),
-      instagram: c.instagram_url || "Not connected",
-      niche: c.category || "—",
-      reachLabel: (c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0),
-      publicLabel: c.is_public ? "Listed" : "Hidden",
-      publicColor: c.is_public ? "#c9c9c9" : "#6d6d6d",
-      togglePublic: () => this.togglePublic(c.id, !c.is_public),
-      flagged: !!c.flagged_for_review,
-      clearFlag: () => this.clearFlag(c.id),
-      vLabel: c.is_verified ? "Verified ✓" : "Verify",
-      vBg: c.is_verified ? "#FF3300" : "transparent",
-      vFg: "#fff",
-      vBorder: c.is_verified ? "#FF3300" : "#333",
-      toggle: () => this.toggleVerified(c.id, !c.is_verified)
-    }));
-
-    const campaigns = campaignsRaw.filter((c) => hit((c.title || "") + " " + (c.brands?.company_name || ""))).map((c, i) => Object.assign({}, this.pill(c.status), {
-      title: c.title,
-      brand: c.brands?.company_name || "Brand",
-      budget: fmtRange(c.budget_min, c.budget_max),
-      status: c.status,
-      delay: i * 70 + "ms",
-      fill: 0.4,
-      appsLabel: c.status === "draft" ? "Pending your approval" : appsRaw.filter((a) => a.campaigns?.id === c.id).length + " applications",
-      isDraft: c.status === "draft",
-      isNotDraft: c.status !== "draft",
-      toggleLabel: c.status === "closed" ? "Reopen" : "Close",
-      toggleStatus: () => this.toggleCampaignStatus(c.id, c.status === "closed" ? "open" : "closed"),
-      approve: () => this.decideCampaign(c.id, "open"),
-      decline: () => this.decideCampaign(c.id, "closed")
-    }));
-
-    const gallery = galleryRaw.filter((g) => hit(g.caption || "")).map((g, i) => ({
-      caption: g.caption || "",
-      order: String(i + 1).padStart(2, "0"),
-      delay: i * 45 + "ms",
-      veil: g.is_published ? "rgba(255,51,0,0)" : "rgba(0,0,0,.55)",
-      label: g.is_published ? "Live — hide it" : "Hidden — publish",
-      bg: g.is_published ? "#FF3300" : "transparent",
-      fg: "#fff",
-      border: g.is_published ? "#FF3300" : "#333",
-      toggle: () => this.toggleGallery(g.id, !g.is_published)
-    }));
-
-    const { conversations, activeConversationId, thread, msgDraft, unreadByConvo, session } = this.state;
-    const totalUnread = Object.values(unreadByConvo || {}).reduce((a, b) => a + b, 0);
-    const counts = { apps: apps.length, creators: creators.length, campaigns: campaigns.length, gallery: gallery.length, messages: totalUnread };
-    const mk = (label, on) => ({
-      label,
-      count: String(counts[on] || 0),
-      bg: view === on ? "#151515" : "transparent",
-      rule: view === on ? "#FF3300" : "transparent",
-      fg: view === on ? "#fff" : "#8a8a8a",
-      pick: () => this.setState({ view: on })
-    });
-
-    const current = { apps, creators, campaigns, gallery, messages: conversations }[view] || [];
-
-    return {
-      rootRef: this.rootRef,
-      nav: [mk("Applications", "apps"), mk("Creators", "creators"), mk("Campaigns", "campaigns"), mk("Gallery", "gallery"), mk("Messages", "messages")],
-      viewTitle: { apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", messages: "Messages" }[view],
-      isMessages: view === "messages",
-      conversations: conversations.map((cv) => ({
-        pick: () => this.openConversation(cv.id),
-        bg: cv.id === activeConversationId ? "#151515" : "transparent",
-        name: cv.profiles?.full_name || "User",
-        role: cv.profiles?.role || "",
-        unread: (unreadByConvo || {})[cv.id] || 0,
-        hasUnread: !!(unreadByConvo || {})[cv.id]
-      })),
-      conversationsEmpty: conversations.length === 0,
-      hasActiveThread: !!activeConversationId,
-      noActiveThread: !activeConversationId,
-      thread: thread.map((m) => {
-        const mine = session && m.sender_id === session.user.id;
-        return {
-          align: mine ? "flex-end" : "flex-start",
-          bg: mine ? "#FF3300" : "#151515",
-          fg: "#fff",
-          who: mine ? "You (Creatopz)" : "User",
-          when: new Date(m.sent_at).toLocaleString(),
-          body: m.body
-        };
-      }),
-      msgDraft,
-      onMsgDraft: (e) => this.setState({ msgDraft: e.target.value }),
-      sendMsg: this.sendMsg,
-      kpis: [
-        { label: "Pending matches", fill: Math.min(1, appsRaw.filter((a) => a.status === "pending" || a.status === "shortlisted").length / 20), color: "#FF3300", ref: this.kpiRefs[0], target: appsRaw.filter((a) => a.status === "pending" || a.status === "shortlisted").length },
-        { label: "Live campaigns", fill: Math.min(1, campaignsRaw.filter((c) => c.status === "open").length / 10), color: "#fff", ref: this.kpiRefs[1], target: campaignsRaw.filter((c) => c.status === "open").length },
-        { label: "Creators listed", fill: Math.min(1, creatorsRaw.filter((c) => c.is_public).length / 30), color: "#FF3300", ref: this.kpiRefs[2], target: creatorsRaw.filter((c) => c.is_public).length },
-        { label: "Awaiting verify", fill: Math.min(1, creatorsRaw.filter((c) => !c.is_verified).length / 30), color: "#fff", ref: this.kpiRefs[3], target: creatorsRaw.filter((c) => !c.is_verified).length }
-      ],
-      loading,
-      isApps: view === "apps" && apps.length > 0,
-      isCreators: view === "creators" && creators.length > 0,
-      isCampaigns: view === "campaigns" && campaigns.length > 0,
-      isGallery: view === "gallery" && gallery.length > 0,
-      isEmpty: !loading && view !== "messages" && current.length === 0,
-      apps, creators, campaigns, gallery,
-      query,
-      onQuery: (e) => this.setState({ query: e.target.value }),
-      clearQuery: () => this.setState({ query: "" }),
-      hasToast: !!toast,
-      toast,
-      logout: async () => { await supabaseClient.auth.signOut(); location.href = "auth.html"; }
-    };
-  }
-
-  async componentDidMount() {
-    const { data: sessionData } = await supabaseClient.auth.getSession();
-    const session = sessionData?.session;
-    if (!session) { location.href = "auth.html"; return; }
-    const { data: profile } = await supabaseClient.from("profiles").select("role").eq("id", session.user.id).single();
-    if (profile?.role !== "admin") {
-      location.href = profile?.role === "brand" ? "dashboard-brand.html" : "dashboard-creator.html";
-      return;
-    }
-    this.setState({ session });
-    await this.loadAll();
-    await this.loadConversations();
-    this.msgChannel = supabaseClient
-      .channel("admin-messages")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => {
-        this.loadConversations();
-        if (this.state.activeConversationId) this.openConversation(this.state.activeConversationId);
-      })
-      .subscribe();
-    this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targets = this.renderVals().kpis.map((k) => k.target || 0);
-    this.kpiRefs.forEach((ref, i) => this.countTo(ref.current, targets[i], i * 80));
-  }
-
-  countTo(el, target, delay) {
-    if (!el) return;
-    if (this.reduced) { el.textContent = String(target); return; }
-    const t0 = performance.now() + delay;
-    const tick = (t) => {
-      if (t < t0) return requestAnimationFrame(tick);
-      const p = Math.min(1, (t - t0) / 1000);
-      const e = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.round(target * e));
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this._t);
-    if (this.msgChannel) supabaseClient.removeChannel(this.msgChannel);
+  const threadHost = document.getElementById("threadBody");
+  if (!ACTIVE_CONVO_ID) {
+    threadHost.innerHTML = `<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;">Pick a conversation on the left.</div>`;
+  } else {
+    threadHost.innerHTML = THREAD.map((m) => {
+      const mine = SESSION && m.sender_id === SESSION.user.id;
+      return `<div style="align-self:${mine ? "flex-end" : "flex-start"};max-width:78%;">
+        <div class="caption" style="margin-bottom:4px;">${mine ? "You (Creatopz)" : "User"} · ${new Date(m.sent_at).toLocaleString()}</div>
+        <div style="background:${mine ? "var(--accent)" : "rgba(255,255,255,.06)"};color:#fff;border:1px solid var(--dark-border);border-radius:var(--r-md);padding:12px 16px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere;">${escapeHtml(m.body)}</div>
+      </div>`;
+    }).join("");
   }
 }
+
+function renderAll() {
+  renderApps(); renderCreators(); renderCampaigns(); renderGallery(); renderMessages();
+}
+
+document.getElementById("searchInput").addEventListener("input", (e) => { QUERY = e.target.value; renderAll(); });
+document.getElementById("clearSearchBtn").addEventListener("click", () => { QUERY = ""; document.getElementById("searchInput").value = ""; renderAll(); });
+
+async function loadAll() {
+  const [appsRes, creatorsRes, campaignsRes, galleryRes] = await Promise.all([
+    supabaseClient.from("campaign_applications")
+      .select("id, status, message, created_at, agreed_budget, admin_notes, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
+      .order("created_at", { ascending: false }),
+    supabaseClient.from("creators").select("*").order("created_at", { ascending: false }),
+    supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
+    supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true }),
+  ]);
+  APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
+  document.getElementById("kpiPending").textContent = APPS.filter((a) => a.status === "pending" || a.status === "shortlisted").length;
+  document.getElementById("kpiLive").textContent = CAMPAIGNS.filter((c) => c.status === "open").length;
+  document.getElementById("kpiListed").textContent = CREATORS.filter((c) => c.is_public).length;
+  document.getElementById("kpiUnverified").textContent = CREATORS.filter((c) => !c.is_verified).length;
+  renderAll();
+}
+
+async function loadConversations() {
+  const { data: convos } = await supabaseClient.from("conversations").select("*, profiles(full_name, role)").order("updated_at", { ascending: false });
+  const { data: unreadMsgs } = await supabaseClient.from("messages").select("conversation_id, sender_id").is("read_at", null);
+  const map = {};
+  (unreadMsgs || []).forEach((m) => { map[m.conversation_id] = (map[m.conversation_id] || 0) + 1; });
+  CONVERSATIONS = convos || []; UNREAD_BY_CONVO = map;
+  renderMessages();
+}
+
+async function openConversation(id) {
+  ACTIVE_CONVO_ID = id;
+  const { data } = await supabaseClient.from("messages").select("*").eq("conversation_id", id).order("sent_at", { ascending: true });
+  THREAD = data || [];
+  renderMessages();
+  const unreadIds = THREAD.filter((m) => !m.read_at && m.sender_id !== SESSION.user.id).map((m) => m.id);
+  if (unreadIds.length) {
+    await supabaseClient.from("messages").update({ read_at: new Date().toISOString() }).in("id", unreadIds);
+    await loadConversations();
+  }
+}
+
+document.getElementById("msgForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = document.getElementById("msgDraft");
+  const body = input.value.trim();
+  if (!body || !ACTIVE_CONVO_ID) return;
+  const { error } = await supabaseClient.from("messages").insert({ conversation_id: ACTIVE_CONVO_ID, sender_id: SESSION.user.id, body });
+  if (error) return showToast("Couldn't send: " + error.message, "error");
+  input.value = "";
+  await openConversation(ACTIVE_CONVO_ID);
+});
+
+async function decideApplication(id, status) {
+  const patch = { status };
+  if (status === "accepted" && AGREED_DRAFTS[id]) patch.agreed_budget = Number(AGREED_DRAFTS[id]);
+  const { error } = await supabaseClient.from("campaign_applications").update(patch).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(status === "accepted" ? "Match finalised — intro sent" : "Application declined", "success");
+}
+async function toggleVerified(id, next) {
+  const { error } = await supabaseClient.from("creators").update({ is_verified: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(next ? "Creator verified" : "Creator unverified", "success");
+}
+async function togglePublic(id, next) {
+  const { error } = await supabaseClient.from("creators").update({ is_public: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(next ? "Listed in the directory" : "Hidden from the directory", "success");
+}
+async function clearFlag(id) {
+  const { error } = await supabaseClient.from("creators").update({ flagged_for_review: false, is_public: true }).eq("id", id);
+  if (error) return showToast("Couldn't clear flag: " + error.message, "error");
+  await loadAll();
+  showToast("Cleared for review — listed in the directory", "success");
+}
+async function toggleCampaignStatus(id, next) {
+  const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(next === "closed" ? "Campaign closed" : "Campaign reopened", "success");
+}
+async function decideCampaign(id, next) {
+  const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(next === "open" ? "Campaign approved — now live" : "Campaign declined", "success");
+}
+async function toggleGallery(id, next) {
+  const { error } = await supabaseClient.from("gallery_posts").update({ is_published: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + error.message, "error");
+  await loadAll();
+  showToast(next ? "Published to the gallery" : "Hidden from the gallery", "success");
+}
+
+async function boot() {
+  // requireAuth enforces the role server-side too (RLS is_admin()) — this
+  // client check only decides where to redirect a non-admin visitor.
+  const profile = await requireAuth("admin");
+  if (!profile) return;
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  SESSION = sessionData.session;
+
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("dashContent").style.display = "block";
+
+  await loadAll();
+  await loadConversations();
+
+  supabaseClient.channel("admin-messages")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => {
+      loadConversations();
+      if (ACTIVE_CONVO_ID) openConversation(ACTIVE_CONVO_ID);
+    })
+    .subscribe();
+
+  const initialView = (location.hash || "#apps").replace("#", "");
+  setView(["apps", "creators", "campaigns", "gallery", "messages"].includes(initialView) ? initialView : "apps");
+}
+
+document.getElementById("logoutBtn").addEventListener("click", logOut);
+document.getElementById("logoutBtnMobile").addEventListener("click", logOut);
+document.addEventListener("DOMContentLoaded", boot);
 </script>
 </body>
 </html>

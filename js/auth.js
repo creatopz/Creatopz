@@ -65,6 +65,31 @@ async function getCurrentUser() {
   return data.user || null;
 }
 
+// Self-healing: signup can happen without an active session (email
+// confirmation pending), in which case RLS blocks writing the profiles
+// row at signup time. The first time that user is seen with a real
+// session (i.e. here), make sure their profiles/creators/brands rows
+// exist so nothing downstream (dashboards, admin, onboarding) 404s on
+// a profile that was never created.
+async function ensureProfileRow(user) {
+  const role = user.user_metadata?.role === "brand" ? "brand" : "creator";
+  const fullName = user.user_metadata?.full_name || "";
+  const { data: profile } = await supabaseClient
+    .from("profiles")
+    .upsert({ id: user.id, role, full_name: fullName, email: user.email }, { onConflict: "id", ignoreDuplicates: false })
+    .select()
+    .single();
+
+  const table = role === "brand" ? "brands" : "creators";
+  const { data: existing } = await supabaseClient.from(table).select("id").eq("user_id", user.id).maybeSingle();
+  if (!existing) {
+    await supabaseClient.from(table).insert(
+      role === "brand" ? { user_id: user.id, company_name: fullName } : { user_id: user.id, name: fullName }
+    );
+  }
+  return profile || { id: user.id, email: user.email, role, full_name: fullName };
+}
+
 async function getCurrentProfile() {
   const user = await getCurrentUser();
   if (!user) return null;
@@ -73,7 +98,14 @@ async function getCurrentProfile() {
     .select("*")
     .eq("id", user.id)
     .single();
-  if (error) return { id: user.id, email: user.email, role: user.user_metadata?.role };
+  if (error) {
+    // No row yet (e.g. first login after email confirmation) — create it.
+    try {
+      return await ensureProfileRow(user);
+    } catch {
+      return { id: user.id, email: user.email, role: user.user_metadata?.role || "creator" };
+    }
+  }
   return data;
 }
 
@@ -82,18 +114,18 @@ async function getCurrentProfile() {
 async function requireAuth(requiredRole = null) {
   const profile = await getCurrentProfile();
   if (!profile) {
-    if (!window.location.pathname.endsWith("login.html")) {
-      window.location.href = "login.html";
+    if (!window.location.pathname.endsWith("auth.html")) {
+      window.location.href = "auth.html";
     }
     return null;
   }
   if (requiredRole && profile.role !== requiredRole) {
     const target =
       profile.role === "admin"
-        ? "admin.html"
+        ? "admin-console.html"
         : profile.role === "brand"
-        ? "brand-dashboard.html"
-        : "creator-dashboard.html";
+        ? "dashboard-brand.html"
+        : "dashboard-creator.html";
     // Never redirect to the page we're already on — that would be an
     // infinite reload loop instead of a redirect.
     if (!window.location.pathname.endsWith(target)) {
@@ -105,27 +137,53 @@ async function requireAuth(requiredRole = null) {
 }
 
 // Updates the nav bar (if present on the page) to reflect logged-in state.
+// Also syncs the mobile drawer's action buttons (.nav-drawer-actions), if
+// the page has one — it starts out with static "Log in / Join" markup so
+// a logged-in visitor doesn't see the wrong buttons after opening the
+// hamburger menu.
 async function renderAuthNav(navSelector = "#authNav") {
   const nav = document.querySelector(navSelector);
-  if (!nav) return;
+  const drawerActions = document.querySelector(".nav-drawer-actions[data-auth-sync]");
+  if (!nav && !drawerActions) return;
   const profile = await getCurrentProfile();
+
+  const wireLogout = (id) => {
+    document.getElementById(id)?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await logOut();
+    });
+  };
+
   if (!profile) {
-    nav.innerHTML = `<a href="login.html" class="btn btn-outline-dark" style="padding:10px 20px;font-size:14px;">Log in</a>`;
+    if (nav) {
+      nav.innerHTML = `<a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
+    }
+    if (drawerActions) {
+      drawerActions.innerHTML = `<a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a><a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>`;
+    }
     return;
   }
+
   const dashboardHref =
     profile.role === "admin"
-      ? "admin.html"
+      ? "admin-console.html"
       : profile.role === "brand"
-      ? "brand-dashboard.html"
-      : "creator-dashboard.html";
+      ? "dashboard-brand.html"
+      : "dashboard-creator.html";
   const onDashboardAlready = window.location.pathname.endsWith(dashboardHref);
-  nav.innerHTML = `
-    ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline-dark" style="padding:10px 20px;font-size:14px;">Dashboard</a>`}
-    <a href="#" id="navLogout" class="btn btn-red" style="padding:10px 20px;font-size:14px;">Log out</a>
-  `;
-  document.getElementById("navLogout")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    await logOut();
-  });
+
+  if (nav) {
+    nav.innerHTML = `
+      ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline btn-sm">Dashboard</a>`}
+      <a href="#" id="navLogout" class="btn btn-primary btn-sm">Log out</a>
+    `;
+    wireLogout("navLogout");
+  }
+  if (drawerActions) {
+    drawerActions.innerHTML = `
+      ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline on-dark btn-block btn-lg">Dashboard</a>`}
+      <a href="#" id="navLogoutDrawer" class="btn btn-white btn-block btn-lg">Log out</a>
+    `;
+    wireLogout("navLogoutDrawer");
+  }
 }

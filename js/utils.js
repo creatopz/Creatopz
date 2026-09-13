@@ -16,16 +16,16 @@ function showToast(message, type = "info") {
   }
   const el = document.createElement("div");
   const colors = {
-    info: "#1E1A14",
+    info: "#17140f",
     success: "#3E7C6B",
     error: "#B8493D",
   };
   el.textContent = message;
   el.style.cssText =
-    `background:${colors[type] || colors.info};color:#fff;padding:12px 18px;` +
-    "border-radius:2px;font-family:'Inter',sans-serif;font-size:14px;" +
-    "box-shadow:0 12px 30px -10px rgba(0,0,0,0.4);width:100%;text-align:center;" +
-    "animation:toastIn .2s ease;";
+    `background:${colors[type] || colors.info};color:#fff;padding:13px 20px;` +
+    "border-radius:999px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;" +
+    "box-shadow:0 16px 40px -14px rgba(0,0,0,0.45);width:auto;max-width:100%;text-align:center;" +
+    "animation:toastIn .25s cubic-bezier(.16,1,.3,1);";
   host.appendChild(el);
   setTimeout(() => {
     el.style.transition = "opacity .3s ease";

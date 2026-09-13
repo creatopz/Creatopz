@@ -1,575 +1,376 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/soften.css">
-<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/supabase-client.js"></script>
-<script src="./support.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Creator Profile — Creatopz™</title>
+<meta name="description" content="Creator media kit on Creatopz — portfolio, audience and engagement stats.">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
-<x-dc>
-<helmet>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<style>
-  body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-  *{box-sizing:border-box;}
-  a{color:inherit;text-decoration:none;}
-  a:hover{color:#FF3300;}
-  ::selection{background:#FF3300;color:#fff;}
-  button{font-family:inherit;}
-  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
-  @keyframes ctzRise{from{transform:translateY(26px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  @keyframes ctzWordUp{from{transform:translateY(110%);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  @keyframes ctzFloat{0%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-14px) rotate(-1deg);}100%{transform:translateY(0) rotate(-4deg);}}
-  @keyframes ctzBlink{0%,60%{opacity:1;}80%{opacity:.25;}100%{opacity:1;}}
-  @keyframes ctzGrowY{from{transform:scaleY(0);}to{transform:scaleY(1);}}
-  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
-  @media (max-width:860px){
-    .dc-nav{flex-wrap:wrap;row-gap:10px;}
-    .dc-nav-links{flex-wrap:wrap;gap:14px !important;font-size:13.5px !important;order:3;width:100%;justify-content:flex-start;}
-  }
-  @view-transition{navigation:auto;}
-  html{scroll-behavior:smooth;}
-  a,button,input,select,textarea{transition:background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(.16,1,.3,1), opacity .2s ease;}
-</style>
-</helmet>
 
-<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#000;background:#fff;">
-
-  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
-    <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
-      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:21px;">
-        <img src="assets/logo.png" alt="Creatopz mark" style="height:32px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
-      </a>
-      <div class="dc-nav-links" style="display:flex;gap:26px;font-size:14.5px;font-weight:500;">
-        <a href="dashboard-creator.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Dashboard</a>
-        <a href="profile.html" style="padding:6px 0;color:#FF3300;font-weight:600;background-image:linear-gradient(#FF3300,#FF3300);background-size:100% 2px;background-repeat:no-repeat;background-position:0 100%;">My profile</a>
-        <a href="directory.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Directory</a>
-        <a href="play.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Play</a>
-      </div>
-      <sc-if value="{{ isOwn }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ toggleEdit }}" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:2px solid #000;background:{{ editBg }};color:{{ editFg }};cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ editLabel }}</button>
-      </sc-if>
-    </nav>
-  </header>
-
-  <section style="background:#000;color:#fff;position:relative;overflow:hidden;padding:60px 0 0;">
-    <div ref="{{ glowRef }}" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx,70%) var(--my,30%), rgba(255,51,0,.16), transparent 68%);"></div>
-    <img src="assets/logo.png" alt="" style="position:absolute;right:-60px;top:20px;width:340px;opacity:.06;filter:invert(1);animation:ctzFloat 11s ease-in-out infinite;">
-    <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;">
-      <div style="display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;">
-        <div style="width:132px;height:132px;flex:0 0 132px;background:#FF3300;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:52px;overflow:hidden;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) both;">
-          <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
-            <img src="{{ avatarUrl }}" alt="" style="width:100%;height:100%;object-fit:cover;">
-          </sc-if>
-          <sc-if value="{{ noAvatar }}" hint-placeholder-val="{{ true }}">
-            <span>{{ initials }}</span>
-          </sc-if>
-        </div>
-        <div>
-          <div style="display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:7px 13px;margin-bottom:16px;animation:ctzRise .7s cubic-bezier(.16,1,.3,1) .06s both;">
-            <span style="width:7px;height:7px;background:#FF3300;animation:ctzBlink 1.8s ease-in-out infinite;"></span>{{ statusTag }}
-          </div>
-          <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(38px,5vw,64px);line-height:.96;margin:0;">{{ displayName }}</h1>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;color:#9a9a9a;font-size:14.5px;margin-top:14px;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .28s both;">
-            <span>{{ nicheLabel }}</span><span style="color:#333;">/</span><span>{{ cityLabel }}</span>
-          </div>
-        </div>
-      </div>
-
-      <p style="color:#c9c9c9;font-size:18px;line-height:1.65;max-width:620px;margin:32px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .34s both;">{{ bioText }}</p>
-
-      <sc-if value="{{ isPublicView }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 0;animation:ctzRise .8s cubic-bezier(.16,1,.3,1) .42s both;">
-          <a href="auth.html" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;background:#FF3300;color:#fff;font-weight:600;font-size:15px;padding:15px 28px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#e62e00">Invite to a brief<span style="font-family:Anton,sans-serif;">→</span></a>
-          <button onClick="{{ toggleSave }}" data-magnetic="10" style="display:inline-flex;align-items:center;gap:10px;border:2px solid rgba(255,255,255,.45);background:{{ saveBg }};color:{{ saveFg }};font-weight:600;font-size:15px;padding:13px 26px;cursor:pointer;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);">{{ saveLabel }}</button>
-        </div>
-      </sc-if>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:#1e1e1e;border:2px solid #1e1e1e;margin-top:48px;">
-        <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="5">
-          <div style="background:#000;padding:20px 22px;transition:background .3s ease;" style-hover="background:#0d0d0d">
-            <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">{{ m.label }}</div>
-            <div ref="{{ m.ref }}" style="font-family:Anton,sans-serif;font-size:32px;margin-top:7px;">0</div>
-            <div style="font-size:12px;color:#7d7d7d;margin-top:4px;">{{ m.note }}</div>
-          </div>
-        </sc-for>
-      </div>
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz logo">Creatopz<sup>™</sup></a>
+    <div class="nav-links">
+      <a href="dashboard-creator.html">Dashboard</a>
+      <a href="profile.html">My profile</a>
+      <a href="directory.html">Directory</a>
     </div>
+    <div class="nav-actions" id="editAction"></div>
+    <button class="nav-burger" data-nav-open aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </nav>
+</header>
 
-    <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
-      <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;"></div>
-    </sc-if>
-    <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
-      <div style="position:relative;max-width:1180px;margin:44px auto 0;padding:0 32px;">
-        <div style="display:flex;border-bottom:2px solid #1e1e1e;flex-wrap:wrap;">
-          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
-            <button onClick="{{ t.pick }}" style="background:transparent;border:none;border-bottom:3px solid {{ t.rule }};color:{{ t.fg }};font-size:14.5px;font-weight:600;padding:16px 22px;margin-bottom:-2px;cursor:pointer;transition:color .25s ease,border-color .25s ease;">{{ t.label }}</button>
-          </sc-for>
-        </div>
-      </div>
-    </sc-if>
-  </section>
-
-  <section style="max-width:1180px;margin:0 auto;padding:40px 32px 80px;">
-    <sc-if value="{{ showWork }}" hint-placeholder-val="{{ true }}">
-      <div>
-        <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 18px;">Brand collaborations</h3>
-        <sc-if value="{{ collabsEmpty }}" hint-placeholder-val="{{ false }}">
-          <div style="border:2px solid #000;padding:48px 28px;color:#5C5C5C;">No past brand collaborations listed yet.</div>
-        </sc-if>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <sc-for list="{{ work }}" as="w" hint-placeholder-count="6">
-            <div style="border:2px solid #000;padding:14px 20px;font-weight:600;font-size:14.5px;animation:ctzRise .5s cubic-bezier(.16,1,.3,1) {{ w.delay }} both;">{{ w.title }}</div>
-          </sc-for>
-        </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showAudience }}" hint-placeholder-val="{{ false }}">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;">
-        <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Base city</h3>
-          <p style="font-size:15px;color:#5C5C5C;">{{ cityLabel }}</p>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:30px 0 16px;">Audience cities</h3>
-          <sc-if value="{{ audienceCitiesEmpty }}" hint-placeholder-val="{{ false }}">
-            <p style="font-size:14.5px;color:#8a8a8a;">Not shared yet.</p>
-          </sc-if>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;">
-            <sc-for list="{{ audienceCities }}" as="c" hint-placeholder-count="5">
-              <span style="border:2px solid #000;padding:8px 14px;font-size:13.5px;font-weight:600;">{{ c.label }}</span>
-            </sc-for>
-          </div>
-        </div>
-        <div>
-          <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:24px;margin:0 0 22px;">Audience gender split</h3>
-          <div style="display:flex;gap:2px;background:#E2DFD8;border:2px solid #000;">
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Female</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ femalePct }}</div></div>
-            <div style="flex:1;background:#fff;padding:18px 20px;"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;font-weight:700;">Male</div><div style="font-family:Anton,sans-serif;font-size:28px;margin-top:6px;">{{ malePct }}</div></div>
-          </div>
-        </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showRates }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;padding:30px 28px;">
-        <div style="font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF3300;font-weight:700;">Rate per collab</div>
-        <div style="font-family:Anton,sans-serif;font-size:44px;margin:14px 0 10px;line-height:1;">{{ rateLabel }}</div>
-        <div style="font-size:14px;line-height:1.6;color:#5C5C5C;">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</div>
-      </div>
-      <div style="border:2px solid #000;border-top:none;padding:26px 28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
-        <div style="font-size:14.5px;color:#5C5C5C;max-width:560px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</div>
-        <a href="auth.html" data-magnetic="8" style="display:inline-flex;align-items:center;gap:10px;background:#000;color:#fff;font-weight:600;font-size:14.5px;padding:14px 24px;transition:background .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#FF3300">Request a quote<span style="font-family:Anton,sans-serif;">→</span></a>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ showEdit }}" hint-placeholder-val="{{ false }}">
-      <form onSubmit="{{ saveProfile }}" style="max-width:720px;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;">
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Avatar</label>
-            <input type="file" accept="image/*" onChange="{{ onAvatarFile }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;font-size:13.5px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Full name *</label>
-            <input value="{{ fName }}" onInput="{{ onFName }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Niche / category</label>
-            <input value="{{ fCategory }}" onInput="{{ onFCategory }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Base city</label>
-            <input value="{{ fCity }}" onInput="{{ onFCity }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram username <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private — admin + you only)</span></label>
-            <input value="{{ fUsername }}" onInput="{{ onFUsername }}" placeholder="@yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Instagram URL <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(private)</span></label>
-            <input type="url" value="{{ fInstagramUrl }}" onInput="{{ onFInstagramUrl }}" placeholder="https://instagram.com/yourhandle" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Follower count</label>
-            <input type="number" min="0" value="{{ fFollowers }}" onInput="{{ onFFollowers }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Rate per collab (₹)</label>
-            <input type="number" min="0" value="{{ fRate }}" onInput="{{ onFRate }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — female %</label>
-            <input type="number" min="0" max="100" value="{{ fFemalePct }}" onInput="{{ onFFemalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-          <div>
-            <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience — male %</label>
-            <input type="number" min="0" max="100" value="{{ fMalePct }}" onInput="{{ onFMalePct }}" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-          </div>
-        </div>
-
-        <div style="margin-top:24px;">
-          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Audience cities <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
-          <input value="{{ fAudienceCities }}" onInput="{{ onFAudienceCities }}" placeholder="Jodhpur, Jaipur, Delhi NCR" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-        </div>
-        <div style="margin-top:20px;">
-          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Brand collaborations <span style="color:#8a8a8a;font-weight:400;text-transform:none;">(comma-separated)</span></label>
-          <input value="{{ fCollabs }}" onInput="{{ onFCollabs }}" placeholder="Marwar Skincare, Kaapi Kind" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;">
-        </div>
-        <div style="margin-top:20px;">
-          <label style="display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#5C5C5C;font-weight:700;margin-bottom:8px;">Bio <span style="color:#8a8a8a;font-weight:400;text-transform:none;">({{ bioCount }}/150)</span></label>
-          <textarea value="{{ fBio }}" onInput="{{ onFBio }}" maxlength="150" rows="3" style="width:100%;border:2px solid #DCD8D1;padding:12px;font-size:15px;resize:vertical;"></textarea>
-        </div>
-
-        <div style="margin-top:30px;padding:24px;border:2px solid #000;">
-          <div style="font-family:Anton,sans-serif;font-size:19px;margin-bottom:6px;">Engagement rate calculator</div>
-          <p style="font-size:13px;color:#5C5C5C;margin:0 0 16px;">Enter your last 30 days on one typical post — the rate below is (likes + comments + shares + saves) ÷ reach.</p>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;">
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Likes</label><input type="number" min="0" value="{{ calcLikes }}" onInput="{{ onCalcLikes }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Comments</label><input type="number" min="0" value="{{ calcComments }}" onInput="{{ onCalcComments }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Shares</label><input type="number" min="0" value="{{ calcShares }}" onInput="{{ onCalcShares }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Saves</label><input type="number" min="0" value="{{ calcSaves }}" onInput="{{ onCalcSaves }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-            <div><label style="font-size:11px;color:#8a8a8a;text-transform:uppercase;">Reach</label><input type="number" min="0" value="{{ calcReach }}" onInput="{{ onCalcReach }}" style="width:100%;border:2px solid #DCD8D1;padding:10px;"></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:14px;margin-top:16px;">
-            <div style="font-family:Anton,sans-serif;font-size:28px;">{{ calcRate }}</div>
-            <button type="button" onClick="{{ applyCalc }}" style="border:2px solid #000;background:#fff;font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Use this as my engagement rate</button>
-          </div>
-        </div>
-
-        <div style="font-size:13.5px;color:#FF3300;min-height:20px;margin-top:20px;">{{ formError }}</div>
-        <button type="submit" data-magnetic="8" style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;background:#FF3300;color:#fff;border:none;font-weight:700;font-size:15.5px;padding:17px 24px;cursor:pointer;width:100%;max-width:280px;transition:background .2s ease;" style-hover="background:#e62e00">{{ saveLabel2 }}<span style="font-family:Anton,sans-serif;">→</span></button>
-      </form>
-    </sc-if>
-
-    <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-      <div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:400;background:{{ toastBg }};color:#fff;font-weight:700;font-size:14.5px;padding:15px 24px;border:2px solid #000;">{{ toast }}</div>
-    </sc-if>
-  </section>
-
-  <footer style="border-top:2px solid #000;padding:36px 0 44px;">
-    <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:#5C5C5C;font-size:13px;flex-wrap:wrap;gap:10px;">
-      <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
-    </div>
-  </footer>
+<div class="nav-drawer">
+  <div class="nav-drawer-top">
+    <span class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></span>
+    <button class="nav-drawer-close" data-nav-close aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="dashboard-creator.html">Dashboard</a>
+    <a href="directory.html">Directory</a>
+  </div>
 </div>
 
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{}">
-function emptyForm() {
-  return {
-    fName: "", fCategory: "", fCity: "", fUsername: "", fInstagramUrl: "", fFollowers: "", fRate: "",
-    fFemalePct: "", fMalePct: "", fAudienceCities: "", fCollabs: "", fBio: "",
-    calcLikes: "", calcComments: "", calcShares: "", calcSaves: "", calcReach: "",
-    avatarFile: null
-  };
+<div id="loadingState" class="wrap" style="padding:60px 0;"><div class="skeleton" style="height:220px;"></div></div>
+
+<div id="profileContent" style="display:none;">
+  <section class="section" style="padding:52px 0 0;background:var(--surface-2);">
+    <div class="wrap">
+      <div style="display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap;">
+        <div id="avatarHost" class="avatar-fallback" style="width:120px;height:120px;flex:0 0 120px;background:var(--ink);color:#fff;font-size:44px;overflow:hidden;border-radius:var(--r-xl);"></div>
+        <div>
+          <span class="eyebrow" id="statusTag"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Loading…</span>
+          <h1 style="margin-top:12px;" id="displayName">—</h1>
+          <div style="display:flex;gap:12px;color:var(--ink-soft);font-size:14.5px;margin-top:10px;">
+            <span id="nicheLabel">Creator</span><span>/</span><span id="cityLabel">—</span>
+          </div>
+        </div>
+      </div>
+      <p class="lede" style="max-width:600px;margin:26px 0 0;" id="bioText"></p>
+
+      <div id="publicActions" style="display:none;gap:14px;flex-wrap:wrap;margin:26px 0 0;">
+        <a href="auth.html" class="btn btn-primary btn-lg">Invite to a brief →</a>
+        <button class="btn btn-outline btn-lg" id="saveShortlistBtn">Save to shortlist</button>
+      </div>
+
+      <div class="grid grid-4" id="metricsGrid" style="margin-top:38px;gap:1px;background:var(--border);"></div>
+
+      <div id="tabBar" style="margin-top:34px;display:flex;border-bottom:1px solid var(--border);gap:4px;overflow-x:auto;">
+        <button class="tab" data-tab="work" style="color:var(--ink);">Work</button>
+        <button class="tab" data-tab="audience" style="color:var(--muted);">Audience</button>
+        <button class="tab" data-tab="rates" style="color:var(--muted);">Rates</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div id="tabWork">
+        <h3 style="margin-bottom:18px;">Brand collaborations</h3>
+        <div id="collabsList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+      </div>
+
+      <div id="tabAudience" style="display:none;">
+        <div class="grid grid-2">
+          <div>
+            <h3 style="margin-bottom:16px;">Base city</h3>
+            <p class="body-sm" id="audienceCityText">—</p>
+            <h3 style="margin:28px 0 14px;">Audience cities</h3>
+            <div id="audienceCitiesList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          </div>
+          <div>
+            <h3 style="margin-bottom:16px;">Audience gender split</h3>
+            <div class="grid grid-2" style="gap:1px;background:var(--border);">
+              <div class="card" style="border-radius:0;padding:18px 20px;"><div class="caption">Female</div><div class="font-display" style="font-size:26px;margin-top:6px;" id="femalePct">—</div></div>
+              <div class="card" style="border-radius:0;padding:18px 20px;"><div class="caption">Male</div><div class="font-display" style="font-size:26px;margin-top:6px;" id="malePct">—</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tabRates" style="display:none;">
+        <div class="panel" style="padding:28px;">
+          <span class="eyebrow">Rate per collab</span>
+          <div class="font-display" style="font-size:40px;margin:12px 0 10px;" id="rateLabel">—</div>
+          <p class="body-sm">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</p>
+        </div>
+        <div class="card card-pad" style="margin-top:2px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
+          <p class="body-sm" style="max-width:520px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</p>
+          <a href="auth.html" class="btn btn-primary">Request a quote →</a>
+        </div>
+      </div>
+
+      <!-- EDIT FORM (own profile only) -->
+      <form id="editForm" style="display:none;max-width:760px;">
+        <div class="grid grid-2">
+          <div class="field"><label>Avatar</label><input class="input" type="file" accept="image/*" id="fAvatar"></div>
+          <div class="field"><label>Full name *</label><input class="input" id="fName" required></div>
+          <div class="field"><label>Niche / category</label><input class="input" id="fCategory"></div>
+          <div class="field"><label>Base city</label><input class="input" id="fCity"></div>
+          <div class="field"><label>Instagram username <span class="hint">(private)</span></label><input class="input" id="fUsername" placeholder="@yourhandle"></div>
+          <div class="field"><label>Instagram URL <span class="hint">(private)</span></label><input class="input" type="url" id="fInstagramUrl" placeholder="https://instagram.com/yourhandle"></div>
+          <div class="field"><label>Follower count</label><input class="input" type="number" min="0" id="fFollowers"></div>
+          <div class="field"><label>Rate per collab (₹)</label><input class="input" type="number" min="0" id="fRate"></div>
+          <div class="field"><label>Audience — female %</label><input class="input" type="number" min="0" max="100" id="fFemalePct"></div>
+          <div class="field"><label>Audience — male %</label><input class="input" type="number" min="0" max="100" id="fMalePct"></div>
+        </div>
+        <div class="field"><label>Audience cities <span class="hint">(comma-separated)</span></label><input class="input" id="fAudienceCities" placeholder="Jodhpur, Jaipur, Delhi NCR"></div>
+        <div class="field"><label>Brand collaborations <span class="hint">(comma-separated)</span></label><input class="input" id="fCollabs" placeholder="Marwar Skincare, Kaapi Kind"></div>
+        <div class="field"><label>Bio <span class="hint">(<span id="bioCount">0</span>/150)</span></label><textarea class="input" id="fBio" maxlength="150" rows="3"></textarea></div>
+
+        <div class="panel" style="padding:24px;margin:8px 0 22px;">
+          <h4 style="margin-bottom:6px;">Engagement rate calculator</h4>
+          <p class="body-sm" style="margin-bottom:16px;">Enter your last 30 days on one typical post — the rate below is (likes + comments + shares + saves) ÷ reach.</p>
+          <div class="grid grid-4" style="gap:12px;">
+            <div class="field" style="margin-bottom:0;"><label class="hint">Likes</label><input class="input" type="number" min="0" id="calcLikes"></div>
+            <div class="field" style="margin-bottom:0;"><label class="hint">Comments</label><input class="input" type="number" min="0" id="calcComments"></div>
+            <div class="field" style="margin-bottom:0;"><label class="hint">Shares</label><input class="input" type="number" min="0" id="calcShares"></div>
+            <div class="field" style="margin-bottom:0;"><label class="hint">Saves</label><input class="input" type="number" min="0" id="calcSaves"></div>
+          </div>
+          <div class="field" style="max-width:200px;margin-top:14px;"><label class="hint">Reach</label><input class="input" type="number" min="0" id="calcReach"></div>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
+            <div class="font-display" style="font-size:24px;" id="calcRateOut">—</div>
+            <button type="button" class="btn btn-outline btn-sm" id="applyCalcBtn">Use this as my engagement rate</button>
+          </div>
+        </div>
+
+        <div class="error-text" id="formError" style="min-height:20px;margin-bottom:14px;"></div>
+        <button type="submit" class="btn btn-accent" id="saveProfileBtn" style="max-width:260px;">Done editing →</button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer" style="padding:36px 0;">
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let CREATOR = null, IS_OWN = false, SESSION = null, SAVED_SHORTLIST = false;
+
+function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
+
+function renderProfile() {
+  const c = CREATOR || {};
+  document.getElementById("pageTitle").textContent = (c.name || "Creator") + " — Creatopz™";
+  document.getElementById("statusTag").innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>` +
+    (c.is_verified ? "Verified" : "Unverified") + ((c.availability === "available" || !c.availability) ? " · open to briefs" : "");
+  document.getElementById("displayName").textContent = c.name || "Unnamed creator";
+  document.getElementById("nicheLabel").textContent = c.category || "Creator";
+  document.getElementById("cityLabel").textContent = (c.locations && c.locations[0]) || "—";
+  document.getElementById("bioText").textContent = c.bio || "No bio yet.";
+
+  const avatarHost = document.getElementById("avatarHost");
+  avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}" style="width:100%;height:100%;object-fit:cover;">` : initials(c.name);
+
+  document.getElementById("publicActions").style.display = IS_OWN ? "none" : "flex";
+  document.getElementById("editAction").innerHTML = IS_OWN ? `<button class="btn btn-outline btn-sm" id="editToggleBtn">Edit profile</button>` : "";
+  document.getElementById("editToggleBtn")?.addEventListener("click", toggleEdit);
+
+  const metrics = [
+    { label: "Followers", note: "Self-reported", val: c.followers >= 1000 ? (c.followers / 1000).toFixed(1) + "K" : String(c.followers || 0) },
+    { label: "Engagement", note: "self-reported rate", val: c.engagement_rate ? Number(c.engagement_rate).toFixed(1) + "%" : "—" },
+    { label: "Collabs", note: "brand partnerships", val: String((c.brand_partnerships || []).length) },
+    { label: "Verified", note: c.is_verified ? "by Creatopz" : "not yet", val: c.is_verified ? "Yes" : "No" },
+  ];
+  document.getElementById("metricsGrid").innerHTML = metrics.map((m) => `
+    <div style="background:var(--surface);padding:20px 22px;">
+      <div class="caption" style="text-transform:uppercase;letter-spacing:.1em;">${m.label}</div>
+      <div class="font-display" style="font-size:28px;margin-top:6px;">${m.val}</div>
+      <div class="caption" style="margin-top:4px;">${m.note}</div>
+    </div>`).join("");
+
+  document.getElementById("collabsList").innerHTML = (c.brand_partnerships || []).length
+    ? (c.brand_partnerships || []).map((t) => `<span class="badge" style="padding:12px 18px;font-size:14px;">${escapeHtml(t)}</span>`).join("")
+    : `<div class="state-block" style="width:100%;"><div class="state-icon">◎</div><h3>No collaborations listed yet</h3></div>`;
+
+  document.getElementById("audienceCityText").textContent = (c.locations && c.locations[0]) || "—";
+  document.getElementById("audienceCitiesList").innerHTML = (c.audience_locations || []).length
+    ? (c.audience_locations || []).map((l) => `<span class="badge">${escapeHtml(l)}</span>`).join("")
+    : `<p class="body-sm">Not shared yet.</p>`;
+  document.getElementById("femalePct").textContent = c.audience_female_pct != null ? c.audience_female_pct + "%" : "—";
+  document.getElementById("malePct").textContent = c.audience_male_pct != null ? c.audience_male_pct + "%" : "—";
+  document.getElementById("rateLabel").textContent = (c.rate_min || c.rate_max) ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Not published";
 }
 
-class Component extends DCLogic {
-  state = {
-    tab: "work", saved: false, editing: false, loading: true, saving: false,
-    mode: "loading", isOwn: false, creator: null, session: null, toast: "", toastKind: "ok",
-    formError: "", ...emptyForm()
-  };
-  rootRef = React.createRef();
-  glowRef = React.createRef();
-  metricRefs = [React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef()];
+document.querySelectorAll("#tabBar .tab").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#tabBar .tab").forEach((b) => { b.style.color = "var(--muted)"; b.style.borderBottom = "none"; });
+    btn.style.color = "var(--ink)";
+    btn.style.borderBottom = "2px solid var(--accent)";
+    ["work", "audience", "rates"].forEach((t) => document.getElementById("tab" + t[0].toUpperCase() + t.slice(1)).style.display = t === btn.dataset.tab ? "block" : "none");
+  });
+});
+document.querySelector('#tabBar .tab[data-tab="work"]').style.borderBottom = "2px solid var(--accent)";
 
-  flash(msg, kind) {
-    this.setState({ toast: msg, toastKind: kind || "ok" });
-    clearTimeout(this._t);
-    this._t = setTimeout(() => this.setState({ toast: "" }), 3200);
-  }
+document.getElementById("saveShortlistBtn")?.addEventListener("click", (e) => {
+  SAVED_SHORTLIST = !SAVED_SHORTLIST;
+  e.target.textContent = SAVED_SHORTLIST ? "Saved to shortlist ✓" : "Save to shortlist";
+});
 
-  startEdit() {
-    const c = this.state.creator || {};
-    this.setState({
-      editing: true, tab: "work", formError: "",
-      fName: c.name || "", fCategory: c.category || "", fCity: (c.locations && c.locations[0]) || "",
-      fUsername: c.username || "", fInstagramUrl: c.instagram_url || "",
-      fFollowers: c.followers || "", fRate: c.rate_min || c.rate_max || "",
-      fFemalePct: c.audience_female_pct ?? "", fMalePct: c.audience_male_pct ?? "",
-      fAudienceCities: (c.audience_locations || []).join(", "),
-      fCollabs: (c.brand_partnerships || []).join(", "),
-      fBio: c.bio || "",
-      calcLikes: "", calcComments: "", calcShares: "", calcSaves: "", calcReach: "",
-      avatarFile: null
-    });
-  }
-
-  calcEngagement() {
-    const { calcLikes, calcComments, calcShares, calcSaves, calcReach } = this.state;
-    const reach = Number(calcReach) || 0;
-    if (!reach) return null;
-    const total = (Number(calcLikes) || 0) + (Number(calcComments) || 0) + (Number(calcShares) || 0) + (Number(calcSaves) || 0);
-    return Math.round((total / reach) * 10000) / 100;
-  }
-
-  validateForm() {
-    const { fName, fBio, fFollowers, fRate, fFemalePct, fMalePct } = this.state;
-    if (!fName.trim()) return "Full name is required.";
-    if (!fBio.trim()) return "Bio is required.";
-    if (fBio.length > 150) return "Bio must be 150 characters or fewer.";
-    if (fFollowers !== "" && !/^\d+$/.test(String(fFollowers))) return "Follower count must be a number.";
-    if (fRate !== "" && !/^\d+(\.\d+)?$/.test(String(fRate))) return "Rate must be a number.";
-    const fem = fFemalePct === "" ? 0 : Number(fFemalePct);
-    const male = fMalePct === "" ? 0 : Number(fMalePct);
-    if (fem < 0 || fem > 100 || male < 0 || male > 100) return "Gender split percentages must be between 0 and 100.";
-    if (fem + male > 100) return "Female % + male % can't exceed 100.";
-    return "";
-  }
-
-  saveProfile = async (e) => {
-    e.preventDefault();
-    const err = this.validateForm();
-    if (err) return this.setState({ formError: err });
-    const { session, avatarFile } = this.state;
-    if (!session) return;
-    this.setState({ saving: true, formError: "" });
-
-    let avatarUrl = this.state.creator?.profile_image || null;
-    if (avatarFile) {
-      if (avatarFile.size > 5 * 1024 * 1024) {
-        this.setState({ saving: false, formError: "Avatar image must be under 5MB." });
-        return;
-      }
-      if (!avatarFile.type.startsWith("image/")) {
-        this.setState({ saving: false, formError: "Avatar must be an image file." });
-        return;
-      }
-      const ext = (avatarFile.name.split(".").pop() || "jpg").toLowerCase();
-      const path = session.user.id + "/avatar." + ext;
-      const { error: upErr } = await supabaseClient.storage.from("creator-avatars").upload(path, avatarFile, { upsert: true });
-      if (upErr) {
-        this.setState({ saving: false, formError: "Avatar upload failed: " + upErr.message });
-        return;
-      }
-      const { data: pub } = supabaseClient.storage.from("creator-avatars").getPublicUrl(path);
-      avatarUrl = pub.publicUrl + "?t=" + Date.now();
-    }
-
-    const patch = {
-      name: this.state.fName.trim(),
-      category: this.state.fCategory.trim() || null,
-      locations: this.state.fCity.trim() ? [this.state.fCity.trim()] : [],
-      username: this.state.fUsername.trim() || null,
-      instagram_url: this.state.fInstagramUrl.trim() || null,
-      followers: this.state.fFollowers === "" ? 0 : parseInt(this.state.fFollowers, 10),
-      rate_min: this.state.fRate === "" ? null : Number(this.state.fRate),
-      rate_max: this.state.fRate === "" ? null : Number(this.state.fRate),
-      audience_female_pct: this.state.fFemalePct === "" ? null : Number(this.state.fFemalePct),
-      audience_male_pct: this.state.fMalePct === "" ? null : Number(this.state.fMalePct),
-      audience_locations: this.state.fAudienceCities.split(",").map((s) => s.trim()).filter(Boolean),
-      brand_partnerships: this.state.fCollabs.split(",").map((s) => s.trim()).filter(Boolean),
-      bio: this.state.fBio.trim(),
-      profile_image: avatarUrl
-    };
-    const calcRate = this.calcEngagement();
-    if (calcRate !== null) patch.engagement_rate = calcRate;
-
-    const { data: updated, error } = await supabaseClient.from("creators").update(patch).eq("user_id", session.user.id).select().single();
-    this.setState({ saving: false });
-    if (error) return this.setState({ formError: error.message });
-    this.setState({ creator: updated, editing: false });
-    this.flash("Profile saved");
-  };
-
-  renderVals() {
-    const {
-      tab, saved, editing, loading, creator, isOwn, mode, saving,
-      fName, fCategory, fCity, fUsername, fInstagramUrl, fFollowers, fRate,
-      fFemalePct, fMalePct, fAudienceCities, fCollabs, fBio,
-      calcLikes, calcComments, calcShares, calcSaves, calcReach,
-      formError, toast, toastKind
-    } = this.state;
-    const mk = (label, on) => ({
-      label,
-      rule: tab === on ? "#FF3300" : "transparent",
-      fg: tab === on ? "#fff" : "#8a8a8a",
-      pick: () => this.setState({ tab: on })
-    });
-    const c = creator || {};
-    const isPublicView = mode !== "loading" && !isOwn;
-    const calcRate = this.calcEngagement();
-
-    return {
-      rootRef: this.rootRef, glowRef: this.glowRef,
-      loading, mode,
-      isOwn, isPublicView,
-      statusTag: loading ? "Loading…" : (c.is_verified ? "Verified" : "Unverified") + (c.availability === "available" || !c.availability ? " · open to briefs" : ""),
-      displayName: loading ? "" : (c.name || "Unnamed creator"),
-      initials: (c.name || "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
-      hasAvatar: !!c.profile_image,
-      noAvatar: !c.profile_image,
-      avatarUrl: c.profile_image || "",
-      nicheLabel: c.category || "Creator",
-      cityLabel: (c.locations && c.locations[0]) || "—",
-      bioText: c.bio || (loading ? "" : "No bio yet."),
-      metrics: [
-        { label: "Followers", note: "Self-reported", ref: this.metricRefs[0] },
-        { label: "Engagement", note: "self-reported rate", ref: this.metricRefs[1] },
-        { label: "Collabs", note: "brand partnerships", ref: this.metricRefs[2] },
-        { label: "Audience", note: "% female", ref: this.metricRefs[3] },
-        { label: "Verified", note: c.is_verified ? "by Creatopz" : "not yet", ref: this.metricRefs[4] }
-      ],
-      tabs: [mk("Work", "work"), mk("Audience", "audience"), mk("Rates", "rates")],
-      notEditing: !editing,
-      showWork: !editing && tab === "work",
-      showAudience: !editing && tab === "audience",
-      showRates: !editing && tab === "rates",
-      showEdit: editing,
-      work: (c.brand_partnerships || []).map((title, i) => ({ title, delay: i * 60 + "ms" })),
-      collabsEmpty: (c.brand_partnerships || []).length === 0,
-      audienceCities: (c.audience_locations || []).map((label) => ({ label })),
-      audienceCitiesEmpty: (c.audience_locations || []).length === 0,
-      femalePct: c.audience_female_pct != null ? c.audience_female_pct + "%" : "—",
-      malePct: c.audience_male_pct != null ? c.audience_male_pct + "%" : "—",
-      rateLabel: c.rate_min || c.rate_max ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Not published",
-      saved,
-      saveLabel: saved ? "Saved to shortlist ✓" : "Save to shortlist",
-      saveBg: saved ? "#fff" : "transparent",
-      saveFg: saved ? "#000" : "#fff",
-      toggleSave: () => this.setState({ saved: !saved }),
-      editing,
-      editLabel: editing ? "Cancel" : "Edit profile",
-      editBg: editing ? "#FF3300" : "#fff",
-      editFg: editing ? "#fff" : "#000",
-      toggleEdit: () => { if (editing) this.setState({ editing: false }); else this.startEdit(); },
-      saveLabel2: saving ? "Saving…" : "Done editing",
-      formError,
-      fName, fCategory, fCity, fUsername, fInstagramUrl, fFollowers, fRate, fFemalePct, fMalePct, fAudienceCities, fCollabs, fBio,
-      bioCount: fBio.length,
-      onFName: (e) => this.setState({ fName: e.target.value }),
-      onFCategory: (e) => this.setState({ fCategory: e.target.value }),
-      onFCity: (e) => this.setState({ fCity: e.target.value }),
-      onFUsername: (e) => this.setState({ fUsername: e.target.value }),
-      onFInstagramUrl: (e) => this.setState({ fInstagramUrl: e.target.value }),
-      onFFollowers: (e) => this.setState({ fFollowers: e.target.value }),
-      onFRate: (e) => this.setState({ fRate: e.target.value }),
-      onFFemalePct: (e) => this.setState({ fFemalePct: e.target.value }),
-      onFMalePct: (e) => this.setState({ fMalePct: e.target.value }),
-      onFAudienceCities: (e) => this.setState({ fAudienceCities: e.target.value }),
-      onFCollabs: (e) => this.setState({ fCollabs: e.target.value }),
-      onFBio: (e) => this.setState({ fBio: e.target.value.slice(0, 150) }),
-      onAvatarFile: (e) => this.setState({ avatarFile: e.target.files && e.target.files[0] }),
-      calcLikes, calcComments, calcShares, calcSaves, calcReach,
-      onCalcLikes: (e) => this.setState({ calcLikes: e.target.value }),
-      onCalcComments: (e) => this.setState({ calcComments: e.target.value }),
-      onCalcShares: (e) => this.setState({ calcShares: e.target.value }),
-      onCalcSaves: (e) => this.setState({ calcSaves: e.target.value }),
-      onCalcReach: (e) => this.setState({ calcReach: e.target.value }),
-      calcRate: calcRate === null ? "—" : calcRate + "%",
-      applyCalc: () => { if (calcRate !== null) this.flash("Will save as " + calcRate + "% engagement when you submit"); },
-      saveProfile: this.saveProfile,
-      hasToast: !!toast,
-      toast,
-      toastBg: toastKind === "error" ? "#000" : "#FF3300"
-    };
-  }
-
-  async componentDidMount() {
-    this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const params = new URLSearchParams(location.search);
-    const idParam = params.get("id");
-    const { data: sessionData } = await supabaseClient.auth.getSession();
-    const session = sessionData?.session || null;
-    this.setState({ session });
-
-    let ownCreator = null;
-    if (session) {
-      const { data } = await supabaseClient.from("creators").select("*").eq("user_id", session.user.id).maybeSingle();
-      ownCreator = data;
-    }
-
-    if (idParam) {
-      if (ownCreator && ownCreator.id === idParam) {
-        this.setState({ loading: false, mode: "own", isOwn: true, creator: ownCreator });
-      } else {
-        const { data } = await supabaseClient.from("creators_public").select("*").eq("id", idParam).maybeSingle();
-        this.setState({ loading: false, mode: "public", isOwn: false, creator: data });
-      }
-    } else if (ownCreator) {
-      this.setState({ loading: false, mode: "own", isOwn: true, creator: ownCreator });
-    } else if (session) {
-      // Logged in but not a creator (e.g. a brand) viewing profile.html with no id.
-      location.href = "dashboard-brand.html";
-      return;
-    } else {
-      location.href = "auth.html";
-      return;
-    }
-
-    this.animateMetrics();
-    const glow = this.glowRef.current;
-    if (glow && !this.reduced) {
-      const host = glow.parentElement;
-      this.host = host;
-      this.move = (ev) => {
-        this._lastGlowEv = ev;
-        if (this._glowRaf) return;
-        this._glowRaf = requestAnimationFrame(() => {
-          this._glowRaf = null;
-          const r = host.getBoundingClientRect();
-          glow.style.setProperty("--mx", this._lastGlowEv.clientX - r.left + "px");
-          glow.style.setProperty("--my", this._lastGlowEv.clientY - r.top + "px");
-        });
-      };
-      host.addEventListener("mousemove", this.move);
-    }
-    const root = this.rootRef.current;
-    if (root && !this.reduced) {
-      root.addEventListener("mousemove", (ev) => {
-        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
-        if (!el) return;
-        const amt = parseFloat(el.dataset.magnetic) || 8;
-        const r = el.getBoundingClientRect();
-        el.style.transitionDuration = "0s";
-        el.style.transform =
-          "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
-          (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
-      });
-      root.addEventListener("mouseout", (ev) => {
-        const el = ev.target.closest && ev.target.closest("[data-magnetic]");
-        if (el) { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; }
-      });
-    }
-  }
-
-  animateMetrics() {
-    const c = this.state.creator || {};
-    const vals = [
-      { t: c.followers || 0, fmt: (n) => n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(Math.round(n)) },
-      { t: Number(c.engagement_rate) || 0, fmt: (n) => n.toFixed(1) + "%" },
-      { t: (c.brand_partnerships || []).length, fmt: (n) => String(Math.round(n)) },
-      { t: Number(c.audience_female_pct) || 0, fmt: (n) => Math.round(n) + "%" },
-      { t: c.is_verified ? 1 : 0, fmt: (n) => (n ? "Yes" : "No") }
-    ];
-    this.metricRefs.forEach((ref, i) => this.countTo(ref.current, vals[i].t, vals[i].fmt, i * 80));
-  }
-
-  countTo(el, target, fmt, delay) {
-    if (!el) return;
-    if (this.reduced) { el.textContent = fmt(target); return; }
-    const t0 = performance.now() + delay;
-    const tick = (t) => {
-      if (t < t0) return requestAnimationFrame(tick);
-      const p = Math.min(1, (t - t0) / 1100);
-      const e = 1 - Math.pow(1 - p, 3);
-      el.textContent = fmt(target * e);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
-  componentWillUnmount() {
-    cancelAnimationFrame(this._glowRaf);
-    if (this.host && this.move) this.host.removeEventListener("mousemove", this.move);
+function toggleEdit() {
+  const editing = document.getElementById("editForm").style.display === "block";
+  if (editing) {
+    document.getElementById("editForm").style.display = "none";
+    document.getElementById("tabBar").style.display = "flex";
+    ["tabWork", "tabAudience", "tabRates"].forEach((id) => { if (id !== "tabAudience" && id !== "tabRates") document.getElementById(id).style.display = "block"; });
+    document.getElementById("tabWork").style.display = "block";
+    document.getElementById("editToggleBtn").textContent = "Edit profile";
+  } else {
+    const c = CREATOR || {};
+    document.getElementById("fName").value = c.name || "";
+    document.getElementById("fCategory").value = c.category || "";
+    document.getElementById("fCity").value = (c.locations && c.locations[0]) || "";
+    document.getElementById("fUsername").value = c.username || "";
+    document.getElementById("fInstagramUrl").value = c.instagram_url || "";
+    document.getElementById("fFollowers").value = c.followers || "";
+    document.getElementById("fRate").value = c.rate_min || c.rate_max || "";
+    document.getElementById("fFemalePct").value = c.audience_female_pct ?? "";
+    document.getElementById("fMalePct").value = c.audience_male_pct ?? "";
+    document.getElementById("fAudienceCities").value = (c.audience_locations || []).join(", ");
+    document.getElementById("fCollabs").value = (c.brand_partnerships || []).join(", ");
+    document.getElementById("fBio").value = c.bio || "";
+    document.getElementById("bioCount").textContent = (c.bio || "").length;
+    ["calcLikes", "calcComments", "calcShares", "calcSaves", "calcReach"].forEach((id) => document.getElementById(id).value = "");
+    document.getElementById("calcRateOut").textContent = "—";
+    document.getElementById("formError").textContent = "";
+    document.getElementById("editForm").style.display = "block";
+    document.getElementById("tabBar").style.display = "none";
+    document.getElementById("tabWork").style.display = "none";
+    document.getElementById("tabAudience").style.display = "none";
+    document.getElementById("tabRates").style.display = "none";
+    document.getElementById("editToggleBtn").textContent = "Cancel";
   }
 }
+
+document.getElementById("fBio").addEventListener("input", (e) => { document.getElementById("bioCount").textContent = e.target.value.length; });
+
+function calcEngagement() {
+  const reach = Number(document.getElementById("calcReach").value) || 0;
+  if (!reach) return null;
+  const total = ["calcLikes", "calcComments", "calcShares", "calcSaves"].reduce((s, id) => s + (Number(document.getElementById(id).value) || 0), 0);
+  return Math.round((total / reach) * 10000) / 100;
+}
+["calcLikes", "calcComments", "calcShares", "calcSaves", "calcReach"].forEach((id) => {
+  document.getElementById(id).addEventListener("input", () => {
+    const r = calcEngagement();
+    document.getElementById("calcRateOut").textContent = r === null ? "—" : r + "%";
+  });
+});
+document.getElementById("applyCalcBtn").addEventListener("click", () => {
+  const r = calcEngagement();
+  if (r !== null) showToast("Will save as " + r + "% engagement when you submit", "info");
+});
+
+document.getElementById("editForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("formError");
+  const val = (id) => document.getElementById(id).value;
+  const name = val("fName").trim();
+  const bio = val("fBio").trim();
+  const followers = val("fFollowers");
+  const rate = val("fRate");
+  const fem = val("fFemalePct") === "" ? 0 : Number(val("fFemalePct"));
+  const male = val("fMalePct") === "" ? 0 : Number(val("fMalePct"));
+  errorEl.textContent = "";
+  if (!name) return (errorEl.textContent = "Full name is required.");
+  if (!bio) return (errorEl.textContent = "Bio is required.");
+  if (bio.length > 150) return (errorEl.textContent = "Bio must be 150 characters or fewer.");
+  if (followers !== "" && !/^\d+$/.test(followers)) return (errorEl.textContent = "Follower count must be a number.");
+  if (rate !== "" && !/^\d+(\.\d+)?$/.test(rate)) return (errorEl.textContent = "Rate must be a number.");
+  if (fem < 0 || fem > 100 || male < 0 || male > 100) return (errorEl.textContent = "Gender split percentages must be between 0 and 100.");
+  if (fem + male > 100) return (errorEl.textContent = "Female % + male % can't exceed 100.");
+
+  const btn = document.getElementById("saveProfileBtn");
+  setButtonLoading(btn, true, "Saving…");
+
+  let avatarUrl = CREATOR?.profile_image || null;
+  const file = document.getElementById("fAvatar").files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024) { setButtonLoading(btn, false); return (errorEl.textContent = "Avatar image must be under 5MB."); }
+    if (!file.type.startsWith("image/")) { setButtonLoading(btn, false); return (errorEl.textContent = "Avatar must be an image file."); }
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = SESSION.user.id + "/avatar." + ext;
+    const { error: upErr } = await supabaseClient.storage.from("creator-avatars").upload(path, file, { upsert: true });
+    if (upErr) { setButtonLoading(btn, false); return (errorEl.textContent = "Avatar upload failed: " + upErr.message); }
+    const { data: pub } = supabaseClient.storage.from("creator-avatars").getPublicUrl(path);
+    avatarUrl = pub.publicUrl + "?t=" + Date.now();
+  }
+
+  const patch = {
+    name, category: val("fCategory").trim() || null,
+    locations: val("fCity").trim() ? [val("fCity").trim()] : [],
+    username: val("fUsername").trim() || null,
+    instagram_url: val("fInstagramUrl").trim() || null,
+    followers: followers === "" ? 0 : parseInt(followers, 10),
+    rate_min: rate === "" ? null : Number(rate),
+    rate_max: rate === "" ? null : Number(rate),
+    audience_female_pct: val("fFemalePct") === "" ? null : Number(val("fFemalePct")),
+    audience_male_pct: val("fMalePct") === "" ? null : Number(val("fMalePct")),
+    audience_locations: val("fAudienceCities").split(",").map((s) => s.trim()).filter(Boolean),
+    brand_partnerships: val("fCollabs").split(",").map((s) => s.trim()).filter(Boolean),
+    bio, profile_image: avatarUrl,
+  };
+  const calcRate = calcEngagement();
+  if (calcRate !== null) patch.engagement_rate = calcRate;
+
+  const { data: updated, error } = await supabaseClient.from("creators").update(patch).eq("user_id", SESSION.user.id).select().single();
+  setButtonLoading(btn, false);
+  if (error) return (errorEl.textContent = error.message);
+  CREATOR = updated;
+  toggleEdit();
+  renderProfile();
+  showToast("Profile saved", "success");
+});
+
+async function boot() {
+  const params = new URLSearchParams(location.search);
+  const idParam = params.get("id");
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  SESSION = sessionData?.session || null;
+
+  let ownCreator = null;
+  if (SESSION) {
+    const { data } = await supabaseClient.from("creators").select("*").eq("user_id", SESSION.user.id).maybeSingle();
+    ownCreator = data;
+  }
+
+  if (idParam) {
+    if (ownCreator && ownCreator.id === idParam) { CREATOR = ownCreator; IS_OWN = true; }
+    else {
+      const { data } = await supabaseClient.from("creators_public").select("*").eq("id", idParam).maybeSingle();
+      CREATOR = data; IS_OWN = false;
+      if (!data) {
+        document.getElementById("loadingState").innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>Creator not found</h3><p>This profile may have been removed or made private.</p></div>`;
+        return;
+      }
+    }
+  } else if (ownCreator) {
+    CREATOR = ownCreator; IS_OWN = true;
+  } else if (SESSION) {
+    location.href = "dashboard-brand.html";
+    return;
+  } else {
+    location.href = "auth.html";
+    return;
+  }
+
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("profileContent").style.display = "block";
+  renderProfile();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
 </script>
 </body>
 </html>
