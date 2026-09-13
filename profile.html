@@ -90,9 +90,9 @@
 
       <div id="tabRates" style="display:none;">
         <div class="panel" style="padding:28px;">
-          <span class="eyebrow">Rate per collab</span>
-          <div class="font-display" style="font-size:40px;margin:12px 0 10px;" id="rateLabel">—</div>
-          <p class="body-sm">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</p>
+          <span class="eyebrow">Rate card</span>
+          <div id="rateCardView" style="margin-top:16px;display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:var(--r-md);overflow:hidden;"></div>
+          <p class="body-sm" style="margin-top:16px;">Final rates are negotiated per brief through Creatopz — admin mediates every deal.</p>
         </div>
         <div class="card card-pad" style="margin-top:2px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;">
           <p class="body-sm" style="max-width:520px;">Rates are indicative and negotiated per brief. Usage rights, paid amplification and exclusivity are quoted separately.</p>
@@ -110,13 +110,19 @@
           <div class="field"><label>Instagram username <span class="hint">(private)</span></label><input class="input" id="fUsername" placeholder="@yourhandle"></div>
           <div class="field"><label>Instagram URL <span class="hint">(private)</span></label><input class="input" type="url" id="fInstagramUrl" placeholder="https://instagram.com/yourhandle"></div>
           <div class="field"><label>Follower count</label><input class="input" type="number" min="0" id="fFollowers"></div>
-          <div class="field"><label>Rate per collab (₹)</label><input class="input" type="number" min="0" id="fRate"></div>
           <div class="field"><label>Audience — female %</label><input class="input" type="number" min="0" max="100" id="fFemalePct"></div>
           <div class="field"><label>Audience — male %</label><input class="input" type="number" min="0" max="100" id="fMalePct"></div>
         </div>
         <div class="field"><label>Audience cities <span class="hint">(comma-separated)</span></label><input class="input" id="fAudienceCities" placeholder="Jodhpur, Jaipur, Delhi NCR"></div>
         <div class="field"><label>Brand collaborations <span class="hint">(comma-separated)</span></label><input class="input" id="fCollabs" placeholder="Marwar Skincare, Kaapi Kind"></div>
         <div class="field"><label>Bio <span class="hint">(<span id="bioCount">0</span>/150)</span></label><textarea class="input" id="fBio" maxlength="150" rows="3"></textarea></div>
+
+        <div class="field">
+          <label>My rate card</label>
+          <span class="hint">One rate per content type — brands mix and match across creators inside their budget from this.</span>
+        </div>
+        <div id="rateCardRows" style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px;"></div>
+        <button type="button" class="btn btn-outline btn-block" id="addRateRowBtn" style="border-style:dashed;margin-bottom:22px;">+ Add another content type</button>
 
         <div class="panel" style="padding:24px;margin:8px 0 22px;">
           <h4 style="margin-bottom:6px;">Engagement rate calculator</h4>
@@ -175,6 +181,28 @@
 <script src="js/nav.js"></script>
 <script>
 let CREATOR = null, IS_OWN = false, SESSION = null, SAVED_SHORTLIST = false, VIEWER_BRAND = null;
+let EDIT_RATE_CARD = [];
+const DEFAULT_RATE_CARD = [
+  { type: "Instagram Post", rate: "" },
+  { type: "Instagram Reel", rate: "" },
+  { type: "Instagram Story", rate: "" },
+];
+
+function renderRateCardRows() {
+  const host = document.getElementById("rateCardRows");
+  host.innerHTML = EDIT_RATE_CARD.map((row, i) => `
+    <div class="card card-pad" style="display:grid;grid-template-columns:1fr 160px 40px;gap:14px;align-items:end;padding:18px;">
+      <div class="field" style="margin-bottom:0;"><label>Content type</label><input class="input rate-type-input" data-i="${i}" value="${escapeHtml(row.type)}" placeholder="e.g. Instagram Reel"></div>
+      <div class="field" style="margin-bottom:0;"><label>Rate (₹)</label><input class="input rate-amount-input" data-i="${i}" type="number" min="0" value="${escapeHtml(String(row.rate))}"></div>
+      <button type="button" class="btn btn-outline rate-del-btn" data-i="${i}" style="padding:12px;" aria-label="Remove">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>
+      </button>
+    </div>`).join("");
+  host.querySelectorAll(".rate-type-input").forEach((el) => el.addEventListener("input", () => { EDIT_RATE_CARD[el.dataset.i].type = el.value; }));
+  host.querySelectorAll(".rate-amount-input").forEach((el) => el.addEventListener("input", () => { EDIT_RATE_CARD[el.dataset.i].rate = el.value; }));
+  host.querySelectorAll(".rate-del-btn").forEach((btn) => btn.addEventListener("click", () => { EDIT_RATE_CARD.splice(Number(btn.dataset.i), 1); renderRateCardRows(); }));
+}
+document.getElementById("addRateRowBtn").addEventListener("click", () => { EDIT_RATE_CARD.push({ type: "", rate: "" }); renderRateCardRows(); });
 
 function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
 
@@ -218,7 +246,10 @@ function renderProfile() {
     : `<p class="body-sm">Not shared yet.</p>`;
   document.getElementById("femalePct").textContent = c.audience_female_pct != null ? c.audience_female_pct + "%" : "—";
   document.getElementById("malePct").textContent = c.audience_male_pct != null ? c.audience_male_pct + "%" : "—";
-  document.getElementById("rateLabel").textContent = (c.rate_min || c.rate_max) ? "₹" + Number(c.rate_min || c.rate_max).toLocaleString("en-IN") : "Not published";
+  const rateCard = Array.isArray(c.rate_card) ? c.rate_card : [];
+  document.getElementById("rateCardView").innerHTML = rateCard.length
+    ? rateCard.map((r) => `<div style="background:var(--surface);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:600;">${escapeHtml(r.type)}</span><span class="font-display" style="font-size:20px;">₹${Number(r.rate).toLocaleString("en-IN")}</span></div>`).join("")
+    : `<div style="background:var(--surface);padding:20px;color:var(--muted);font-size:14px;">Not published yet.</div>`;
 }
 
 document.querySelectorAll("#tabBar .tab").forEach((btn) => {
@@ -329,7 +360,9 @@ function toggleEdit() {
     document.getElementById("fUsername").value = c.username || "";
     document.getElementById("fInstagramUrl").value = c.instagram_url || "";
     document.getElementById("fFollowers").value = c.followers || "";
-    document.getElementById("fRate").value = c.rate_min || c.rate_max || "";
+    EDIT_RATE_CARD = (Array.isArray(c.rate_card) && c.rate_card.length ? c.rate_card : DEFAULT_RATE_CARD)
+      .map((r) => ({ type: r.type || "", rate: r.rate ?? "" }));
+    renderRateCardRows();
     document.getElementById("fFemalePct").value = c.audience_female_pct ?? "";
     document.getElementById("fMalePct").value = c.audience_male_pct ?? "";
     document.getElementById("fAudienceCities").value = (c.audience_locations || []).join(", ");
@@ -374,7 +407,6 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   const name = val("fName").trim();
   const bio = val("fBio").trim();
   const followers = val("fFollowers");
-  const rate = val("fRate");
   const fem = val("fFemalePct") === "" ? 0 : Number(val("fFemalePct"));
   const male = val("fMalePct") === "" ? 0 : Number(val("fMalePct"));
   errorEl.textContent = "";
@@ -382,9 +414,19 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   if (!bio) return (errorEl.textContent = "Bio is required.");
   if (bio.length > 150) return (errorEl.textContent = "Bio must be 150 characters or fewer.");
   if (followers !== "" && !/^\d+$/.test(followers)) return (errorEl.textContent = "Follower count must be a number.");
-  if (rate !== "" && !/^\d+(\.\d+)?$/.test(rate)) return (errorEl.textContent = "Rate must be a number.");
   if (fem < 0 || fem > 100 || male < 0 || male > 100) return (errorEl.textContent = "Gender split percentages must be between 0 and 100.");
   if (fem + male > 100) return (errorEl.textContent = "Female % + male % can't exceed 100.");
+
+  const rateCard = [];
+  for (const row of EDIT_RATE_CARD) {
+    const type = (row.type || "").trim();
+    const rateStr = String(row.rate ?? "").trim();
+    if (!type && !rateStr) continue;
+    if (!type) return (errorEl.textContent = "Every rate card row needs a content type.");
+    if (!/^\d+(\.\d+)?$/.test(rateStr)) return (errorEl.textContent = `Enter a valid rate for "${type}".`);
+    rateCard.push({ type, rate: Number(rateStr) });
+  }
+  const rates = rateCard.map((r) => r.rate);
 
   const btn = document.getElementById("saveProfileBtn");
   setButtonLoading(btn, true, "Saving…");
@@ -408,8 +450,9 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     username: val("fUsername").trim() || null,
     instagram_url: val("fInstagramUrl").trim() || null,
     followers: followers === "" ? 0 : parseInt(followers, 10),
-    rate_min: rate === "" ? null : Number(rate),
-    rate_max: rate === "" ? null : Number(rate),
+    rate_card: rateCard,
+    rate_min: rates.length ? Math.min(...rates) : null,
+    rate_max: rates.length ? Math.max(...rates) : null,
     audience_female_pct: val("fFemalePct") === "" ? null : Number(val("fFemalePct")),
     audience_male_pct: val("fMalePct") === "" ? null : Number(val("fMalePct")),
     audience_locations: val("fAudienceCities").split(",").map((s) => s.trim()).filter(Boolean),

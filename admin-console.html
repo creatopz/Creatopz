@@ -134,7 +134,7 @@
 <script src="js/nav.js"></script>
 <script>
 let SESSION = null, VIEW = "apps", QUERY = "";
-let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {};
+let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [];
 let ACTIVE_CONVO_ID = null, THREAD = [];
 const AGREED_DRAFTS = {};
 
@@ -185,6 +185,9 @@ function renderApps() {
         <div><div class="caption" style="text-transform:uppercase;">Creator's rate</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.creators?.rate_min, a.creators?.rate_max)}</div></div>
         <div><div class="caption" style="text-transform:uppercase;">Brand's budget</div><div style="margin-top:5px;color:#fff;">${fmtRange(a.campaigns?.budget_min, a.campaigns?.budget_max)}</div></div>
       </div>
+      ${Array.isArray(a.deliverables) && a.deliverables.length
+        ? `<div class="caption" style="margin-top:14px;">Agreed via team builder: ${a.deliverables.map((d) => `${d.quantity} × ${escapeHtml(d.content_type)} (₹${Number(d.rate).toLocaleString("en-IN")} each)`).join(", ")}</div>`
+        : ""}
       ${a.status === "invited"
         ? `<div class="caption" style="margin-top:16px;">Brand invited this creator — waiting on their response, nothing for admin to do yet.</div>`
         : `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;">
@@ -225,6 +228,32 @@ function renderCampaigns() {
   toggleEmpty(filtered.length === 0);
   document.getElementById("campaignsGrid").innerHTML = filtered.map((c) => {
     const appsLabel = c.status === "draft" ? "Pending your approval" : APPS.filter((a) => a.campaigns?.id === c.id).length + " applications";
+    const picksForCampaign = TEAM_PICKS.filter((p) => p.campaign_id === c.id && p.status === "planned");
+    const byCreator = {};
+    picksForCampaign.forEach((p) => {
+      if (!byCreator[p.creator_id]) byCreator[p.creator_id] = { creator: p.creators, rows: [] };
+      byCreator[p.creator_id].rows.push(p);
+    });
+    const creatorIds = Object.keys(byCreator);
+    const rosterHtml = creatorIds.length ? `
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--dark-border);">
+        <div class="caption" style="margin-bottom:10px;">Planned roster — not yet invited</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          ${creatorIds.map((cid) => {
+            const g = byCreator[cid];
+            const subtotal = g.rows.reduce((s, r) => s + r.quantity * Number(r.rate_snapshot), 0);
+            return `
+            <div style="background:rgba(255,255,255,.04);border-radius:var(--r-md);padding:12px 14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                <b style="color:#fff;font-size:14px;">${escapeHtml(g.creator?.name || "Creator")}</b>
+                <span style="color:#fff;font-weight:700;font-size:13.5px;">₹${subtotal.toLocaleString("en-IN")}</span>
+              </div>
+              <div class="caption" style="margin-top:6px;">${g.rows.map((r) => `${r.quantity} × ${escapeHtml(r.content_type)}`).join(", ")}</div>
+              <button class="btn btn-accent btn-sm approve-pick-btn" data-campaign="${c.id}" data-creator="${cid}" style="margin-top:10px;width:100%;">Approve & invite ${escapeHtml((g.creator?.name || "creator").split(" ")[0])}</button>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>` : "";
     return `
     <article class="admin-card">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
@@ -239,11 +268,13 @@ function renderCampaigns() {
       ${c.status === "draft"
         ? `<div style="display:flex;gap:8px;margin-top:14px;"><button class="btn btn-accent btn-sm approve-campaign-btn" data-id="${c.id}" style="flex:1;">Approve</button><button class="btn admin-btn-out btn-sm decline-campaign-btn" data-id="${c.id}" style="flex:1;">Decline</button></div>`
         : `<button class="btn admin-btn-out btn-block btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="margin-top:14px;">${c.status === "closed" ? "Reopen" : "Close"}</button>`}
+      ${rosterHtml}
     </article>`;
   }).join("");
   document.querySelectorAll(".approve-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "open")));
   document.querySelectorAll(".decline-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "closed")));
   document.querySelectorAll(".toggle-campaign-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status === "closed" ? "open" : "closed")));
+  document.querySelectorAll(".approve-pick-btn").forEach((btn) => btn.addEventListener("click", () => approveTeamPick(btn.dataset.campaign, btn.dataset.creator)));
 }
 
 function renderGallery() {
@@ -308,15 +339,17 @@ document.getElementById("searchInput").addEventListener("input", (e) => { QUERY 
 document.getElementById("clearSearchBtn").addEventListener("click", () => { QUERY = ""; document.getElementById("searchInput").value = ""; renderAll(); });
 
 async function loadAll() {
-  const [appsRes, creatorsRes, campaignsRes, galleryRes] = await Promise.all([
+  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
-      .select("id, status, message, created_at, agreed_budget, admin_notes, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
+      .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
     supabaseClient.from("creators").select("*").order("created_at", { ascending: false }),
     supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
     supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true }),
+    supabaseClient.from("campaign_team_picks").select("*, creators(id,name)").order("created_at", { ascending: true }),
   ]);
   APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
+  TEAM_PICKS = teamPicksRes.data || [];
   // 'invited' rows are a brand's outstanding invite, not yet accepted by
   // the creator -- nothing for admin to mediate until the creator responds.
   document.getElementById("kpiPending").textContent = APPS.filter((a) => a.status === "pending" || a.status === "shortlisted").length;
@@ -390,6 +423,21 @@ async function toggleCampaignStatus(id, next) {
   await loadAll();
   showToast(next === "closed" ? "Campaign closed" : "Campaign reopened", "success");
 }
+async function approveTeamPick(campaignId, creatorId) {
+  const rows = TEAM_PICKS.filter((p) => p.campaign_id === campaignId && p.creator_id === creatorId && p.status === "planned");
+  if (!rows.length) return;
+  const deliverables = rows.map((r) => ({ content_type: r.content_type, quantity: r.quantity, rate: Number(r.rate_snapshot) }));
+  const agreedBudget = deliverables.reduce((s, d) => s + d.quantity * d.rate, 0);
+  const { error: insertErr } = await supabaseClient.from("campaign_applications").insert({
+    campaign_id: campaignId, creator_id: creatorId, status: "invited", deliverables, agreed_budget: agreedBudget,
+  });
+  if (insertErr) return showToast("Couldn't send invite: " + insertErr.message, "error");
+  const { error: updateErr } = await supabaseClient.from("campaign_team_picks").update({ status: "approved" }).in("id", rows.map((r) => r.id));
+  if (updateErr) return showToast("Invite sent, but couldn't mark the plan approved: " + updateErr.message, "error");
+  await loadAll();
+  showToast("Invite sent to " + (rows[0].creators?.name || "the creator"), "success");
+}
+
 async function decideCampaign(id, next) {
   const { error } = await supabaseClient.from("campaigns").update({ status: next }).eq("id", id);
   if (error) return showToast("Couldn't update: " + error.message, "error");
