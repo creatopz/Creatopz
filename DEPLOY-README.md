@@ -55,6 +55,13 @@ confirmed the new pages against your live data.
 - A user can never set their own role to 'admin' (DB trigger). Only
   creatopz.in@gmail.com can ever hold role='admin' — enforced even against
   an *existing* admin trying to promote a second account (migration_006).
+  **If admin-console.html ever silently bounces creatopz.in@gmail.com to
+  a regular dashboard after login**, that account's role has reverted to
+  'creator'/'brand' and there's a chicken-and-egg lock: the same trigger
+  that protects the admin role also blocks the *first* promotion once no
+  admin exists to authorize it. See the bootstrap procedure documented in
+  `supabase/migration_005_lock_admin_role.sql` step 3 (disable the
+  trigger, set the role, re-enable it — three separate statements).
 - Creators/brands only see their own private data; public directory/profile
   go through safe views (creators_public, brands_public, campaigns_public)
   that exclude Instagram handle/URL, rate and budget.

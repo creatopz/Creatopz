@@ -49,6 +49,23 @@ create trigger trg_prevent_admin_self_insert
 --    signed up, promote that profile now. If they haven't
 --    signed up yet, sign up normally first, then re-run just
 --    this block.
+--
+--    IMPORTANT — this plain UPDATE only works the very first time,
+--    before trg_prevent_role_change (created just above) exists yet.
+--    Once that trigger is live, it requires is_admin() to already be
+--    true for ANY role change — including this one — which is a
+--    chicken-and-egg lock if the admin account has since reverted to
+--    'creator'/'brand' (e.g. an accidental reseed, or it was never
+--    actually promoted on this project). Confirmed live on
+--    2026-09-13: this exact lockout happened and admin-console.html
+--    was silently bouncing the admin to their regular dashboard on
+--    every login. Fix if it happens again — run as three separate
+--    statements, NOT as one transaction, so it can't be RLS/trigger-
+--    blocked mid-way:
+--
+--      alter table profiles disable trigger trg_prevent_role_change;
+--      update profiles set role = 'admin' where email = 'creatopz.in@gmail.com';
+--      alter table profiles enable trigger trg_prevent_role_change;
 -- ------------------------------------------------------------
 update profiles set role = 'admin'
 where email = 'creatopz.in@gmail.com' and role is distinct from 'admin';
