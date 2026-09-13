@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator of the Week — Creatopz™</title>
+<meta name="description" content="Creatopz's Creator of the Week — a new creator featured every week for standout collabs, delivered on time and done well.">
+<meta property="og:title" content="Creator of the Week — Creatopz™">
+<meta property="og:description" content="A new creator featured every week on Creatopz.">
+<meta property="og:image" content="og-image.png">
+<link rel="canonical" href="https://www.creatopz.in/spotlight.html">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/theme.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz logo">Creatopz<sup>™</sup></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="directory.html">Creators</a>
+      <a href="campaigns.html">Campaigns</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="spotlight.html" class="active">Spotlight</a>
+    </div>
+    <div class="nav-actions" id="authNav">
+      <a href="auth.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="auth.html?mode=signup" class="btn btn-primary btn-sm">Join</a>
+    </div>
+    <button class="nav-burger" data-nav-open aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
+
+<div class="nav-drawer">
+  <div class="nav-drawer-top">
+    <a href="index.html" class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></a>
+    <button class="nav-drawer-close" data-nav-close aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="index.html">Home</a>
+    <a href="directory.html">Creators</a>
+    <a href="campaigns.html">Campaigns</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="spotlight.html">Spotlight</a>
+  </div>
+  <div class="nav-drawer-actions" data-auth-sync>
+    <a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a>
+    <a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>
+  </div>
+</div>
+
+<section class="section" style="padding:56px 0 40px;">
+  <div class="wrap">
+    <span class="eyebrow"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Creator of the Week</span>
+    <h1 style="margin-top:14px;">A new creator, featured every week.</h1>
+    <p class="lede" style="max-width:520px;margin:16px 0 0;">Standout collabs, delivered on time and done well — hand-picked by the Creatopz team.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div id="currentState"></div>
+    <div id="currentSpotlight"></div>
+  </div>
+</section>
+
+<section class="section-tint" style="padding:44px 0;">
+  <div class="wrap">
+    <h3 style="margin-bottom:22px;">Past features</h3>
+    <div id="archiveState"></div>
+    <div class="grid grid-3" id="archiveGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer" style="padding:36px 0;">
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
+  </div>
+</footer>
+
+<script src="js/motion.js"></script>
+<script src="js/nav.js"></script>
+<script>
+function initials(name) {
+  return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+}
+function spotlightCard(s, big) {
+  const photo = s.profile_image
+    ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="${big ? "height:280px;" : ""}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;${big ? "height:280px;" : ""}',textContent:'${initials(s.name)}'}))">`
+    : `<div class="cc-photo avatar-fallback" style="font-size:44px;${big ? "height:280px;" : ""}">${initials(s.name)}</div>`;
+  return `
+    <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
+      ${photo}
+      <div class="cc-body">
+        <span class="caption">Week of ${new Date(s.week_start).toLocaleDateString()}</span>
+        <div class="cc-name" style="margin-top:4px;">${escapeHtml(s.name || "Creator")}</div>
+        <div class="cc-meta">${escapeHtml(s.category || "")}</div>
+        ${s.headline ? `<p class="body-sm" style="margin-top:8px;">${escapeHtml(s.headline)}</p>` : ""}
+        ${s.stat_label ? `<div class="cc-stats" style="margin-top:10px;"><span><b>${escapeHtml(s.stat_value || "")}</b>${escapeHtml(s.stat_label)}</span></div>` : ""}
+      </div>
+    </a>`;
+}
+
+async function loadSpotlights() {
+  const currentState = document.getElementById("currentState");
+  const archiveState = document.getElementById("archiveState");
+  currentState.innerHTML = `<div class="skeleton" style="height:340px;"></div>`;
+  const { data, error } = await supabaseClient
+    .from("creator_spotlights_public")
+    .select("*")
+    .order("week_start", { ascending: false });
+
+  if (error) {
+    currentState.innerHTML = `<div class="state-block state-error"><div class="state-icon">!</div><h3>Something went wrong</h3><p>Couldn't load the spotlight right now. Please try refreshing.</p></div>`;
+    return;
+  }
+  const rows = data || [];
+  currentState.innerHTML = "";
+  if (!rows.length) {
+    document.getElementById("currentSpotlight").innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No spotlight yet</h3><p>Check back soon — a new creator is featured every week.</p></div>`;
+    document.getElementById("archiveGrid").style.display = "none";
+    return;
+  }
+  const [current, ...past] = rows;
+  document.getElementById("currentSpotlight").innerHTML = `<div class="grid grid-2" style="align-items:stretch;">${spotlightCard(current, true)}</div>`;
+
+  archiveState.innerHTML = "";
+  if (!past.length) {
+    archiveState.innerHTML = `<p class="body-sm">No past features yet.</p>`;
+  } else {
+    document.getElementById("archiveGrid").innerHTML = past.map((s) => spotlightCard(s, false)).join("");
+    staggerInGrid("#archiveGrid", ".creator-card");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadSpotlights();
+  renderAuthNav("#authNav");
+});
+</script>
+</body>
+</html>

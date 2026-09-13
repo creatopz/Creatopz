@@ -34,6 +34,7 @@
       <a href="#creators" data-view="creators">Creators <span class="badge" id="countCreators" style="margin-left:auto;">0</span></a>
       <a href="#campaigns" data-view="campaigns">Campaigns <span class="badge" id="countCampaigns" style="margin-left:auto;">0</span></a>
       <a href="#gallery" data-view="gallery">Gallery <span class="badge" id="countGallery" style="margin-left:auto;">0</span></a>
+      <a href="#spotlight" data-view="spotlight">Spotlight <span class="badge" id="countSpotlight" style="margin-left:auto;">0</span></a>
       <a href="#messages" data-view="messages">Messages <span class="badge badge-accent" id="countMessages" style="margin-left:auto;display:none;">0</span></a>
     </nav>
     <div class="dash-sidebar-foot">
@@ -94,6 +95,22 @@
           <div class="grid grid-4" id="galleryGrid"></div>
         </section>
 
+        <section id="view-spotlight" style="display:none;">
+          <p class="body-sm" style="max-width:680px;margin-bottom:20px;color:var(--on-dark-soft);">Feature a creator for the week on the public spotlight page and homepage. Ranked by Creatopz Score/ratings below as a starting suggestion — the pick is always yours.</p>
+          <div class="admin-card" style="margin-bottom:20px;">
+            <b style="color:#fff;font-size:15px;">Add a spotlight</b>
+            <form id="spotlightForm" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;">
+              <div class="field" style="grid-column:1/-1;"><label style="color:var(--on-dark-soft);">Creator</label><select class="admin-input" id="spCreator" style="width:100%;" required><option value="">Select…</option></select></div>
+              <div class="field"><label style="color:var(--on-dark-soft);">Week of</label><input class="admin-input" id="spWeekStart" type="date" style="width:100%;" required></div>
+              <div class="field"><label style="color:var(--on-dark-soft);">Headline <span class="caption">(optional)</span></label><input class="admin-input" id="spHeadline" style="width:100%;" maxlength="120"></div>
+              <div class="field"><label style="color:var(--on-dark-soft);">Stat label <span class="caption">(optional)</span></label><input class="admin-input" id="spStatLabel" style="width:100%;" placeholder="Collabs closed"></div>
+              <div class="field"><label style="color:var(--on-dark-soft);">Stat value <span class="caption">(optional)</span></label><input class="admin-input" id="spStatValue" style="width:100%;" placeholder="9"></div>
+              <div style="grid-column:1/-1;"><button type="submit" class="btn btn-accent">Add spotlight</button></div>
+            </form>
+          </div>
+          <div class="grid grid-3" id="spotlightGrid"></div>
+        </section>
+
         <section id="view-messages" style="display:none;">
           <div class="grid messages-grid" style="gap:16px;min-height:520px;">
             <div class="admin-card" style="padding:0;overflow-y:auto;max-height:640px;" id="convoList"></div>
@@ -127,6 +144,7 @@
     <a href="#creators" data-view="creators">Creators</a>
     <a href="#campaigns" data-view="campaigns">Campaigns</a>
     <a href="#gallery" data-view="gallery">Gallery</a>
+    <a href="#spotlight" data-view="spotlight">Spotlight</a>
     <a href="#messages" data-view="messages">Messages</a>
   </div>
   <div class="nav-drawer-actions">
@@ -141,7 +159,7 @@
 <script src="js/nav.js"></script>
 <script>
 let SESSION = null, VIEW = "apps", QUERY = "";
-let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [];
+let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [], SPOTLIGHTS = [];
 let ACTIVE_CONVO_ID = null, THREAD = [];
 const AGREED_DRAFTS = {};
 
@@ -159,12 +177,12 @@ function pillClass(status) {
 }
 
 function setView(view) {
-  ["apps", "creators", "campaigns", "gallery", "messages"].forEach((v) => {
+  ["apps", "creators", "campaigns", "gallery", "spotlight", "messages"].forEach((v) => {
     document.getElementById("view-" + v).style.display = v === view ? "block" : "none";
   });
   document.querySelectorAll("[data-view]").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
   document.getElementById("viewTitle").textContent = {
-    apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", messages: "Messages",
+    apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", spotlight: "Spotlight", messages: "Messages",
   }[view];
   VIEW = view;
   renderAll();
@@ -369,7 +387,69 @@ function renderMessages() {
 }
 
 function renderAll() {
-  renderApps(); renderCreators(); renderCampaigns(); renderGallery(); renderMessages();
+  renderApps(); renderCreators(); renderCampaigns(); renderGallery(); renderSpotlights(); renderMessages();
+}
+
+// ===== Creator of the Week / spotlight =====
+function renderSpotlights() {
+  document.getElementById("countSpotlight").textContent = SPOTLIGHTS.length;
+  // Suggestion list ranked by score/ratings -- admin still picks by hand.
+  const ranked = [...CREATORS].sort((a, b) => (b.creatopz_score || 0) - (a.creatopz_score || 0) || (b.ratings_count || 0) - (a.ratings_count || 0));
+  const select = document.getElementById("spCreator");
+  const prevValue = select.value;
+  select.innerHTML = `<option value="">Select…</option>` + ranked.map((c) =>
+    `<option value="${c.id}">${escapeHtml(c.name || "Creator")}${c.creatopz_score ? ` — ${Number(c.creatopz_score).toFixed(1)}★ (${c.ratings_count})` : ""}</option>`
+  ).join("");
+  select.value = prevValue;
+  if (VIEW !== "spotlight") return;
+  toggleEmpty(SPOTLIGHTS.length === 0);
+  document.getElementById("spotlightGrid").innerHTML = SPOTLIGHTS.map((s) => `
+    <div class="admin-card">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;">
+        <b style="color:#fff;">${escapeHtml(s.creators?.name || "Creator")}</b>
+        <span class="caption">${new Date(s.week_start).toLocaleDateString()}</span>
+      </div>
+      <div class="caption" style="margin-top:4px;">${escapeHtml(s.creators?.category || "")}</div>
+      ${s.headline ? `<p class="body-sm" style="margin-top:10px;color:#fff;">${escapeHtml(s.headline)}</p>` : ""}
+      ${s.stat_label ? `<div class="caption" style="margin-top:8px;">${escapeHtml(s.stat_label)}: <b style="color:#fff;">${escapeHtml(s.stat_value || "")}</b></div>` : ""}
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn btn-sm ${s.is_published ? "btn-accent" : "admin-btn-out"} toggle-spotlight-btn" data-id="${s.id}" data-next="${!s.is_published}" style="flex:1;">${s.is_published ? "Live — hide it" : "Hidden — publish"}</button>
+        <button class="btn btn-sm admin-btn-out delete-spotlight-btn" data-id="${s.id}">Remove</button>
+      </div>
+    </div>`).join("");
+  document.querySelectorAll(".toggle-spotlight-btn").forEach((btn) => btn.addEventListener("click", () => toggleSpotlight(btn.dataset.id, btn.dataset.next === "true")));
+  document.querySelectorAll(".delete-spotlight-btn").forEach((btn) => btn.addEventListener("click", () => deleteSpotlight(btn.dataset.id)));
+}
+
+document.getElementById("spotlightForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const creatorId = document.getElementById("spCreator").value;
+  const weekStart = document.getElementById("spWeekStart").value;
+  if (!creatorId || !weekStart) return showToast("Pick a creator and week.", "error");
+  const { error } = await supabaseClient.from("creator_spotlights").insert({
+    creator_id: creatorId, week_start: weekStart,
+    headline: document.getElementById("spHeadline").value.trim() || null,
+    stat_label: document.getElementById("spStatLabel").value.trim() || null,
+    stat_value: document.getElementById("spStatValue").value.trim() || null,
+  });
+  if (error) return showToast("Couldn't add: " + friendlyAuthError(error), "error");
+  document.getElementById("spotlightForm").reset();
+  await loadAll();
+  showToast("Spotlight added — publish it when you're ready", "success");
+});
+
+async function toggleSpotlight(id, next) {
+  const { error } = await supabaseClient.from("creator_spotlights").update({ is_published: next }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
+  await loadAll();
+  showToast(next ? "Spotlight published" : "Spotlight hidden", "success");
+}
+
+async function deleteSpotlight(id) {
+  const { error } = await supabaseClient.from("creator_spotlights").delete().eq("id", id);
+  if (error) return showToast("Couldn't remove: " + friendlyAuthError(error), "error");
+  await loadAll();
+  showToast("Spotlight removed", "success");
 }
 
 document.getElementById("searchInput").addEventListener("input", (e) => { QUERY = e.target.value; renderAll(); });
@@ -377,7 +457,7 @@ document.getElementById("clearSearchBtn").addEventListener("click", () => { QUER
 
 async function loadAll() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes] = await Promise.all([
+  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes, spotlightsRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
       .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
@@ -386,9 +466,10 @@ async function loadAll() {
     supabaseClient.from("gallery_posts").select("*").order("display_order", { ascending: true }),
     supabaseClient.from("campaign_team_picks").select("*, creators(id,name)").order("created_at", { ascending: true }),
     supabaseClient.from("application_feedback").select("content_format_fit, niche_fit, reach_fit, created_at").gte("created_at", sevenDaysAgo),
+    supabaseClient.from("creator_spotlights").select("*, creators(name, category)").order("week_start", { ascending: false }),
   ]);
   APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
-  TEAM_PICKS = teamPicksRes.data || [];
+  TEAM_PICKS = teamPicksRes.data || []; SPOTLIGHTS = spotlightsRes.data || [];
   // 'invited' rows are a brand's outstanding invite, not yet accepted by
   // the creator -- nothing for admin to mediate until the creator responds.
   document.getElementById("kpiPending").textContent = APPS.filter((a) => a.status === "pending" || a.status === "shortlisted").length;
@@ -540,7 +621,7 @@ async function boot() {
     .subscribe();
 
   const initialView = (location.hash || "#apps").replace("#", "");
-  setView(["apps", "creators", "campaigns", "gallery", "messages"].includes(initialView) ? initialView : "apps");
+  setView(["apps", "creators", "campaigns", "gallery", "spotlight", "messages"].includes(initialView) ? initialView : "apps");
 }
 
 document.getElementById("logoutBtn").addEventListener("click", logOut);

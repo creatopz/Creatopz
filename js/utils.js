@@ -187,6 +187,89 @@ async function renderScoreCard(canvas, { name, score, ratingsCount, niche }) {
   ctx.textAlign = "left";
 }
 
+// ---------- Shareable "Selected" badge ----------
+// Same card format/palette as renderScoreCard() -- a creator lands a
+// brief, this is the congratulatory image for their Story/feed. Pure
+// UI over data that already exists (an accepted application); no new
+// table backs this.
+async function renderSelectedBadge(canvas, { creatorName, campaignTitle, brandName, niche }) {
+  await document.fonts.ready;
+  const W = 1080, H = 1350;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#f0f0f0";
+  ctx.fillRect(0, 0, W, H);
+
+  // Wordmark
+  ctx.fillStyle = "#000";
+  ctx.font = "800 40px 'Bricolage Grotesque', sans-serif";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText("Creatopz", 80, 130);
+  ctx.fillStyle = "#e7473c";
+  ctx.beginPath();
+  ctx.arc(80 + ctx.measureText("Creatopz").width + 22, 108, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Big label
+  ctx.fillStyle = "#e7473c";
+  ctx.font = "800 34px 'Inter', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("I ' M   S E L E C T E D", W / 2, 420);
+  ctx.fillStyle = "#000";
+  ctx.font = "800 90px 'Bricolage Grotesque', sans-serif";
+  wrapCenteredText(ctx, campaignTitle || "a new brief", W / 2, 540, 880, 96);
+
+  ctx.fillStyle = "#4a4a4a";
+  ctx.font = "600 38px 'Inter', sans-serif";
+  ctx.fillText("with " + (brandName || "a brand") + " · via Creatopz", W / 2, 800);
+
+  // Divider
+  ctx.strokeStyle = "#dcdcdc";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(240, 900);
+  ctx.lineTo(W - 240, 900);
+  ctx.stroke();
+
+  // Name + niche
+  ctx.fillStyle = "#000";
+  ctx.font = "700 54px 'Bricolage Grotesque', sans-serif";
+  ctx.fillText(creatorName || "Creator", W / 2, 990);
+  ctx.fillStyle = "#4a4a4a";
+  ctx.font = "500 34px 'Inter', sans-serif";
+  ctx.fillText(niche || "Creator", W / 2, 1045);
+
+  // Footer
+  ctx.fillStyle = "#7d7d7d";
+  ctx.font = "600 30px 'Inter', sans-serif";
+  ctx.fillText("creatopz.in", W / 2, H - 90);
+
+  ctx.textAlign = "left";
+}
+
+// Wraps a single string across up to 3 centered lines of a given
+// max width, shrinking to fit rather than overflowing -- campaign
+// titles are free text of very variable length.
+function wrapCenteredText(ctx, text, cx, startY, maxWidth, lineHeight) {
+  const words = String(text).split(" ");
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const test = line ? line + " " + word : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  const capped = lines.slice(0, 3);
+  const offset = ((capped.length - 1) * lineHeight) / 2;
+  capped.forEach((l, i) => ctx.fillText(l, cx, startY - offset + i * lineHeight));
+}
+
 function formatNumber(n) {
   if (n === null || n === undefined || n === "") return "—";
   const num = Number(n);
