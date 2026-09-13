@@ -1,294 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/soften.css">
-<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Directory — Creatopz™</title>
+<meta name="description" content="Browse vetted creators on Creatopz by niche, city, following and engagement. Every profile is checked before it's listed.">
+<meta property="og:title" content="Creator Directory — Creatopz™">
+<meta property="og:description" content="Vetted creators, ready to collab.">
+<meta property="og:image" content="og-image.png">
+<link rel="canonical" href="https://www.creatopz.in/directory.html">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/theme.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/supabase-client.js"></script>
-<script src="./support.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
 </head>
 <body>
-<x-dc>
-<helmet>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<style>
-  body{margin:0;background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-  *{box-sizing:border-box;}
-  a{color:inherit;text-decoration:none;}
-  a:hover{color:#FF3300;}
-  ::selection{background:#FF3300;color:#fff;}
-  input,select,button{font-family:inherit;}
-  :focus-visible{outline:2px solid #FF3300;outline-offset:2px;}
-  @keyframes ctzRise{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  @keyframes ctzCardIn{from{transform:translateY(18px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  @media (prefers-reduced-motion: reduce){*{animation:none !important;}}
-  @media (max-width:860px){
-    .dc-nav{flex-wrap:wrap;row-gap:10px;}
-    .dc-nav-links{flex-wrap:wrap;gap:14px !important;font-size:13.5px !important;order:3;width:100%;justify-content:flex-start;}
-  }
-  @view-transition{navigation:auto;}
-  html{scroll-behavior:smooth;}
-  a,button,input,select,textarea{transition:background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(.16,1,.3,1), opacity .2s ease;}
-</style>
-</helmet>
 
-<div ref="{{ rootRef }}" style="font-family:Inter,system-ui,sans-serif;color:#000;background:#fff;">
-
-  <header style="position:sticky;top:0;z-index:120;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:2px solid #000;">
-    <nav class="dc-nav" style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
-      <a href="index.html" style="display:flex;align-items:center;gap:10px;font-family:Anton,sans-serif;font-size:22px;">
-        <img src="assets/logo.png" alt="Creatopz mark" style="height:34px;display:block;transition:transform .6s cubic-bezier(.34,1.56,.64,1);" style-hover="transform:rotate(-10deg) scale(1.12)">Creatopz<sup style="font-family:Inter,sans-serif;font-size:10px;">™</sup>
-      </a>
-      <div class="dc-nav-links" style="display:flex;gap:28px;font-size:15px;font-weight:500;">
-        <a href="index.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Home</a>
-        <a href="directory.html" style="padding:6px 0;color:#FF3300;font-weight:600;background-image:linear-gradient(#FF3300,#FF3300);background-size:100% 2px;background-repeat:no-repeat;background-position:0 100%;">Directory</a>
-        <a href="play.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Play</a>
-        <a href="auth.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);" style-hover="background-size:100% 2px;color:#000">Log in</a>
-        <a href="dashboard-creator.html" style="padding:6px 0;background-image:linear-gradient(#FF3300,#FF3300);background-size:0% 2px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s cubic-bezier(.16,1,.3,1);">Dashboard</a>
-      </div>
-      <a href="auth.html" data-magnetic="8" style="font-size:14px;font-weight:600;padding:11px 22px;border:2px solid #000;background:#fff;transition:background .2s ease,color .2s ease,transform .3s cubic-bezier(.16,1,.3,1);" style-hover="background:#000;color:#fff">Get started</a>
-    </nav>
-  </header>
-
-  <section style="background:#000;color:#fff;padding:60px 0 44px;position:relative;overflow:hidden;">
-    <div ref="{{ glowRef }}" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(460px circle at var(--mx,70%) var(--my,30%), rgba(255,51,0,.14), transparent 68%);"></div>
-    <div style="position:relative;max-width:1180px;margin:0 auto;padding:0 32px;">
-      <div style="display:inline-flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600;border:1px solid #2a2a2a;padding:8px 14px;margin-bottom:22px;">
-        <span style="width:7px;height:7px;border-radius:50%;background:#FF3300;"></span>Live directory
-      </div>
-      <h1 style="font-family:Anton,sans-serif;font-weight:400;font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:0;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) both;">Vetted creators, <span style="color:#FF3300;">ready to collab.</span></h1>
-      <p style="color:#c9c9c9;font-size:16px;line-height:1.6;max-width:500px;margin:18px 0 0;animation:ctzRise .6s cubic-bezier(.16,1,.3,1) .08s both;">Search by niche, city or reach. Every profile here has been checked before it was listed.</p>
-
-      <div style="margin:32px 0 0;max-width:480px;">
-        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search name, niche or city…" style="width:100%;background:transparent;border:none;border-bottom:2px solid #333;color:#fff;font-size:17px;padding:12px 0;outline:none;transition:border-color .3s ease;" style-focus="border-color:#FF3300">
-      </div>
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz logo">Creatopz<sup>™</sup></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="directory.html">Creators</a>
+      <a href="campaigns.html">Campaigns</a>
+      <a href="gallery.html">Gallery</a>
     </div>
-  </section>
-
-  <section style="background:#F6F4F1;border-bottom:2px solid #000;">
-    <div style="max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <sc-for list="{{ niches }}" as="n" hint-placeholder-count="6">
-          <button onClick="{{ n.pick }}" style="border:1px solid {{ n.border }};background:{{ n.bg }};color:{{ n.fg }};font-size:12.5px;font-weight:600;padding:8px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">{{ n.label }}</button>
-        </sc-for>
-        <button onClick="{{ toggleVerified }}" style="border:1px solid {{ verifiedBorder }};background:{{ verifiedBg }};color:{{ verifiedFg }};font-size:12.5px;font-weight:600;padding:8px 14px;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;">✓ Verified only</button>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a8a8a;font-weight:600;">Sort</span>
-        <select value="{{ sort }}" onChange="{{ onSort }}" style="background:#fff;color:#000;border:1px solid #cfcac2;padding:8px 12px;font-size:13px;font-weight:600;">
-          <option value="reach">Reach</option>
-          <option value="engagement">Engagement</option>
-          <option value="name">Name</option>
-        </select>
-      </div>
+    <div class="nav-actions" id="authNav">
+      <a href="auth.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="auth.html?mode=signup" class="btn btn-primary btn-sm">Join</a>
     </div>
-  </section>
+    <button class="nav-burger" data-nav-open aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+</header>
 
-  <section style="max-width:1180px;margin:0 auto;padding:44px 32px 96px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;border-bottom:2px solid #000;padding-bottom:14px;margin-bottom:2px;">
-      <div style="font-family:Anton,sans-serif;font-size:20px;"><span ref="{{ countRef }}">0</span> creators</div>
-      <div style="font-size:13px;color:#5C5C5C;">{{ activeLabel }}</div>
-    </div>
-
-    <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;color:#5C5C5C;">Loading creators…</div>
-    </sc-if>
-    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;color:#FF3300;">{{ loadError }}</div>
-    </sc-if>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:2px;background:#E2DFD8;border:2px solid #000;border-top:none;">
-      <sc-for list="{{ results }}" as="c" hint-placeholder-count="6">
-        <article style="background:#fff;padding:24px;position:relative;animation:ctzCardIn .5s cubic-bezier(.16,1,.3,1) {{ c.delay }} both;transition:background .25s ease;" style-hover="background:#F6F4F1">
-          <div style="display:flex;gap:14px;align-items:center;">
-            <div style="width:52px;height:52px;flex:0 0 52px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:Anton,sans-serif;font-size:19px;letter-spacing:.04em;">{{ c.initials }}</div>
-            <div style="min-width:0;">
-              <h3 style="font-family:Anton,sans-serif;font-weight:400;font-size:19px;margin:0;line-height:1.1;overflow-wrap:anywhere;">{{ c.name }}</h3>
-              <div style="font-size:12.5px;color:#8a8a8a;margin-top:3px;">{{ c.city }} · {{ c.niche }}</div>
-            </div>
-          </div>
-          <p style="font-size:14px;line-height:1.6;color:#5C5C5C;margin:16px 0;">{{ c.bio }}</p>
-          <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#5C5C5C;margin-bottom:18px;">
-            <span><b style="color:#000;">{{ c.reachLabel }}</b> reach</span>
-            <span><b style="color:#000;">{{ c.engagementLabel }}</b> engagement</span>
-            <sc-if value="{{ c.verified }}" hint-placeholder-val="{{ false }}">
-              <span style="color:#0a7a3d;font-weight:700;">✓ Verified</span>
-            </sc-if>
-          </div>
-          <div style="display:flex;gap:8px;">
-            <a href="{{ c.applyHref }}" style="flex:1;text-align:center;background:#FF3300;color:#fff;font-weight:600;font-size:13.5px;padding:11px 14px;transition:background .2s ease;" style-hover="background:#e62e00">Invite to brief</a>
-            <a href="{{ c.profileHref }}" style="display:flex;align-items:center;padding:11px 14px;border:1px solid #000;font-weight:600;font-size:13.5px;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Profile</a>
-          </div>
-        </article>
-      </sc-for>
-    </div>
-
-    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
-      <div style="border:2px solid #000;border-top:none;padding:64px 28px;text-align:left;">
-        <div style="font-family:Anton,sans-serif;font-size:30px;margin-bottom:10px;">No creators match that.</div>
-        <p style="color:#5C5C5C;margin:0 0 22px;">Try a different niche — or clear the filters.</p>
-        <button onClick="{{ clearAll }}" style="border:2px solid #000;background:#fff;font-weight:600;font-size:14px;padding:12px 20px;cursor:pointer;transition:background .2s ease,color .2s ease;" style-hover="background:#000;color:#fff">Clear filters</button>
-      </div>
-    </sc-if>
-  </section>
-
-  <footer style="background:#fff;padding:40px 0;">
-    <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;color:#5C5C5C;font-size:13px;flex-wrap:wrap;gap:10px;">
-      <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
-    </div>
-  </footer>
+<div class="nav-drawer">
+  <div class="nav-drawer-top">
+    <a href="index.html" class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></a>
+    <button class="nav-drawer-close" data-nav-close aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="index.html">Home</a>
+    <a href="directory.html">Creators</a>
+    <a href="campaigns.html">Campaigns</a>
+    <a href="gallery.html">Gallery</a>
+  </div>
+  <div class="nav-drawer-actions">
+    <a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a>
+    <a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>
+  </div>
 </div>
 
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{}">
+<section class="section-dark" style="padding:56px 0 40px;">
+  <div class="wrap">
+    <span class="eyebrow on-dark"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Live directory</span>
+    <h1 style="color:#fff;margin-top:14px;">Vetted creators, <span style="color:var(--accent);">ready to collab.</span></h1>
+    <p style="color:var(--on-dark-soft);font-size:16px;max-width:520px;margin:16px 0 0;">Search by niche, city or reach. Every profile here has been checked before it was listed.</p>
+    <div style="margin-top:28px;max-width:460px;position:relative;">
+      <input id="searchInput" type="text" placeholder="Search name, niche or city…" style="width:100%;background:rgba(255,255,255,.08);border:1.5px solid var(--dark-border);border-radius:var(--r-pill);color:#fff;font-size:15px;padding:14px 20px;outline:none;">
+    </div>
+  </div>
+</section>
+
+<section class="section-tint" style="padding:18px 0;border-bottom:1px solid var(--border);">
+  <div class="wrap" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+    <div class="chip-select" id="nicheChips"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="chip" id="verifiedToggle">✓ Verified only</button>
+      <select id="sortSelect" class="input" style="width:auto;padding:9px 32px 9px 16px;border-radius:var(--r-pill);">
+        <option value="reach">Sort: Reach</option>
+        <option value="engagement">Sort: Engagement</option>
+        <option value="name">Sort: Name</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:44px;">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px;">
+      <h3><span id="resultCount">0</span> creators</h3>
+      <span class="body-sm" id="activeLabel">All niches</span>
+    </div>
+    <div id="directoryState"></div>
+    <div class="grid grid-3" id="creatorGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer" style="padding:36px 0;">
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
+  </div>
+</footer>
+
+<script src="js/motion.js"></script>
+<script src="js/nav.js"></script>
+<script>
 const FALLBACK_NICHES = ["All", "Beauty", "Fitness", "Food", "Fashion", "Tech", "Travel"];
+let ALL_CREATORS = [];
+let state = { query: "", niche: "All", sort: "reach", verifiedOnly: false };
 
-class Component extends DCLogic {
-  state = { query: "", niche: "All", sort: "reach", verifiedOnly: false, creators: [], loading: true, loadError: "" };
-  rootRef = React.createRef();
-  glowRef = React.createRef();
-  countRef = React.createRef();
-
-  async componentDidMount() {
-    const { data, error } = await supabaseClient
-      .from("creators_public")
-      .select("id, name, username, bio, category, followers, engagement_rate, locations, is_verified")
-      .order("followers", { ascending: false });
-    if (error) {
-      this.setState({ loading: false, loadError: "Couldn't load the directory right now. Try refreshing." });
-    } else {
-      this.setState({
-        loading: false,
-        creators: (data || []).map((c) => ({
-          id: c.id,
-          name: c.name || "Unnamed creator",
-          city: (c.locations && c.locations[0]) || "—",
-          niche: c.category || "Other",
-          reach: c.followers || 0,
-          engagement: Number(c.engagement_rate) || 0,
-          bio: c.bio || "",
-          verified: !!c.is_verified
-        }))
-      });
-    }
-    this.reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    this.animateCount();
-    const glow = this.glowRef.current;
-    const root = this.rootRef.current;
-    if (glow && root && !this.reduced) {
-      const hero = glow.parentElement;
-      this.move = (ev) => {
-        this._lastGlowEv = ev;
-        if (this._glowRaf) return;
-        this._glowRaf = requestAnimationFrame(() => {
-          this._glowRaf = null;
-          const r = hero.getBoundingClientRect();
-          glow.style.setProperty("--mx", this._lastGlowEv.clientX - r.left + "px");
-          glow.style.setProperty("--my", this._lastGlowEv.clientY - r.top + "px");
-        });
-      };
-      hero.addEventListener("mousemove", this.move);
-      this.hero = hero;
-    }
-    if (root && !this.reduced) {
-      root.querySelectorAll("[data-magnetic]").forEach((el) => {
-        const amt = parseFloat(el.dataset.magnetic) || 8;
-        el.addEventListener("mousemove", (ev) => {
-          const r = el.getBoundingClientRect();
-          el.style.transitionDuration = "0s";
-          el.style.transform =
-            "translate(" + (((ev.clientX - r.left) / r.width - 0.5) * 2 * amt).toFixed(1) + "px," +
-            (((ev.clientY - r.top) / r.height - 0.5) * 2 * amt).toFixed(1) + "px)";
-        });
-        el.addEventListener("mouseleave", () => { el.style.transitionDuration = ""; el.style.transform = "translate(0,0)"; });
-      });
-    }
-  }
-
-  renderVals() {
-    const { query, niche, sort, verifiedOnly, creators } = this.state;
-    const q = query.trim().toLowerCase();
-    let list = creators.filter((c) => {
-      const inNiche = niche === "All" || c.niche === niche;
-      const inVerified = !verifiedOnly || c.verified;
-      const inQuery = !q || (c.name + " " + c.city + " " + c.niche + " " + c.bio).toLowerCase().includes(q);
-      return inNiche && inVerified && inQuery;
-    });
-    list = list.slice().sort((a, b) =>
-      sort === "name" ? a.name.localeCompare(b.name) : sort === "engagement" ? b.engagement - a.engagement : b.reach - a.reach
-    );
-
-    const names = Array.from(new Set(["All", ...creators.map((c) => c.niche)]));
-    const niches = (names.length > 1 ? names : FALLBACK_NICHES).map((label) => {
-      const on = label === niche;
-      return {
-        label,
-        border: on ? "#FF3300" : "#333",
-        bg: on ? "#FF3300" : "transparent",
-        fg: on ? "#fff" : "#e6e6e6",
-        pick: () => this.setState({ niche: label })
-      };
-    });
-
-    return {
-      niches,
-      query,
-      sort,
-      toggleVerified: () => this.setState({ verifiedOnly: !verifiedOnly }),
-      verifiedBorder: verifiedOnly ? "#0a7a3d" : "#333",
-      verifiedBg: verifiedOnly ? "#0a7a3d" : "transparent",
-      verifiedFg: verifiedOnly ? "#fff" : "#e6e6e6",
-      results: list.map((c, i) => ({
-        ...c,
-        initials: c.name.split(" ").map((w) => w[0]).join(""),
-        reachLabel: c.reach >= 1000 ? (c.reach / 1000).toFixed(0) + "K" : String(c.reach),
-        engagementLabel: c.engagement ? c.engagement.toFixed(1) + "%" : "—",
-        profileHref: "profile.html?id=" + encodeURIComponent(c.id),
-        applyHref: "auth.html",
-        delay: Math.min(i * 55, 440) + "ms"
-      })),
-      empty: !this.state.loading && list.length === 0,
-      loading: this.state.loading,
-      loadError: this.state.loadError,
-      activeLabel: this.state.loading ? "Loading…" : (niche === "All" ? "All niches" : niche) + (q ? " · “" + query.trim() + "”" : ""),
-      onQuery: (e) => this.setState({ query: e.target.value }),
-      onSort: (e) => this.setState({ sort: e.target.value }),
-      clearAll: () => this.setState({ query: "", niche: "All", verifiedOnly: false }),
-      rootRef: this.rootRef,
-      glowRef: this.glowRef,
-      countRef: this.countRef
-    };
-  }
-
-  componentDidUpdate() { this.animateCount(); }
-
-  animateCount() {
-    const el = this.countRef.current;
-    if (!el) return;
-    const target = this.renderVals().results.length;
-    if (this.reduced) { el.textContent = String(target); return; }
-    cancelAnimationFrame(this._cRaf);
-    const from = parseInt(el.textContent, 10) || 0;
-    if (from === target) return;
-    const t0 = performance.now();
-    const tick = (t) => {
-      const p = Math.min(1, (t - t0) / 420);
-      const e = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.round(from + (target - from) * e));
-      if (p < 1) this._cRaf = requestAnimationFrame(tick);
-    };
-    this._cRaf = requestAnimationFrame(tick);
-  }
-
-  componentWillUnmount() {
-    cancelAnimationFrame(this._cRaf);
-    cancelAnimationFrame(this._glowRaf);
-    if (this.hero && this.move) this.hero.removeEventListener("mousemove", this.move);
-  }
+function initials(name) {
+  return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 }
+function formatReach(n) { return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n); }
+
+async function loadCreators() {
+  const stateHost = document.getElementById("directoryState");
+  stateHost.innerHTML = `<div class="grid grid-3">${Array.from({length:6}).map(() => `<div class="skeleton" style="height:340px;"></div>`).join("")}</div>`;
+  const { data, error } = await supabaseClient
+    .from("creators_public")
+    .select("id, name, username, bio, category, profile_image, followers, engagement_rate, locations, is_verified")
+    .order("followers", { ascending: false });
+
+  if (error) {
+    stateHost.innerHTML = `<div class="state-block state-error"><div class="state-icon">!</div><h3>Something went wrong</h3><p>Couldn't load the directory right now. Please try refreshing.</p></div>`;
+    return;
+  }
+  ALL_CREATORS = (data || []).map((c) => ({
+    id: c.id,
+    name: c.name || "Unnamed creator",
+    city: (c.locations && c.locations[0]) || "—",
+    niche: c.category || "Other",
+    reach: c.followers || 0,
+    engagement: Number(c.engagement_rate) || 0,
+    bio: c.bio || "",
+    image: c.profile_image || "",
+    verified: !!c.is_verified,
+  }));
+  stateHost.innerHTML = "";
+  renderNiches();
+  render();
+}
+
+function renderNiches() {
+  const names = Array.from(new Set(["All", ...ALL_CREATORS.map((c) => c.niche)]));
+  const list = names.length > 1 ? names : FALLBACK_NICHES;
+  const host = document.getElementById("nicheChips");
+  host.innerHTML = list.map((label) =>
+    `<button class="chip ${label === state.niche ? "is-selected" : ""}" data-niche="${escapeHtml(label)}">${escapeHtml(label)}</button>`
+  ).join("");
+  host.querySelectorAll("[data-niche]").forEach((btn) => {
+    btn.addEventListener("click", () => { state.niche = btn.dataset.niche; render(); renderNiches(); });
+  });
+}
+
+function render() {
+  const q = state.query.trim().toLowerCase();
+  let list = ALL_CREATORS.filter((c) => {
+    const inNiche = state.niche === "All" || c.niche === state.niche;
+    const inVerified = !state.verifiedOnly || c.verified;
+    const inQuery = !q || (c.name + " " + c.city + " " + c.niche + " " + c.bio).toLowerCase().includes(q);
+    return inNiche && inVerified && inQuery;
+  });
+  list = list.slice().sort((a, b) =>
+    state.sort === "name" ? a.name.localeCompare(b.name) :
+    state.sort === "engagement" ? b.engagement - a.engagement : b.reach - a.reach
+  );
+
+  document.getElementById("resultCount").textContent = list.length;
+  document.getElementById("activeLabel").textContent =
+    (state.niche === "All" ? "All niches" : state.niche) + (q ? ` · "${state.query.trim()}"` : "");
+
+  const grid = document.getElementById("creatorGrid");
+  if (!list.length) {
+    grid.innerHTML = "";
+    document.getElementById("directoryState").innerHTML = `
+      <div class="state-block">
+        <div class="state-icon">◎</div>
+        <h3>No creators match that</h3>
+        <p style="margin-bottom:20px;">Try a different niche — or clear the filters.</p>
+        <button class="btn btn-outline" id="clearFiltersBtn">Clear filters</button>
+      </div>`;
+    document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
+      state = { query: "", niche: "All", sort: state.sort, verifiedOnly: false };
+      document.getElementById("searchInput").value = "";
+      document.getElementById("verifiedToggle").classList.remove("is-selected");
+      renderNiches();
+      render();
+    });
+    return;
+  }
+  document.getElementById("directoryState").innerHTML = "";
+  grid.innerHTML = list.map((c) => `
+    <a href="profile.html?id=${encodeURIComponent(c.id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
+      ${c.image
+        ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.name)}" class="cc-photo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;',textContent:'${initials(c.name)}'}))">`
+        : `<div class="cc-photo avatar-fallback" style="font-size:44px;">${initials(c.name)}</div>`}
+      <div class="cc-body">
+        <div class="cc-name">${escapeHtml(c.name)} ${c.verified ? `<span title="Verified" style="color:var(--success);">✓</span>` : ""}</div>
+        <div class="cc-meta">${escapeHtml(c.city)} · ${escapeHtml(c.niche)}</div>
+        <p class="body-sm" style="margin:4px 0 0;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(c.bio)}</p>
+        <div class="cc-stats">
+          <span><b>${formatReach(c.reach)}</b>reach</span>
+          <span><b>${c.engagement ? c.engagement.toFixed(1) + "%" : "—"}</b>engagement</span>
+        </div>
+      </div>
+    </a>
+  `).join("");
+  staggerInGrid("#creatorGrid", ".creator-card");
+}
+
+document.getElementById("searchInput").addEventListener("input", (e) => { state.query = e.target.value; render(); });
+document.getElementById("sortSelect").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
+document.getElementById("verifiedToggle").addEventListener("click", (e) => {
+  state.verifiedOnly = !state.verifiedOnly;
+  e.target.classList.toggle("is-selected", state.verifiedOnly);
+  render();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadCreators();
+  renderAuthNav("#authNav");
+});
 </script>
 </body>
 </html>

@@ -82,18 +82,18 @@ async function getCurrentProfile() {
 async function requireAuth(requiredRole = null) {
   const profile = await getCurrentProfile();
   if (!profile) {
-    if (!window.location.pathname.endsWith("login.html")) {
-      window.location.href = "login.html";
+    if (!window.location.pathname.endsWith("auth.html")) {
+      window.location.href = "auth.html";
     }
     return null;
   }
   if (requiredRole && profile.role !== requiredRole) {
     const target =
       profile.role === "admin"
-        ? "admin.html"
+        ? "admin-console.html"
         : profile.role === "brand"
-        ? "brand-dashboard.html"
-        : "creator-dashboard.html";
+        ? "dashboard-brand.html"
+        : "dashboard-creator.html";
     // Never redirect to the page we're already on — that would be an
     // infinite reload loop instead of a redirect.
     if (!window.location.pathname.endsWith(target)) {
@@ -110,19 +110,19 @@ async function renderAuthNav(navSelector = "#authNav") {
   if (!nav) return;
   const profile = await getCurrentProfile();
   if (!profile) {
-    nav.innerHTML = `<a href="login.html" class="btn btn-outline-dark" style="padding:10px 20px;font-size:14px;">Log in</a>`;
+    nav.innerHTML = `<a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
     return;
   }
   const dashboardHref =
     profile.role === "admin"
-      ? "admin.html"
+      ? "admin-console.html"
       : profile.role === "brand"
-      ? "brand-dashboard.html"
-      : "creator-dashboard.html";
+      ? "dashboard-brand.html"
+      : "dashboard-creator.html";
   const onDashboardAlready = window.location.pathname.endsWith(dashboardHref);
   nav.innerHTML = `
-    ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline-dark" style="padding:10px 20px;font-size:14px;">Dashboard</a>`}
-    <a href="#" id="navLogout" class="btn btn-red" style="padding:10px 20px;font-size:14px;">Log out</a>
+    ${onDashboardAlready ? "" : `<a href="${dashboardHref}" class="btn btn-outline btn-sm">Dashboard</a>`}
+    <a href="#" id="navLogout" class="btn btn-primary btn-sm">Log out</a>
   `;
   document.getElementById("navLogout")?.addEventListener("click", async (e) => {
     e.preventDefault();
