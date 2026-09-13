@@ -60,8 +60,9 @@
   </div>
 </div>
 
-<section class="section" style="padding:56px 0 40px;">
-  <div class="wrap">
+<section class="section" style="padding:56px 0 40px;position:relative;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--accent);opacity:.08;"></div>
+  <div class="wrap" style="position:relative;">
     <span class="eyebrow"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Live directory</span>
     <h1 style="margin-top:14px;">Vetted creators, ready to collab.</h1>
     <p class="lede" style="max-width:520px;margin:16px 0 0;">Search by niche, city or reach. Every profile here has been checked before it was listed.</p>
@@ -193,16 +194,20 @@ function render() {
   document.getElementById("directoryState").innerHTML = "";
   grid.innerHTML = list.map((c) => `
     <a href="profile.html?id=${encodeURIComponent(c.id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
-      ${c.image
-        ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.name)}" class="cc-photo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;',textContent:'${initials(c.name)}'}))">`
-        : `<div class="cc-photo avatar-fallback" style="font-size:44px;">${initials(c.name)}</div>`}
+      <div class="cc-photo-wrap">
+        ${c.image
+          ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.name)}" class="cc-photo" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;',textContent:'${initials(c.name)}'}))">`
+          : `<div class="cc-photo avatar-fallback" style="font-size:44px;">${initials(c.name)}</div>`}
+        ${c.verified ? `<span class="cc-verified" title="Verified">✓</span>` : ""}
+        <span class="cc-niche-tag">${escapeHtml(c.niche)}</span>
+      </div>
       <div class="cc-body">
-        <div class="cc-name">${escapeHtml(c.name)} ${c.verified ? `<span title="Verified" style="color:var(--success);">✓</span>` : ""}</div>
-        <div class="cc-meta">${escapeHtml(c.city)} · ${escapeHtml(c.niche)}</div>
-        <p class="body-sm" style="margin:4px 0 0;-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(c.bio)}</p>
+        <div class="cc-name">${escapeHtml(c.name)}</div>
+        <div class="cc-meta">${escapeHtml(c.city)}</div>
         <div class="cc-stats">
-          <span><b>${formatReach(c.reach)}</b>reach</span>
-          <span><b>${c.engagement ? c.engagement.toFixed(1) + "%" : "—"}</b>engagement</span>
+          <span><b>${formatReach(c.reach)}</b>Followers</span>
+          <span class="cc-stat-divider"></span>
+          <span><b>${c.engagement ? c.engagement.toFixed(1) + "%" : "—"}</b>Engagement</span>
         </div>
       </div>
     </a>
