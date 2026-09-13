@@ -329,3 +329,45 @@ other public page already uses.
   accent circle. All additive/CSS-only -- no existing class was
   renamed and no other page using `.creator-card` needed a markup
   change to keep working.
+
+## Homepage hero: brand-tied refresh + profile.html redesign
+No schema change. CSS/markup only.
+- The app-window hero's cool blue-grey backdrop became a warm cream
+  tone matching the rest of the site, with a soft red glow behind the
+  window (`.hero-window::after`) tying it to the brand accent instead
+  of reading as a generic dark SaaS mockup. Follower badges gained a
+  small red dot; the intro slide gained a red accent bar and a subtle
+  maroon-tinted gradient instead of flat black; every slide gets a
+  hover lift (`.hero-slide:hover{ transform:translateY(-5px) }`)
+  matching the site's existing `.card-hover` interaction language; and
+  slide photos gained a bottom gradient so white caption text stays
+  legible over any image.
+- profile.html was rebuilt around a single narrow column
+  (`.profile-narrow`, max-width 640px) that reads the same on mobile
+  and desktop instead of a wide dashboard-style grid, per a supplied
+  reference design: a moderate photo beside a large Creatopz Score
+  number (with a smaller "New" state when a creator has no ratings
+  yet, rather than a lone dash at 56px), name, category/city, a thin
+  "About" section, a plain-text "Content formats" row (reads from the
+  existing `content_types` column), three clickable stat blocks
+  (Followers/Engagement -> Audience tab, Collabs -> Work tab) with a
+  small arrow icon, and -- for a creator viewing their own profile
+  only -- a dark dot-grid "Share your Creatopz Score" tile that
+  triggers the existing score-card download. The old 4-box
+  spreadsheet-style metrics grid and the separate score panel inside
+  the Rates tab are both gone, consolidated into this one hero. Tabs
+  now use the shared `.tabs`/`.tab.is-active` component instead of
+  manual inline-style toggling. All existing functionality (edit form,
+  rate card, invite/shortlist actions for a brand viewer, audience
+  stats, score-card download) is unchanged, just re-laid-out and
+  re-wired to the same backend calls.
+- Fixed a real bug this surfaced: the connect tile's decorative
+  dot-grid pseudo-element had no `pointer-events:none`, so it silently
+  intercepted clicks on the download button sitting under it.
+
+Verified: node --check on both touched inline scripts, a full
+Playwright pass (own-profile view including the score-card download
+and a stat-click tab switch, public-viewer view confirming the
+share tile and edit button both correctly stay hidden, and the
+existing edit-and-save flow end-to-end), full-site overflow sweep
+(320-1280px, every page) clean.
