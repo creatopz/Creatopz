@@ -17,11 +17,11 @@ Domains & Routes.
 `js/supabase-client.js` already points at the project this build was
 developed and tested against (`vcidjppvvocdtrwanidp`). It already has real
 signups on it — **do not run `schema.sql` or `seed.sql` against it.**
-`supabase/migration_002` through `migration_012` are already applied there.
+`supabase/migration_002` through `migration_013` are already applied there.
 If you're standing up a **new/empty** project instead, run in this order:
 `schema.sql` → `migration_002` → `003` → `004` → `005` → `006` → `007` →
-`008` → `009` → `010` → `011` → `012` → (optionally) `seed.sql` for sample
-rows on a dev project only.
+`008` → `009` → `010` → `011` → `012` → `013` → (optionally) `seed.sql` for
+sample rows on a dev project only.
 
 ## Design system
 `css/theme.css` is the one stylesheet for the whole marketplace: a warm
@@ -47,6 +47,14 @@ from any page's navigation — leave it alone or delete it, your call.
 - `profile.html` — creator media kit (`?id=<creator_id>` for the public view; your own profile is editable)
 - `admin-console.html` — applications mediation, creators, campaigns, gallery, messages (dark, admin-only)
 - `messages.html` — creator/brand inbox with the Creatopz team, live via Supabase Realtime
+- Creators publish a **rate card** (one rate per content type) instead of
+  one flat number, in profile.html's edit form. Brands use it to **build a
+  team** on a per-campaign basis (dashboard-brand.html → "Build your
+  team →" on a campaign card): pick several creators, set how much of
+  each content type from each, tracked live against the campaign's total
+  budget. This plan (`campaign_team_picks`) is visible only to the brand
+  and admin — nothing reaches a creator until admin approves a creator's
+  picks into a real invite from admin-console.html's Campaigns tab.
 - `creator-onboarding.html` / `brand-onboarding.html` — profile builder forms (with a live completion meter on the creator side)
 - `gallery.html`, `forgot-password.html`, `reset-password.html`, `terms.html`, `privacy.html`
 
@@ -102,3 +110,16 @@ from any page's navigation — leave it alone or delete it, your call.
   all backed by real RLS policies and `is_campaign_open()`/
   `creator_has_applied_to_campaign()` SECURITY DEFINER helpers
   (migration_012) — none of these are client-side-only state.
+- `creators_for_team_builder` (migration_013) is the one place a
+  creator's rate card is visible to someone other than themself/admin —
+  granted to `authenticated` only (revoked from `anon`), and still
+  excludes Instagram handle/URL and audience detail the way
+  creators_public does; a brand still can't message a creator directly,
+  only plan against their rate and send that plan to admin.
+  `campaign_team_picks` is RLS-scoped to the owning brand and admin —
+  never the creator being planned around — until admin's "Approve &
+  invite" turns a creator's planned rows into a real
+  `campaign_applications` row (status `invited`, with a `deliverables`
+  snapshot of exactly what was picked). That's also the first INSERT
+  policy that lets admin create an application directly, for this
+  purpose specifically.

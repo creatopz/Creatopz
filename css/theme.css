@@ -268,6 +268,16 @@ textarea{ resize:vertical; min-height:110px; }
 .chip.is-selected{ background:var(--ink); color:#fff; border-color:var(--ink); }
 .chip:hover:not(.is-selected){ border-color:var(--ink); color:var(--ink); }
 
+/* ---------------- Quantity stepper / budget bar ----------------
+   Shared by the creator rate card and the brand's campaign team
+   builder — a unit rate times a small integer quantity. */
+.stepper{ display:flex; align-items:center; border:1.5px solid var(--border-strong); border-radius:var(--r-sm); background:var(--surface); overflow:hidden; height:40px; width:112px; flex-shrink:0; }
+.stepper button{ width:32px; height:100%; border:none; background:var(--surface-2); color:var(--ink); font-size:16px; font-weight:600; cursor:pointer; flex-shrink:0; font-family:inherit; }
+.stepper button:hover{ background:var(--surface-3); }
+.stepper input{ width:100%; min-width:0; text-align:center; border:none; outline:none; background:transparent; font-family:var(--font-body); font-size:14px; font-weight:700; color:var(--ink); padding:0; }
+.budget-bar-track{ height:10px; border-radius:var(--r-pill); background:var(--surface-2); overflow:hidden; }
+.budget-bar-fill{ height:100%; background:var(--accent); border-radius:var(--r-pill); transition:width .3s ease; }
+
 /* ---------------- Tabs / segmented control ---------------- */
 .tabs{ display:inline-flex; gap:4px; background:var(--surface-2); padding:5px; border-radius:var(--r-pill); }
 .tab{ padding:9px 20px; border-radius:var(--r-pill); font-size:14px; font-weight:600; color:var(--ink-soft); background:transparent; border:none; cursor:pointer; }

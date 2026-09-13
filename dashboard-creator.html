@@ -163,8 +163,11 @@ function renderApplicationsTable() {
     const actions = a.status === "invited"
       ? `<div style="display:flex;gap:6px;"><button class="btn btn-sm btn-accent invite-accept-btn" data-id="${a.id}">Accept</button><button class="btn btn-sm btn-ghost invite-decline-btn" data-id="${a.id}">Decline</button></div>`
       : "";
+    const deliverablesNote = Array.isArray(a.deliverables) && a.deliverables.length
+      ? `<div class="caption" style="margin-top:2px;">${a.deliverables.map((d) => `${d.quantity} × ${escapeHtml(d.content_type)}`).join(", ")} — ₹${a.deliverables.reduce((s, d) => s + d.quantity * Number(d.rate), 0).toLocaleString("en-IN")}</div>`
+      : "";
     return `<tr>
-      <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div></td>
+      <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div>${deliverablesNote}</td>
       <td>${escapeHtml(a.campaigns?.brands?.company_name || "Brand")}</td>
       <td><span class="badge ${p.cls}">${p.label}</span></td>
       <td class="caption">${new Date(a.created_at).toLocaleDateString()}</td>
@@ -264,7 +267,7 @@ async function refreshApplications() {
   if (!CREATOR) return;
   const { data } = await supabaseClient
     .from("campaign_applications")
-    .select("id, campaign_id, status, created_at, campaigns(title, brief, niche, brands(company_name))")
+    .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name))")
     .eq("creator_id", CREATOR.id)
     .order("created_at", { ascending: false });
   APPS = data || [];
@@ -290,7 +293,7 @@ async function boot() {
   if (creator) {
     const { data: appsRaw } = await supabaseClient
       .from("campaign_applications")
-      .select("id, campaign_id, status, created_at, campaigns(title, brief, niche, brands(company_name))")
+      .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name))")
       .eq("creator_id", creator.id)
       .order("created_at", { ascending: false });
     APPS = appsRaw || [];

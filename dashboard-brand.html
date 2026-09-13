@@ -154,6 +154,39 @@
   </div>
 </div>
 
+<!-- Build your team modal -->
+<div class="modal-backdrop" id="teamModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-head">
+      <div><span class="eyebrow">Build your team</span><h2 style="margin-top:8px;" id="teamModalTitle">Campaign</h2></div>
+      <button class="modal-close" data-modal-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="body-sm" style="margin-bottom:18px;">Pick creators and how much of each you want, at their own per-piece rates. This is a plan for Creatopz admin to review — nobody is invited until admin approves it.</p>
+
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <span class="caption" id="teamAllocatedLabel">Allocated ₹0 of ₹0</span>
+        <span class="caption" style="font-weight:700;color:var(--accent-700);" id="teamRemainingLabel">₹0 remaining</span>
+      </div>
+      <div class="budget-bar-track" style="margin-bottom:22px;"><div class="budget-bar-fill" id="teamBudgetBar" style="width:0%;"></div></div>
+
+      <div id="teamCreatorsHost" style="display:flex;flex-direction:column;gap:14px;margin-bottom:16px;"></div>
+
+      <div id="teamSearchHost">
+        <button type="button" class="btn btn-outline btn-block" id="teamAddCreatorBtn" style="border-style:dashed;">+ Add another creator</button>
+        <div id="teamSearchBox" style="display:none;margin-top:12px;">
+          <input class="input" id="teamSearchInput" placeholder="Search creators by name or niche…">
+          <div id="teamSearchResults" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:22px;">
+        <button type="button" class="btn btn-accent" data-modal-close>Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/utils.js"></script>
@@ -198,6 +231,7 @@ function campaignCardHtml(c) {
           <button class="btn btn-primary btn-sm review-btn" data-id="${c.id}" style="flex:1;">Review applicants →</button>
           <button class="btn btn-outline btn-sm toggle-btn" data-id="${c.id}" data-status="${c.status}">${toggleLabel}</button>
         </div>
+        <button class="btn btn-outline btn-sm btn-block build-team-btn" data-id="${c.id}">Build your team →</button>
       </div>
     </div>`;
 }
@@ -220,6 +254,7 @@ function renderCampaigns() {
     loadApplicants(SELECTED_CAMPAIGN_ID);
   }));
   document.querySelectorAll(".toggle-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status)));
+  document.querySelectorAll(".build-team-btn").forEach((btn) => btn.addEventListener("click", () => openTeamModal(btn.dataset.id)));
 }
 
 async function toggleCampaignStatus(id, status) {
@@ -346,6 +381,179 @@ function renderSavedCreators() {
     const { error } = await supabaseClient.from("brand_shortlists").delete().eq("id", btn.dataset.id);
     if (error) return showToast("Couldn't remove: " + error.message, "error");
     await loadSavedCreators();
+  }));
+}
+
+// ===== Build your team =====
+// TEAM_CREATORS: creatorId -> { creator, quantities: {contentType: qty} }.
+// A creator with all-zero quantities exists only in this local map (just
+// added, not saved); as soon as a quantity goes above zero it's a real
+// campaign_team_picks row -- this is a *plan* for admin to review, never
+// an application and never anything a creator can see.
+let TEAM_CAMPAIGN_ID = null, TEAM_CAMPAIGN = null, TEAM_CREATORS = {};
+
+async function openTeamModal(campaignId) {
+  TEAM_CAMPAIGN_ID = campaignId;
+  TEAM_CAMPAIGN = CAMPAIGNS.find((c) => c.id === campaignId) || null;
+  TEAM_CREATORS = {};
+  document.getElementById("teamModalTitle").textContent = TEAM_CAMPAIGN?.title || "Campaign";
+  document.getElementById("teamSearchBox").style.display = "none";
+  document.getElementById("teamSearchInput").value = "";
+  document.getElementById("teamSearchResults").innerHTML = "";
+  await loadTeamPicks(campaignId);
+  openModal("teamModal");
+}
+
+async function loadTeamPicks(campaignId) {
+  const { data: picks, error } = await supabaseClient.from("campaign_team_picks").select("*").eq("campaign_id", campaignId);
+  if (error) { showToast("Couldn't load team plan: " + error.message, "error"); return; }
+  const creatorIds = [...new Set((picks || []).map((p) => p.creator_id))];
+  let creatorsById = {};
+  if (creatorIds.length) {
+    const { data: creators } = await supabaseClient.from("creators_for_team_builder").select("*").in("id", creatorIds);
+    (creators || []).forEach((c) => { creatorsById[c.id] = c; });
+  }
+  TEAM_CREATORS = {};
+  (picks || []).forEach((p) => {
+    if (!TEAM_CREATORS[p.creator_id]) {
+      TEAM_CREATORS[p.creator_id] = { creator: creatorsById[p.creator_id] || { id: p.creator_id, name: "Creator", rate_card: [] }, quantities: {} };
+    }
+    TEAM_CREATORS[p.creator_id].quantities[p.content_type] = p.quantity;
+  });
+  renderTeamModal();
+}
+
+function renderTeamModal() {
+  const budget = Number(TEAM_CAMPAIGN?.budget_min) || 0;
+  let allocated = 0;
+  const creatorIds = Object.keys(TEAM_CREATORS);
+
+  const host = document.getElementById("teamCreatorsHost");
+  if (!creatorIds.length) {
+    host.innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No creators picked yet</h3><p>Add a creator below and set how much of each content type you want.</p></div>`;
+  } else {
+    host.innerHTML = creatorIds.map((creatorId) => {
+      const entry = TEAM_CREATORS[creatorId];
+      const c = entry.creator;
+      const rateCard = Array.isArray(c.rate_card) ? c.rate_card : [];
+      const initials = (c.name || "?").split(" ").map((w) => w[0]).join("");
+      let subtotal = 0;
+      const lines = rateCard.map((r) => {
+        const qty = entry.quantities[r.type] || 0;
+        const lineTotal = qty * Number(r.rate);
+        subtotal += lineTotal;
+        return `
+        <div style="display:grid;grid-template-columns:1fr 112px 90px;gap:12px;align-items:center;">
+          <span style="font-size:14px;">${escapeHtml(r.type)} · ₹${Number(r.rate).toLocaleString("en-IN")} each</span>
+          <div class="stepper">
+            <button type="button" class="team-qty-btn" data-creator="${creatorId}" data-type="${escapeHtml(r.type)}" data-rate="${r.rate}" data-delta="-1">−</button>
+            <input type="number" min="0" value="${qty}" class="team-qty-input" data-creator="${creatorId}" data-type="${escapeHtml(r.type)}" data-rate="${r.rate}">
+            <button type="button" class="team-qty-btn" data-creator="${creatorId}" data-type="${escapeHtml(r.type)}" data-rate="${r.rate}" data-delta="1">+</button>
+          </div>
+          <span style="font-weight:700;text-align:right;">₹${lineTotal.toLocaleString("en-IN")}</span>
+        </div>`;
+      }).join("");
+      allocated += subtotal;
+      return `
+      <div class="card card-pad">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+          <div style="display:flex;gap:12px;align-items:center;">
+            <span class="avatar-fallback" style="width:44px;height:44px;background:var(--accent-soft);color:var(--accent-700);">${initials}</span>
+            <div>
+              <div style="font-weight:700;font-size:15px;">${escapeHtml(c.name || "Creator")}</div>
+              <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;"><span class="badge badge-accent">${c.engagement_rate ? Number(c.engagement_rate).toFixed(1) + "% engagement" : "—"}</span><span class="badge">${escapeHtml(c.category || "—")}</span></div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm team-remove-btn" data-creator="${creatorId}">Remove</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">${lines || `<p class="body-sm">This creator hasn't published a rate card yet.</p>`}</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-weight:700;">Subtotal ₹${subtotal.toLocaleString("en-IN")}</div>
+      </div>`;
+    }).join("");
+  }
+
+  host.querySelectorAll(".team-qty-btn").forEach((btn) => btn.addEventListener("click", () => {
+    const current = TEAM_CREATORS[btn.dataset.creator].quantities[btn.dataset.type] || 0;
+    setPickQuantity(btn.dataset.creator, btn.dataset.type, Number(btn.dataset.rate), current + Number(btn.dataset.delta));
+  }));
+  host.querySelectorAll(".team-qty-input").forEach((el) => el.addEventListener("change", () => {
+    setPickQuantity(el.dataset.creator, el.dataset.type, Number(el.dataset.rate), Number(el.value));
+  }));
+  host.querySelectorAll(".team-remove-btn").forEach((btn) => btn.addEventListener("click", () => removeCreatorFromTeam(btn.dataset.creator)));
+
+  const remaining = budget - allocated;
+  document.getElementById("teamAllocatedLabel").textContent = `Allocated ₹${allocated.toLocaleString("en-IN")} of ₹${budget.toLocaleString("en-IN")}`;
+  const remainingLabel = document.getElementById("teamRemainingLabel");
+  remainingLabel.textContent = (remaining < 0 ? "₹" + Math.abs(remaining).toLocaleString("en-IN") + " over budget" : "₹" + remaining.toLocaleString("en-IN") + " remaining");
+  remainingLabel.style.color = remaining < 0 ? "var(--danger)" : "var(--accent-700)";
+  document.getElementById("teamBudgetBar").style.width = Math.min(100, budget ? (allocated / budget) * 100 : 0) + "%";
+  document.getElementById("teamBudgetBar").style.background = remaining < 0 ? "var(--danger)" : "var(--accent)";
+}
+
+async function setPickQuantity(creatorId, contentType, rate, qty) {
+  qty = Math.max(0, Math.floor(qty) || 0);
+  if (qty === 0) {
+    const { error } = await supabaseClient.from("campaign_team_picks").delete()
+      .eq("campaign_id", TEAM_CAMPAIGN_ID).eq("creator_id", creatorId).eq("content_type", contentType);
+    if (error) return showToast("Couldn't update: " + error.message, "error");
+  } else {
+    const { error } = await supabaseClient.from("campaign_team_picks").upsert({
+      campaign_id: TEAM_CAMPAIGN_ID, creator_id: creatorId, content_type: contentType,
+      quantity: qty, rate_snapshot: rate,
+    }, { onConflict: "campaign_id,creator_id,content_type" });
+    if (error) return showToast("Couldn't update: " + error.message, "error");
+  }
+  TEAM_CREATORS[creatorId].quantities[contentType] = qty;
+  renderTeamModal();
+}
+
+async function removeCreatorFromTeam(creatorId) {
+  const { error } = await supabaseClient.from("campaign_team_picks").delete()
+    .eq("campaign_id", TEAM_CAMPAIGN_ID).eq("creator_id", creatorId);
+  if (error) return showToast("Couldn't remove: " + error.message, "error");
+  delete TEAM_CREATORS[creatorId];
+  renderTeamModal();
+}
+
+document.getElementById("teamAddCreatorBtn").addEventListener("click", () => {
+  const box = document.getElementById("teamSearchBox");
+  box.style.display = box.style.display === "none" ? "block" : "none";
+  document.getElementById("teamSearchInput").focus();
+});
+
+let teamSearchDebounce;
+document.getElementById("teamSearchInput").addEventListener("input", (e) => {
+  clearTimeout(teamSearchDebounce);
+  const q = e.target.value.trim();
+  teamSearchDebounce = setTimeout(() => searchCreatorsForTeam(q), 250);
+});
+
+async function searchCreatorsForTeam(query) {
+  const resultsHost = document.getElementById("teamSearchResults");
+  if (!query) { resultsHost.innerHTML = ""; return; }
+  const { data, error } = await supabaseClient.from("creators_for_team_builder")
+    .select("*").or(`name.ilike.%${query}%,category.ilike.%${query}%`).limit(8);
+  if (error) { resultsHost.innerHTML = `<p class="body-sm">Search failed.</p>`; return; }
+  const results = (data || []).filter((c) => !TEAM_CREATORS[c.id]);
+  if (!results.length) { resultsHost.innerHTML = `<p class="body-sm">No matching creators.</p>`; return; }
+  resultsHost.innerHTML = results.map((c) => {
+    const rateCard = Array.isArray(c.rate_card) ? c.rate_card : [];
+    const rateSummary = rateCard.length ? rateCard.map((r) => `${escapeHtml(r.type)} ₹${Number(r.rate).toLocaleString("en-IN")}`).join(" · ") : "No rate card published";
+    return `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-md);">
+      <div style="min-width:0;">
+        <div style="font-weight:600;font-size:14px;">${escapeHtml(c.name || "Creator")} <span class="caption">· ${escapeHtml(c.category || "—")}</span></div>
+        <div class="caption" style="margin-top:2px;overflow-wrap:anywhere;">${rateSummary}</div>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm team-add-result-btn" data-id="${c.id}" style="flex-shrink:0;">+ Add</button>
+    </div>`;
+  }).join("");
+  resultsHost.querySelectorAll(".team-add-result-btn").forEach((btn) => btn.addEventListener("click", () => {
+    const c = results.find((r) => r.id === btn.dataset.id);
+    TEAM_CREATORS[c.id] = { creator: c, quantities: {} };
+    document.getElementById("teamSearchInput").value = "";
+    resultsHost.innerHTML = "";
+    renderTeamModal();
   }));
 }
 
