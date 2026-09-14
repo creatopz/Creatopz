@@ -100,8 +100,8 @@ function friendlyAuthError(error) {
 // a budget is entered or reviewed, not a stored/charged amount. Kept in
 // one place so the brand's post-campaign form, the team builder's
 // allocatable pool, and admin's view of a campaign's budget can never
-// drift out of sync on what "9%" means.
-const PLATFORM_FEE_PCT = 0.09;
+// drift out of sync on what "15%" means.
+const PLATFORM_FEE_PCT = 0.15;
 function feeBreakdown(totalBudget) {
   const total = Number(totalBudget) || 0;
   const fee = Math.round(total * PLATFORM_FEE_PCT);

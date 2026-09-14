@@ -213,7 +213,7 @@ function renderApps() {
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--dark-border);">
         <div class="caption" style="text-transform:uppercase;margin-bottom:5px;">Brand's budget</div>
         ${(() => { const { total, fee, net } = feeBreakdown(a.campaigns?.budget_min); return total
-          ? `<div style="color:#fff;">₹${total.toLocaleString("en-IN")} total · 9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
+          ? `<div style="color:#fff;">₹${total.toLocaleString("en-IN")} total · 15% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
           : `<div style="color:#fff;">Not set</div>`; })()}
       </div>
       ${Array.isArray(a.deliverables) && a.deliverables.length
@@ -304,7 +304,7 @@ function renderCampaigns() {
       <div style="padding:12px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:14px;">
         <div style="display:flex;justify-content:space-between;"><span class="caption">Budget</span><span style="color:#fff;font-weight:700;">${fmtRange(c.budget_min, c.budget_max)}</span></div>
         ${(() => { const { total, fee, net } = feeBreakdown(c.budget_min); return total
-          ? `<div class="caption" style="margin-top:6px;">9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
+          ? `<div class="caption" style="margin-top:6px;">15% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${net.toLocaleString("en-IN")} available for creators</div>`
           : ""; })()}
       </div>
       <div class="caption" style="margin-top:12px;">${appsLabel}</div>
