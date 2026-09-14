@@ -122,7 +122,7 @@
     mascot.className = "scroll-rail__mascot";
     mascot.id = "scroll-rail-mascot";
     mascot.innerHTML = mascotSVG("inkling", "rough-b");
-    mascot.style.color = "var(--purple)";
+    mascot.style.color = "var(--ink)";
     document.body.appendChild(mascot);
 
     const fill = document.getElementById("scroll-rail-fill");
@@ -166,7 +166,7 @@
     btn.setAttribute("aria-label", "Say hi to Inkling");
     btn.style.cssText = `
       position:fixed;left:1.1rem;bottom:1.1rem;width:58px;height:58px;border-radius:50%;
-      background:var(--purple-wash,#EDE3FB);border:3px solid var(--ink,#141311);
+      background:var(--grey-100,#EAEAE6);border:3px solid var(--ink,#131313);
       box-shadow:4px 4px 0 0 var(--ink,#141311);z-index:900;padding:8px;
       transition:transform .18s cubic-bezier(.34,1.56,.64,1);cursor:pointer;`;
     btn.innerHTML = mascotSVG("inkling", "rough-a");
@@ -193,7 +193,7 @@
   /* ---------------------------------------------------------------- */
   /* Confetti burst                                                    */
   /* ---------------------------------------------------------------- */
-  const CONFETTI_COLORS = ["#5B1FB0", "#8B5CF6", "#C9962E", "#E8B94A", "#F3ECDC", "#141311"];
+  const CONFETTI_COLORS = ["#131313", "#464646", "#6E6E6E", "#A6A6A3", "#D8D8D4", "#FAFAF8"];
   function confettiBurst(x, y, count) {
     count = count || 26;
     for (let i = 0; i < count; i++) {

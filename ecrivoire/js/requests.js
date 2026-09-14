@@ -14,7 +14,7 @@
   const SEED = [
     { title: "The Unbearable Lightness of Filing Taxes", author: "unknown / working title", genre: "Essays", notes: "Something funny about adulthood, please.", name: "Aarav", votes: 14, fulfilled: false },
     { title: "More regional poetry in translation", author: "any", genre: "Poetry", notes: "Would love a shelf of Tamil and Bengali poets in English translation.", name: "Meera", votes: 11, fulfilled: false },
-    { title: "A second copy of On Walking Slowly", author: "Petra Lindqvist", genre: "Philosophy", notes: "The one signed copy sold in a day — any chance of a restock?", name: "Rohan", votes: 9, fulfilled: true },
+    { title: "Where the Crawdads Sing", author: "Delia Owens", genre: "Fiction", notes: "Everyone keeps asking for this one — worth a shelf slot.", name: "Rohan", votes: 9, fulfilled: true },
     { title: "Graphic novels section", author: "various", genre: "Art", notes: "Even a small shelf would be wonderful.", name: "Ishaan", votes: 7, fulfilled: false }
   ];
 

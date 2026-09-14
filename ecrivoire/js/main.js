@@ -117,7 +117,7 @@
       if (!foot || !cartLines().length) return;
       foot.innerHTML = `
         <p style="font-weight:700;display:flex;align-items:center;gap:.5em;">
-          <span data-doodle="check" style="width:20px;height:20px;color:var(--purple);flex-shrink:0;"></span>
+          <span data-doodle="check" style="width:20px;height:20px;color:var(--ink);flex-shrink:0;"></span>
           Order confirmed — thank you!
         </p>
         <p class="cart-drawer__note">This is a demo store, so nothing was actually charged or shipped. Your bag has been cleared.</p>
