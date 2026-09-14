@@ -120,7 +120,7 @@
           </div>
         </div>
         <div id="cFeeNote" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 16px;margin-bottom:18px;font-size:13px;color:var(--ink-soft);">
-          Creatopz charges a 9% platform fee on your total budget. Enter a budget above to see the breakdown.
+          Creatopz charges a 15% platform fee on your total budget. Enter a budget above to see the breakdown.
         </div>
         <div class="field"><label>Deliverables</label><input class="input" id="cDeliverables" placeholder="e.g. 2 reels + 3 stories, one revision" required></div>
         <div class="field">
@@ -592,7 +592,7 @@ function renderTeamModal() {
   const totalBudget = Number(TEAM_CAMPAIGN?.budget_min) || 0;
   const { fee, net: budget } = feeBreakdown(totalBudget);
   document.getElementById("teamFeeLine").textContent =
-    `Total budget ₹${totalBudget.toLocaleString("en-IN")} · 9% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${budget.toLocaleString("en-IN")} available to allocate`;
+    `Total budget ₹${totalBudget.toLocaleString("en-IN")} · 15% platform fee ₹${fee.toLocaleString("en-IN")} · ₹${budget.toLocaleString("en-IN")} available to allocate`;
   let allocated = 0;
   const creatorIds = Object.keys(TEAM_CREATORS);
 
@@ -753,11 +753,11 @@ function updateFeeNote() {
   const num = parseInt(String(raw).replace(/[^0-9]/g, ""), 10);
   const note = document.getElementById("cFeeNote");
   if (!num) {
-    note.textContent = "Creatopz charges a 9% platform fee on your total budget. Enter a budget above to see the breakdown.";
+    note.textContent = "Creatopz charges a 15% platform fee on your total budget. Enter a budget above to see the breakdown.";
     return;
   }
   const { fee, net } = feeBreakdown(num);
-  note.innerHTML = `Creatopz charges a <b>9% platform fee</b> on your total budget: <b>₹${fee.toLocaleString("en-IN")}</b>. You'll have <b>₹${net.toLocaleString("en-IN")}</b> left to run this campaign and select creators.`;
+  note.innerHTML = `Creatopz charges a <b>15% platform fee</b> on your total budget: <b>₹${fee.toLocaleString("en-IN")}</b>. You'll have <b>₹${net.toLocaleString("en-IN")}</b> left to run this campaign and select creators.`;
 }
 document.getElementById("cBudget").addEventListener("input", updateFeeNote);
 
