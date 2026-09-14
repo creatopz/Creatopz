@@ -1,7 +1,7 @@
 /* ==========================================================================
    ÉCRIVOIRE STUDIOS — demo data
    Everything below is fictional catalogue data for a working front-end
-   demo: no backend, no real ISBNs, no real people.
+   demo: no backend, no real ISBNs, no real people. Prices in INR (₹).
    ========================================================================== */
 
 window.ECRIVOIRE_DATA = (function () {
@@ -12,39 +12,39 @@ window.ECRIVOIRE_DATA = (function () {
   ];
 
   const BOOKS = [
-    { id: "quiet-hour", title: "The Quiet Hour", author: "Marguerite Sol", genre: "Fiction", price: 24, year: 2026, pages: 312, publisher: "Ferrous & Kin", isbn: "978-1-9998-4410-2", rating: 5, badge: "New", mark: "Q", pal: 0,
+    { id: "quiet-hour", title: "The Quiet Hour", author: "Marguerite Sol", genre: "Fiction", price: 499, year: 2026, pages: 312, publisher: "Ferrous & Kin", isbn: "978-1-9998-4410-2", rating: 5, badge: "New", mark: "Q", pal: 0, stampPick: true,
       blurb: "A widow reopens her late husband's letterpress shop and, one broadside at a time, relearns how to speak. Sol writes silence the way other novelists write noise — with total control." },
-    { id: "field-notes-nothing", title: "Field Notes on Nothing", author: "Théo Bassin", genre: "Essays", price: 19, year: 2025, pages: 208, publisher: "Low Tide Press", isbn: "978-1-9998-4411-9", rating: 4, badge: "Staff Pick", mark: "F", pal: 3,
+    { id: "field-notes-nothing", title: "Field Notes on Nothing", author: "Théo Bassin", genre: "Essays", price: 349, year: 2025, pages: 208, publisher: "Low Tide Press", isbn: "978-1-9998-4411-9", rating: 4, badge: "Staff Pick", mark: "F", pal: 3,
       blurb: "Fourteen essays on the art of doing nothing well: waiting rooms, layovers, Sundays. A quiet argument for attention as its own reward." },
-    { id: "salt-marrow", title: "Salt & Marrow", author: "Inès Duval", genre: "Poetry", price: 16, year: 2024, pages: 96, publisher: "Éditions Corvine", isbn: "978-1-9998-4412-6", rating: 5, badge: null, mark: "S", pal: 1,
+    { id: "salt-marrow", title: "Salt & Marrow", author: "Inès Duval", genre: "Poetry", price: 299, year: 2024, pages: 96, publisher: "Éditions Corvine", isbn: "978-1-9998-4412-6", rating: 5, badge: null, mark: "S", pal: 1,
       blurb: "Duval's second collection returns to the coast of her childhood — fishing boats, church bells, a mother's hands — with a saltier, harder line than her debut." },
-    { id: "architecture-of-silence", title: "The Architecture of Silence", author: "Lior Adler", genre: "Design & Architecture", price: 38, year: 2023, pages: 264, publisher: "Plinth Books", isbn: "978-1-9998-4413-3", rating: 5, badge: "Bestseller", mark: "A", pal: 2,
+    { id: "architecture-of-silence", title: "The Architecture of Silence", author: "Lior Adler", genre: "Design & Architecture", price: 1499, year: 2023, pages: 264, publisher: "Plinth Books", isbn: "978-1-9998-4413-3", rating: 5, badge: "Bestseller", mark: "A", pal: 2, stampPick: true,
       blurb: "A survey of buildings designed around sound's absence — libraries, chapels, listening rooms — and what they teach us about restraint." },
-    { id: "minor-chorus", title: "A Minor Chorus", author: "Wren Okafor", genre: "Fiction", price: 22, year: 2026, pages: 288, publisher: "Ferrous & Kin", isbn: "978-1-9998-4414-0", rating: 4, badge: null, mark: "M", pal: 4,
+    { id: "minor-chorus", title: "A Minor Chorus", author: "Wren Okafor", genre: "Fiction", price: 449, year: 2026, pages: 288, publisher: "Ferrous & Kin", isbn: "978-1-9998-4414-0", rating: 4, badge: null, mark: "M", pal: 4,
       blurb: "Four cousins inherit a lake house and a decade of unspoken grievances. Okafor's ensemble prose moves like a well-run kitchen — fast, exact, warm underneath." },
-    { id: "walking-slowly", title: "On Walking Slowly", author: "Petra Lindqvist", genre: "Philosophy", price: 21, year: 2022, pages: 176, publisher: "North Field", isbn: "978-1-9998-4415-7", rating: 5, badge: "Signed", mark: "W", pal: 5,
+    { id: "walking-slowly", title: "On Walking Slowly", author: "Petra Lindqvist", genre: "Philosophy", price: 399, year: 2022, pages: 176, publisher: "North Field", isbn: "978-1-9998-4415-7", rating: 5, badge: "Signed", mark: "W", pal: 5,
       blurb: "A philosopher's field guide to unhurried movement, drawing on Nordic walking traditions and the phenomenology of the footstep." },
-    { id: "left-handed-atlas", title: "The Left-Handed Atlas", author: "Casimir Novak", genre: "Essays", price: 27, year: 2024, pages: 240, publisher: "Low Tide Press", isbn: "978-1-9998-4416-4", rating: 4, badge: null, mark: "L", pal: 0,
+    { id: "left-handed-atlas", title: "The Left-Handed Atlas", author: "Casimir Novak", genre: "Essays", price: 549, year: 2024, pages: 240, publisher: "Low Tide Press", isbn: "978-1-9998-4416-4", rating: 4, badge: null, mark: "L", pal: 0,
       blurb: "Essays on maps that were wrong on purpose — propaganda cartography, decoy islands, borders drawn to mislead — and why we trust lines on paper." },
-    { id: "little-weathers", title: "Little Weathers", author: "Yuki Amano", genre: "Children's", price: 18, year: 2026, pages: 40, publisher: "Acorn & Thread", isbn: "978-1-9998-4417-1", rating: 5, badge: "New", mark: "L", pal: 3,
+    { id: "little-weathers", title: "Little Weathers", author: "Yuki Amano", genre: "Children's", price: 349, year: 2026, pages: 40, publisher: "Acorn & Thread", isbn: "978-1-9998-4417-1", rating: 5, badge: "New", mark: "L", pal: 3,
       blurb: "A picture book about a child who keeps a jar of weather — one for every mood — illustrated with the softest, strangest little storms." },
-    { id: "marrow-of-the-city", title: "Marrow of the City", author: "Bram Uys", genre: "Memoir", price: 23, year: 2023, pages: 256, publisher: "North Field", isbn: "978-1-9998-4418-8", rating: 4, badge: null, mark: "M", pal: 1,
+    { id: "marrow-of-the-city", title: "Marrow of the City", author: "Bram Uys", genre: "Memoir", price: 449, year: 2023, pages: 256, publisher: "North Field", isbn: "978-1-9998-4418-8", rating: 4, badge: null, mark: "M", pal: 1,
       blurb: "A former night-shift paramedic's account of a decade spent learning a city by its emergencies." },
-    { id: "studies-in-grey", title: "Studies in Grey", author: "Odile Ferrand", genre: "Art", price: 34, year: 2021, pages: 320, publisher: "Plinth Books", isbn: "978-1-9998-4419-5", rating: 5, badge: "Bestseller", mark: "S", pal: 2,
+    { id: "studies-in-grey", title: "Studies in Grey", author: "Odile Ferrand", genre: "Art", price: 1899, year: 2021, pages: 320, publisher: "Plinth Books", isbn: "978-1-9998-4419-5", rating: 5, badge: "Bestseller", mark: "S", pal: 2, stampPick: true,
       blurb: "A monograph on painters who refused colour — thirty careers built entirely from the space between black and white." },
-    { id: "unfinished-room", title: "The Unfinished Room", author: "Sana Iqbal", genre: "Fiction", price: 25, year: 2025, pages: 344, publisher: "Ferrous & Kin", isbn: "978-1-9998-4420-1", rating: 4, badge: null, mark: "U", pal: 4,
+    { id: "unfinished-room", title: "The Unfinished Room", author: "Sana Iqbal", genre: "Fiction", price: 499, year: 2025, pages: 344, publisher: "Ferrous & Kin", isbn: "978-1-9998-4420-1", rating: 4, badge: null, mark: "U", pal: 4,
       blurb: "An architect is hired to finish a house her estranged mentor left half-built, and half-explained." },
-    { id: "elegy-typewriter", title: "Elegy for a Typewriter", author: "Callum Reyes", genre: "Poetry", price: 17, year: 2022, pages: 88, publisher: "Éditions Corvine", isbn: "978-1-9998-4421-8", rating: 4, badge: null, mark: "E", pal: 5,
+    { id: "elegy-typewriter", title: "Elegy for a Typewriter", author: "Callum Reyes", genre: "Poetry", price: 329, year: 2022, pages: 88, publisher: "Éditions Corvine", isbn: "978-1-9998-4421-8", rating: 4, badge: null, mark: "E", pal: 5,
       blurb: "A debut collection written entirely on a 1962 Olivetti, about the objects we outlive and the ones that outlive us." },
-    { id: "margins-hold", title: "What the Margins Hold", author: "Delphine Roux", genre: "Essays", price: 20, year: 2024, pages: 192, publisher: "Low Tide Press", isbn: "978-1-9998-4422-5", rating: 5, badge: "Staff Pick", mark: "W", pal: 0,
+    { id: "margins-hold", title: "What the Margins Hold", author: "Delphine Roux", genre: "Essays", price: 379, year: 2024, pages: 192, publisher: "Low Tide Press", isbn: "978-1-9998-4422-5", rating: 5, badge: "Staff Pick", mark: "W", pal: 0,
       blurb: "An essayist reads other people's marginalia in secondhand books and reconstructs the readers who left it." },
-    { id: "grammar-of-light", title: "The Grammar of Light", author: "Anouk Verhoeven", genre: "Philosophy", price: 29, year: 2026, pages: 224, publisher: "North Field", isbn: "978-1-9998-4423-2", rating: 5, badge: null, mark: "G", pal: 3,
+    { id: "grammar-of-light", title: "The Grammar of Light", author: "Anouk Verhoeven", genre: "Philosophy", price: 599, year: 2026, pages: 224, publisher: "North Field", isbn: "978-1-9998-4423-2", rating: 5, badge: null, mark: "G", pal: 3,
       blurb: "On how different languages describe the hour after sunrise, and what that says about how we think." },
-    { id: "small-hours", title: "Small Hours, Loud Thoughts", author: "Milo Tanaka", genre: "Memoir", price: 22, year: 2026, pages: 264, publisher: "Acorn & Thread", isbn: "978-1-9998-4424-9", rating: 4, badge: "New", mark: "S", pal: 1,
+    { id: "small-hours", title: "Small Hours, Loud Thoughts", author: "Milo Tanaka", genre: "Memoir", price: 449, year: 2026, pages: 264, publisher: "Acorn & Thread", isbn: "978-1-9998-4424-9", rating: 4, badge: "New", mark: "S", pal: 1,
       blurb: "A composer's memoir of insomnia, told in movements instead of chapters." },
-    { id: "theory-of-doors", title: "A Theory of Doors", author: "Esme Falkner", genre: "Design & Architecture", price: 31, year: 2023, pages: 208, publisher: "Plinth Books", isbn: "978-1-9998-4425-6", rating: 5, badge: "Signed", mark: "T", pal: 2,
+    { id: "theory-of-doors", title: "A Theory of Doors", author: "Esme Falkner", genre: "Design & Architecture", price: 1299, year: 2023, pages: 208, publisher: "Plinth Books", isbn: "978-1-9998-4425-6", rating: 5, badge: "Signed", mark: "T", pal: 2,
       blurb: "A design historian traces the threshold — hinges, thresholds, welcome mats — as the most honest object in any building." },
-    { id: "cartographers-daughter", title: "The Cartographer's Daughter", author: "Marguerite Sol", genre: "Fiction", price: 23, year: 2021, pages: 296, publisher: "Ferrous & Kin", isbn: "978-1-9998-4426-3", rating: 4, badge: null, mark: "C", pal: 5,
+    { id: "cartographers-daughter", title: "The Cartographer's Daughter", author: "Marguerite Sol", genre: "Fiction", price: 459, year: 2021, pages: 296, publisher: "Ferrous & Kin", isbn: "978-1-9998-4426-3", rating: 4, badge: null, mark: "C", pal: 5,
       blurb: "Sol's debut: a young mapmaker inherits her father's unfinished survey of a coastline that keeps quietly moving." }
   ];
 
@@ -91,5 +91,27 @@ window.ECRIVOIRE_DATA = (function () {
     { name: "Bram Uys", role: "Studio & Binding", bio: "Teaches the Saturday bookbinding workshop and keeps the back room from ever being tidy." }
   ];
 
-  return { GENRES, BOOKS, EVENTS, JOURNAL, TESTIMONIALS, TEAM };
+  // The mascot family — Inkling (our purple cow) and friends, used in the
+  // "Meet the Crew" scroll carousel and scattered as scroll-triggered doodles.
+  const MASCOTS = [
+    { id: "inkling", name: "Inkling", role: "Chief Purple Cow. Reads everything twice.", pal: 1 },
+    { id: "spine", name: "Spine", role: "The book with eyes. Never judges a cover.", pal: 0 },
+    { id: "nib", name: "Nib", role: "The quill. Writes every shelf card by hand.", pal: 3 },
+    { id: "brew", name: "Brew", role: "The teacup. Fuels the whole back room.", pal: 2 },
+    { id: "glow", name: "Glow", role: "The lamp. Stays on past closing.", pal: 5 },
+    { id: "fold", name: "Fold", role: "The bookmark ghost. Haunts unfinished novels.", pal: 4 }
+  ];
+
+  // The Purple Cow Club — membership tiers (display-only, luxury flavour).
+  const TIERS = [
+    { name: "Reader", price: 0, period: "forever free", desc: "Every visitor's default. Early word on drops and events.",
+      perks: ["Wishlist voting rights", "Monthly good-list email", "Birthday bookmark, on us"] },
+    { name: "Collector", price: 1499, period: "per year", featured: true, ribbon: "Most Loved",
+      desc: "For the shelf that's always half a metre too full.",
+      perks: ["10% off every visit", "First access to signed & limited stock", "Free rebinding once a year", "Invite to preview nights"] },
+    { name: "Patron", price: 4999, period: "per year", desc: "You basically run the back room at this point.",
+      perks: ["18% off every visit", "A book hand-picked for you, quarterly", "Name on the Patron shelf plate", "Priority seats at every reading"] }
+  ];
+
+  return { GENRES, BOOKS, EVENTS, JOURNAL, TESTIMONIALS, TEAM, MASCOTS, TIERS };
 })();

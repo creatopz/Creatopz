@@ -20,6 +20,7 @@
     { href: "shop.html", label: "Shop", key: "shop" },
     { href: "journal.html", label: "Journal", key: "journal" },
     { href: "events.html", label: "Events", key: "events" },
+    { href: "requests.html", label: "Wishlist", key: "requests" },
     { href: "about.html", label: "About", key: "about" },
     { href: "contact.html", label: "Contact", key: "contact" }
   ];
@@ -56,8 +57,8 @@
 
   function marqueeHTML(items) {
     const list = items && items.length ? items : [
-      "New arrivals every Tuesday", "Free local delivery over $40", "Signed first editions in stock",
-      "Reading series every second Friday", "Order online, collect same day"
+      "🐮 Purple Cow Approved picks every week", "Free delivery in Lower Marsh Quarter over ₹999", "Signed first editions in stock",
+      "The Purple Cow Club — members save 10–18%", "Reading series every second Friday", "Spin the Shelf for a surprise read"
     ];
     const track = list.map((t) => `<span>${t}</span>`).join("");
     return `<div class="marquee"><div class="marquee__track">${track}${track}</div></div>`;
@@ -90,6 +91,7 @@
             <li><a href="about.html">About us</a></li>
             <li><a href="journal.html">Journal</a></li>
             <li><a href="events.html">Events</a></li>
+            <li><a href="requests.html">Wishlist wall</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
         </div>
@@ -104,11 +106,12 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <small>© ${year} Écrivoire Studios. A demo bookstore built for the love of books — no real orders are processed.</small>
+        <small>© ${year} Écrivoire Studios. A demo bookstore built for the love of books — no real orders are processed. Prices shown in ₹ (INR).</small>
         <div class="footer__socials">
           <a href="#">Instagram</a>
           <a href="#">Are.na</a>
           <a href="#">Newsletter</a>
+          <a href="admin.html" class="footer__admin-link">Studio admin</a>
         </div>
       </div>
     </div>`;
@@ -126,7 +129,7 @@
         <p class="cart-drawer__empty">Your bag is empty. Go find something to read.</p>
       </div>
       <div class="cart-drawer__foot">
-        <div class="cart-drawer__row"><span>Subtotal</span><span class="cart-drawer__total" id="cart-subtotal">$0</span></div>
+        <div class="cart-drawer__row"><span>Subtotal</span><span class="cart-drawer__total" id="cart-subtotal">₹0</span></div>
         <button type="button" class="btn btn-red btn-block" id="cart-checkout-btn">Checkout</button>
         <p class="cart-drawer__note">Demo store — checkout confirms your order but nothing is charged or shipped.</p>
       </div>

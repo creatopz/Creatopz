@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Console — Écrivoire Studios</title>
+<meta name="description" content="Internal inventory console for Écrivoire Studios — add products, manage the catalogue, and work the wishlist wall.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+
+<header class="site-header" id="site-header"></header>
+
+<main>
+  <!-- GATE -->
+  <section class="admin-gate" id="admin-gate">
+    <div class="admin-gate__box">
+      <span data-doodle="book" style="width:52px;height:52px;display:inline-block;margin-bottom:1rem;" aria-hidden="true"></span>
+      <h1 class="h-lg">Studio Console</h1>
+      <p class="body" style="margin:1rem auto 0;">Staff only. Enter the demo password to manage inventory and the wishlist wall.</p>
+      <form id="gate-form" style="margin-top:1.6rem;text-align:left;">
+        <div class="field">
+          <label for="gate-password">Password</label>
+          <input id="gate-password" type="password" placeholder="Try: inkling2026" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-red btn-block">Enter the studio</button>
+        <p class="form-note" style="text-align:center;margin-top:1rem;">This is a front-end demo gate for prototyping only — it is <strong>not</strong> real authentication. Password: <code>inkling2026</code></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- CONSOLE -->
+  <section class="section-pad" id="admin-shell" hidden>
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Staff only — demo console</span>
+          <h1 class="h-xl" style="margin-top:.6rem;">Studio Console</h1>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" id="admin-logout-btn">Lock console</button>
+      </div>
+
+      <div class="stat-row" id="admin-stats"></div>
+
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab is-active" data-tab="inventory">Inventory</button>
+        <button type="button" class="admin-tab" data-tab="add">Add product</button>
+        <button type="button" class="admin-tab" data-tab="requests">Wishlist requests</button>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="admin-panel is-active" data-panel="inventory">
+        <div class="toolbar">
+          <span class="eyebrow" id="inventory-count">0 titles</span>
+          <button type="button" class="btn btn-outline btn-sm" id="reset-demo-btn">Reset demo catalogue</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Genre</th><th>Price</th><th>Badge</th><th>Source</th><th>Actions</th></tr></thead>
+            <tbody id="inventory-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADD / EDIT PRODUCT -->
+      <div class="admin-panel" data-panel="add">
+        <span class="eyebrow" id="form-mode-label">New product</span>
+        <h2 class="h-lg" style="margin-top:.6rem;margin-bottom:1.8rem;">Upload to the shelf</h2>
+        <form id="product-form">
+          <input type="hidden" id="p-edit-id" value="">
+          <div class="admin-form-grid">
+            <div class="field"><label for="p-title">Title</label><input id="p-title" required placeholder="The Book's Title"></div>
+            <div class="field"><label for="p-author">Author</label><input id="p-author" required placeholder="Author name"></div>
+            <div class="field"><label for="p-genre">Genre</label><select id="p-genre"></select></div>
+            <div class="field"><label for="p-price">Price (₹)</label><input id="p-price" type="number" min="0" step="1" required placeholder="499"></div>
+            <div class="field"><label for="p-year">Year</label><input id="p-year" type="number" min="1900" max="2100" placeholder="2026"></div>
+            <div class="field"><label for="p-pages">Pages</label><input id="p-pages" type="number" min="1" placeholder="240"></div>
+            <div class="field"><label for="p-publisher">Publisher</label><input id="p-publisher" placeholder="Écrivoire Editions"></div>
+            <div class="field"><label for="p-isbn">ISBN</label><input id="p-isbn" placeholder="978-0-0000-0000-0"></div>
+            <div class="field"><label for="p-badge">Badge</label>
+              <select id="p-badge">
+                <option value="">None</option>
+                <option>New</option>
+                <option>Bestseller</option>
+                <option>Staff Pick</option>
+                <option>Signed</option>
+                <option>Limited</option>
+              </select>
+            </div>
+            <div class="field"><label for="p-mark">Cover initial</label><input id="p-mark" maxlength="1" placeholder="Auto from title"></div>
+          </div>
+          <div class="field">
+            <label>Cover colour</label>
+            <div class="palette-picker" id="p-palette">
+              <label><input type="radio" name="p-pal" value="0"><span class="swatch pal-0"></span></label>
+              <label><input type="radio" name="p-pal" value="1" checked><span class="swatch pal-1"></span></label>
+              <label><input type="radio" name="p-pal" value="2"><span class="swatch pal-2"></span></label>
+              <label><input type="radio" name="p-pal" value="3"><span class="swatch pal-3"></span></label>
+              <label><input type="radio" name="p-pal" value="4"><span class="swatch pal-4"></span></label>
+              <label><input type="radio" name="p-pal" value="5"><span class="swatch pal-5"></span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:.6em;font-family:var(--ff-sans);text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:500;color:var(--ink);">
+              <input type="checkbox" id="p-stamp" style="width:1.1rem;height:1.1rem;"> Mark as “Purple Cow Approved” (adds the gold stamp)
+            </label>
+          </div>
+          <div class="field"><label for="p-blurb">Blurb</label><textarea id="p-blurb" placeholder="A short shelf-card description."></textarea></div>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <button type="submit" class="btn btn-red" id="product-submit-btn">Add to shelf</button>
+            <button type="button" class="btn btn-outline" id="product-cancel-btn" hidden>Cancel edit</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- REQUESTS -->
+      <div class="admin-panel" data-panel="requests">
+        <div class="toolbar">
+          <span class="eyebrow" id="requests-count">0 requests</span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Request</th><th>Requester</th><th>Genre</th><th>Votes</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="admin-requests-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+<div id="cart-root"></div>
+
+<script src="js/data.js"></script>
+<script src="js/doodles.js"></script>
+<script src="js/catalogue.js"></script>
+<script src="js/requests.js"></script>
+<script src="js/mascot.js"></script>
+<script src="js/partials.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  const ADMIN_PASSWORD = "inkling2026";
+  const SESSION_KEY = "ecrivoire_admin_session";
+  const $ = (s, c) => (c || document).querySelector(s);
+  const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
+  const fmt = (n) => "₹" + Math.round(n || 0).toLocaleString("en-IN");
+
+  function showConsole() {
+    $("#admin-gate").hidden = true;
+    $("#admin-shell").hidden = false;
+    refreshAll();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem(SESSION_KEY) === "1") showConsole();
+
+    $("#gate-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if ($("#gate-password").value === ADMIN_PASSWORD) {
+        sessionStorage.setItem(SESSION_KEY, "1");
+        showConsole();
+      } else {
+        window.EcrivoireMascot?.toast("That's not it — try inkling2026");
+      }
+    });
+    $("#admin-logout-btn").addEventListener("click", () => {
+      sessionStorage.removeItem(SESSION_KEY);
+      $("#admin-shell").hidden = true;
+      $("#admin-gate").hidden = false;
+    });
+
+    // Tabs
+    $$(".admin-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        $$(".admin-tab").forEach((t) => t.classList.toggle("is-active", t === tab));
+        $$(".admin-panel").forEach((p) => p.classList.toggle("is-active", p.dataset.panel === tab.dataset.tab));
+      });
+    });
+
+    // Genre select
+    if (window.ECRIVOIRE_DATA) {
+      $("#p-genre").innerHTML = window.ECRIVOIRE_DATA.GENRES.map((g) => `<option>${g}</option>`).join("");
+    }
+
+    $("#reset-demo-btn").addEventListener("click", () => {
+      if (confirm("Reset the demo catalogue? This removes every admin-added or admin-edited book in this browser.")) {
+        window.EcrivoireCatalogue.resetOverlay();
+        window.EcrivoireMascot?.toast("Catalogue reset to the original demo set.");
+        refreshAll();
+      }
+    });
+
+    $("#product-cancel-btn").addEventListener("click", resetForm);
+
+    $("#product-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = {
+        title: $("#p-title").value.trim(),
+        author: $("#p-author").value.trim(),
+        genre: $("#p-genre").value,
+        price: Number($("#p-price").value),
+        year: Number($("#p-year").value) || undefined,
+        pages: Number($("#p-pages").value) || undefined,
+        publisher: $("#p-publisher").value.trim() || undefined,
+        isbn: $("#p-isbn").value.trim() || undefined,
+        badge: $("#p-badge").value || null,
+        mark: $("#p-mark").value.trim() || undefined,
+        pal: Number($("input[name=p-pal]:checked")?.value ?? 1),
+        stampPick: $("#p-stamp").checked,
+        blurb: $("#p-blurb").value.trim() || undefined
+      };
+      const editId = $("#p-edit-id").value;
+      if (editId) {
+        window.EcrivoireCatalogue.updateBook(editId, data);
+        window.EcrivoireMascot?.toast(`Updated “${data.title}”`);
+      } else {
+        window.EcrivoireCatalogue.addBook(data);
+        window.EcrivoireMascot?.toast(`Added “${data.title}” to the shelf`);
+      }
+      resetForm();
+      $$('.admin-tab').forEach((t) => t.classList.toggle("is-active", t.dataset.tab === "inventory"));
+      $$('.admin-panel').forEach((p) => p.classList.toggle("is-active", p.dataset.panel === "inventory"));
+      refreshAll();
+    });
+
+    refreshAll();
+  });
+
+  function resetForm() {
+    $("#product-form").reset();
+    $("#p-edit-id").value = "";
+    $("#form-mode-label").textContent = "New product";
+    $("#product-submit-btn").textContent = "Add to shelf";
+    $("#product-cancel-btn").hidden = true;
+  }
+
+  function editBook(id) {
+    const book = window.EcrivoireCatalogue.getBook(id);
+    if (!book) return;
+    $("#p-edit-id").value = book.id;
+    $("#p-title").value = book.title;
+    $("#p-author").value = book.author;
+    $("#p-genre").value = book.genre;
+    $("#p-price").value = book.price;
+    $("#p-year").value = book.year || "";
+    $("#p-pages").value = book.pages || "";
+    $("#p-publisher").value = book.publisher || "";
+    $("#p-isbn").value = book.isbn || "";
+    $("#p-badge").value = book.badge || "";
+    $("#p-mark").value = book.mark || "";
+    const palRadio = $(`input[name=p-pal][value="${book.pal}"]`);
+    if (palRadio) palRadio.checked = true;
+    $("#p-stamp").checked = !!book.stampPick;
+    $("#p-blurb").value = book.blurb || "";
+    $("#form-mode-label").textContent = "Editing “" + book.title + "”";
+    $("#product-submit-btn").textContent = "Save changes";
+    $("#product-cancel-btn").hidden = false;
+    $$('.admin-tab').forEach((t) => t.classList.toggle("is-active", t.dataset.tab === "add"));
+    $$('.admin-panel').forEach((p) => p.classList.toggle("is-active", p.dataset.panel === "add"));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function renderInventory() {
+    const books = window.EcrivoireCatalogue.getAllBooks();
+    $("#inventory-count").textContent = `${books.length} title${books.length === 1 ? "" : "s"}`;
+    $("#inventory-body").innerHTML = books.map((b) => `
+      <tr>
+        <td><span class="admin-swatch pal-${b.pal}"></span></td>
+        <td><strong>${b.title}</strong></td>
+        <td>${b.author}</td>
+        <td>${b.genre}</td>
+        <td>${fmt(b.price)}</td>
+        <td>${b.badge || "—"}${b.stampPick ? " 🐮" : ""}</td>
+        <td>${b._admin ? "Admin" : "Seed"}</td>
+        <td>
+          <button type="button" class="admin-row-btn" data-edit="${b.id}">Edit</button>
+          <button type="button" class="admin-row-btn admin-row-btn--danger" data-delete="${b.id}">Delete</button>
+        </td>
+      </tr>`).join("");
+
+    $$("[data-edit]", $("#inventory-body")).forEach((btn) => btn.addEventListener("click", () => editBook(btn.dataset.edit)));
+    $$("[data-delete]", $("#inventory-body")).forEach((btn) => btn.addEventListener("click", () => {
+      const book = window.EcrivoireCatalogue.getBook(btn.dataset.delete);
+      if (confirm(`Remove “${book ? book.title : "this title"}” from the shelf?`)) {
+        window.EcrivoireCatalogue.deleteBook(btn.dataset.delete);
+        window.EcrivoireMascot?.toast("Removed from the shelf.");
+        refreshAll();
+      }
+    }));
+  }
+
+  function renderRequests() {
+    const items = window.EcrivoireRequests.getRecent();
+    $("#requests-count").textContent = `${items.length} request${items.length === 1 ? "" : "s"}`;
+    $("#admin-requests-body").innerHTML = items.map((r) => `
+      <tr>
+        <td><strong>${r.title}</strong>${r.notes ? `<br><span style="color:var(--muted);font-size:.8rem;">${r.notes}</span>` : ""}</td>
+        <td>${r.name}</td>
+        <td>${r.genre}</td>
+        <td>${r.votes}</td>
+        <td>${r.fulfilled ? "✓ Fulfilled" : "Open"}</td>
+        <td>
+          <button type="button" class="admin-row-btn" data-toggle="${r.id}">${r.fulfilled ? "Mark open" : "Mark fulfilled"}</button>
+          <button type="button" class="admin-row-btn admin-row-btn--danger" data-del-req="${r.id}">Delete</button>
+        </td>
+      </tr>`).join("") || `<tr><td colspan="6" style="color:var(--muted);">No requests yet.</td></tr>`;
+
+    $$("[data-toggle]", $("#admin-requests-body")).forEach((btn) => btn.addEventListener("click", () => {
+      const item = window.EcrivoireRequests.get(btn.dataset.toggle);
+      window.EcrivoireRequests.setFulfilled(btn.dataset.toggle, !item.fulfilled);
+      renderRequests();
+      renderStats();
+    }));
+    $$("[data-del-req]", $("#admin-requests-body")).forEach((btn) => btn.addEventListener("click", () => {
+      if (confirm("Delete this request?")) { window.EcrivoireRequests.deleteRequest(btn.dataset.delReq); renderRequests(); renderStats(); }
+    }));
+  }
+
+  function renderStats() {
+    const cat = window.EcrivoireCatalogue.stats();
+    const req = window.EcrivoireRequests.stats();
+    $("#admin-stats").innerHTML = `
+      <div class="stat-card"><strong>${cat.totalTitles}</strong><span>Titles live on the shelf</span></div>
+      <div class="stat-card"><strong>${fmt(cat.totalValue)}</strong><span>Total inventory value</span></div>
+      <div class="stat-card"><strong>${cat.adminAdded}</strong><span>Added via this console</span></div>
+      <div class="stat-card"><strong>${req.open}</strong><span>Open wishlist requests</span></div>`;
+  }
+
+  function refreshAll() {
+    if ($("#admin-shell").hidden) return;
+    renderStats();
+    renderInventory();
+    renderRequests();
+  }
+})();
+</script>
+</body>
+</html>

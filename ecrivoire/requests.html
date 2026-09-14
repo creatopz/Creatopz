@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wishlist Wall — Écrivoire Studios</title>
+<meta name="description" content="Tell Écrivoire Studios what to stock next. Post a request, upvote what other readers want, and watch us fulfil it.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="requests">
+
+<header class="site-header" id="site-header"></header>
+
+<main>
+  <section class="section-pad-sm" style="padding-bottom:0;">
+    <div class="wrap">
+      <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Wishlist</span></div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;">
+        <h1 class="h-xl">The<br>Wishlist Wall</h1>
+        <span data-doodle="star5" class="doodle-red doodle-float" style="width:56px;height:56px;--r:8deg;" aria-hidden="true"></span>
+      </div>
+      <p class="lede" style="margin-top:.8rem;">
+        Tell us what you want on the shelf. Everyone can upvote — the loudest requests get read first,
+        and Inkling marks them fulfilled the moment they land in-store.
+      </p>
+    </div>
+  </section>
+
+  <section class="section-pad-sm">
+    <div class="wrap">
+      <div class="stat-row" id="requests-stats"></div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="wrap grid">
+      <div style="grid-column:1/5;">
+        <span class="eyebrow">Post a request</span>
+        <h2 class="h-lg" style="margin-top:.6rem;">What should we stock?</h2>
+        <form id="request-form" style="margin-top:1.8rem;">
+          <div class="field">
+            <label for="r-title">Book or topic</label>
+            <input id="r-title" required placeholder="e.g. more Malayalam fiction in translation">
+          </div>
+          <div class="field">
+            <label for="r-author">Author (if known)</label>
+            <input id="r-author" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label for="r-genre">Closest category</label>
+            <select id="r-genre"></select>
+          </div>
+          <div class="field">
+            <label for="r-notes">Why we should stock it</label>
+            <textarea id="r-notes" placeholder="A sentence or two is plenty."></textarea>
+          </div>
+          <div class="field">
+            <label for="r-name">Your name</label>
+            <input id="r-name" placeholder="Optional — shown next to your post">
+          </div>
+          <button type="submit" class="btn btn-red btn-block">Post to the wall</button>
+          <p class="form-note">Demo store — posts are saved in your browser only, so only you will see what you add here.</p>
+        </form>
+      </div>
+
+      <div style="grid-column:6/-1;">
+        <div class="toolbar" style="margin-bottom:1.5rem;">
+          <span class="eyebrow">The wall</span>
+          <div class="chip-row">
+            <button type="button" class="chip is-active" data-sort="votes">Most wanted</button>
+            <button type="button" class="chip" data-sort="recent">Newest</button>
+          </div>
+        </div>
+        <div id="requests-list"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+<div id="cart-root"></div>
+
+<script src="js/data.js"></script>
+<script src="js/doodles.js"></script>
+<script src="js/catalogue.js"></script>
+<script src="js/requests.js"></script>
+<script src="js/mascot.js"></script>
+<script src="js/partials.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const genreSelect = document.getElementById("r-genre");
+    const listEl = document.getElementById("requests-list");
+    const statsEl = document.getElementById("requests-stats");
+    let sortMode = "votes";
+
+    if (genreSelect && window.ECRIVOIRE_DATA) {
+      genreSelect.innerHTML = window.ECRIVOIRE_DATA.GENRES.map((g) => `<option>${g}</option>`).join("") + `<option>Something else</option>`;
+    }
+
+    function renderStats() {
+      const s = window.EcrivoireRequests.stats();
+      statsEl.innerHTML = `
+        <div class="stat-card"><strong>${s.total}</strong><span>Total requests</span></div>
+        <div class="stat-card"><strong>${s.open}</strong><span>Still open</span></div>
+        <div class="stat-card"><strong>${s.fulfilled}</strong><span>Fulfilled</span></div>
+        <div class="stat-card"><strong>${s.votes}</strong><span>Votes cast</span></div>`;
+    }
+
+    function renderList() {
+      const items = sortMode === "votes" ? window.EcrivoireRequests.getAll() : window.EcrivoireRequests.getRecent();
+      if (!items.length) {
+        listEl.innerHTML = `<p class="body">Nobody's posted yet — be the first to ask for something.</p>`;
+        return;
+      }
+      listEl.innerHTML = items.map((r) => {
+        const voted = window.EcrivoireRequests.hasVoted(r.id);
+        return `
+        <div class="request-card reveal" data-id="${r.id}">
+          <button type="button" class="request-card__vote" data-vote="${r.id}" aria-pressed="${voted}">
+            <strong>${r.votes}</strong><span>${voted ? "Voted" : "Vote"}</span>
+          </button>
+          <div>
+            <div class="request-card__title serif">${r.title}</div>
+            <div class="request-card__meta">${r.author !== "Not sure" ? "by " + r.author + " · " : ""}${r.genre} — requested by ${r.name}${r.notes ? " — “" + r.notes + "”" : ""}</div>
+          </div>
+          <span class="request-card__status ${r.fulfilled ? "request-card__status--fulfilled" : "request-card__status--open"}">${r.fulfilled ? "✓ Fulfilled" : "Open"}</span>
+        </div>`;
+      }).join("");
+      window.EcrivoireApp?.initReveal();
+    }
+
+    document.querySelectorAll("[data-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        sortMode = btn.dataset.sort;
+        document.querySelectorAll("[data-sort]").forEach((b) => b.classList.toggle("is-active", b === btn));
+        renderList();
+      });
+    });
+
+    listEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-vote]");
+      if (!btn) return;
+      window.EcrivoireRequests.toggleVote(btn.dataset.vote);
+      renderStats();
+      renderList();
+    });
+
+    document.getElementById("request-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      window.EcrivoireRequests.addRequest({
+        title: document.getElementById("r-title").value,
+        author: document.getElementById("r-author").value,
+        genre: document.getElementById("r-genre").value,
+        notes: document.getElementById("r-notes").value,
+        name: document.getElementById("r-name").value
+      });
+      e.target.reset();
+      window.EcrivoireMascot?.toast("Posted to the wall — thank you!");
+      renderStats();
+      renderList();
+    });
+
+    renderStats();
+    renderList();
+  });
+</script>
+</body>
+</html>

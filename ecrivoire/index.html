@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Écrivoire Studios — Independent Bookstore &amp; Bindery</title>
-<meta name="description" content="Écrivoire Studios is an independent bookstore and bindery — Swiss-grid shelves, hand-picked fiction, poetry, essays and design books, plus a bookbinding studio and a monthly reading series.">
+<title>Écrivoire Studios — The Purple Cow Bookstore</title>
+<meta name="description" content="Écrivoire Studios — a luxury independent bookstore and bindery with a purple cow for a mascot. Hand-picked fiction, poetry, essays, art and design books in ₹, a bookbinding studio, and a reading series you'll actually want to attend.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="home">
@@ -27,37 +27,47 @@
       </div>
       <div class="hero__headline">
         <h1 class="h-display">
-          Words,<br>
-          well <span style="position:relative;display:inline-block;">bound
+          Be a<br>
+          <span style="position:relative;display:inline-block;color:var(--purple);">purple
             <span data-doodle="underline" class="doodle-red" style="position:absolute;left:-4%;right:-4%;bottom:-.18em;height:.3em;"></span>
-          </span>.
+          </span> reader.
         </h1>
         <p class="lede" style="margin-top:1.75rem;">
-          An independent bookstore and bindery for people who read slowly, dog-ear
-          shamelessly, and underline too much. Fiction, poetry, essays and design —
-          chosen by hand, shelved by feeling.
+          Every other bookshop is beige. We built ours around one loud idea: the
+          books worth remembering are the ones nobody warned you about. Fiction,
+          poetry, essays, art and design — hand-picked, shelved by feeling, priced
+          honestly in ₹.
         </p>
         <div style="display:flex;align-items:center;gap:1.6rem;margin-top:2.2rem;flex-wrap:wrap;">
           <a href="shop.html" class="btn btn-red">Browse the shelf</a>
-          <a href="about.html" class="btn btn-outline">Our story</a>
+          <button type="button" id="spin-open-btn" class="btn btn-gold">🐮 Spin the Shelf</button>
           <span data-doodle="swirl" class="doodle-float" style="width:46px;height:46px;--r:-6deg;" aria-hidden="true"></span>
         </div>
       </div>
       <div class="hero__side">
         <div class="hero__meta">
-          <div><strong>17</strong>Titles on the shelf</div>
+          <div><strong id="stat-titles">17</strong>Titles on the shelf</div>
           <div><strong>8</strong>Categories</div>
-          <div><strong>120+</strong>Signed copies</div>
+          <div><strong>₹299+</strong>Where prices start</div>
         </div>
         <p class="body" style="font-size:.88rem;">
-          “A shop arranged by mood, not alphabet — you'll find things here you
-          never thought to search for.”
+          “Why blend in with every other quiet, minimal bookshop when you could
+          be the purple cow in a field of brown ones?” — Odile, founder
         </p>
       </div>
     </div>
   </section>
 
   <hr class="rule wrap" style="max-width:var(--container);margin-inline:auto;">
+
+  <!-- MASCOT BAND -->
+  <section>
+    <div class="wrap" style="padding-block:2rem 0;">
+      <div class="eyebrow">Meet the crew</div>
+      <h2 class="h-lg" style="margin-top:.5rem;">The Purple Cow &amp; friends</h2>
+    </div>
+    <div class="mascot-band" id="mascot-band-root" style="margin-top:1.5rem;"></div>
+  </section>
 
   <!-- NEW ARRIVALS -->
   <section class="section-pad">
@@ -92,7 +102,7 @@
   <section class="section-pad">
     <div class="wrap grid" style="align-items:center;">
       <div style="grid-column:1/6;position:relative;">
-        <div class="cover pal-4" style="aspect-ratio:1/1;">
+        <div class="cover pal-4 tilt-1" style="aspect-ratio:1/1;">
           <div class="cover__mark" style="font-size:4.5rem;">É</div>
           <div>
             <div class="cover__rule"></div>
@@ -103,14 +113,15 @@
       </div>
       <div style="grid-column:7/-1;">
         <span class="eyebrow"><span class="num">03</span> — About the studio</span>
-        <h2 class="h-lg" style="margin-top:.6rem;">Part bookstore,<br>part bindery.</h2>
+        <h2 class="h-lg" style="margin-top:.6rem;">Part bookstore,<br>part bindery,<br>fully purple.</h2>
         <p class="body" style="margin-top:1.4rem;">
           Écrivoire Studios opened in a former print shop, and we never quite
           stopped acting like one. Downstairs is the shop floor — fiction,
           poetry, essays, art and design, staff-picked and hand-labelled.
-          Through the back is the bindery, where we repair broken spines,
-          rebind well-loved paperbacks, and teach a Saturday class in
-          Coptic stitching.
+          Through the back is the bindery, where we repair broken spines and
+          rebind well-loved paperbacks. Everywhere else is Inkling, our
+          purple cow, making sure this place is impossible to confuse with
+          any other bookshop in the city.
         </p>
         <a href="about.html" class="btn btn-outline" style="margin-top:1.8rem;">Read our story</a>
       </div>
@@ -120,8 +131,8 @@
   <!-- PULL QUOTE -->
   <section class="pull-quote">
     <div class="wrap">
-      <span data-doodle="quoteMarks" style="width:70px;height:42px;display:inline-block;margin-bottom:1rem;color:var(--red);" aria-hidden="true"></span>
-      <blockquote>The only shop where I've bought a book because of how the till receipt was folded.</blockquote>
+      <span data-doodle="quoteMarks" style="width:70px;height:42px;display:inline-block;margin-bottom:1rem;color:var(--purple);" aria-hidden="true"></span>
+      <blockquote>The only shop where I've bought a book because a purple cow with reading glasses told me to.</blockquote>
       <cite>— a reader, six years running</cite>
     </div>
   </section>
@@ -139,12 +150,26 @@
     </div>
   </section>
 
-  <!-- EVENTS PREVIEW -->
+  <!-- MEMBERSHIP -->
   <section class="section-pad">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="eyebrow"><span class="num">05</span> — Upcoming</span>
+          <span class="eyebrow"><span class="num">05</span> — Belong to something purple</span>
+          <h2 class="h-lg" style="margin-top:.6rem;">The Purple Cow Club</h2>
+        </div>
+        <a href="about.html#club" class="btn btn-outline btn-sm">How membership works</a>
+      </div>
+      <div class="tier-grid" id="home-tiers"></div>
+    </div>
+  </section>
+
+  <!-- EVENTS PREVIEW -->
+  <section class="section-pad-sm">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow"><span class="num">06</span> — Upcoming</span>
           <h2 class="h-lg" style="margin-top:.6rem;">Readings &amp; workshops</h2>
         </div>
         <a href="events.html" class="btn btn-outline btn-sm">All events</a>
@@ -154,11 +179,11 @@
   </section>
 
   <!-- JOURNAL PREVIEW -->
-  <section class="section-pad-sm">
+  <section class="section-pad">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="eyebrow"><span class="num">06</span> — From the journal</span>
+          <span class="eyebrow"><span class="num">07</span> — From the journal</span>
           <h2 class="h-lg" style="margin-top:.6rem;">Notes from the floor</h2>
         </div>
         <a href="journal.html" class="btn btn-outline btn-sm">Read the journal</a>
@@ -171,16 +196,16 @@
   <section class="newsletter">
     <div class="wrap newsletter__grid">
       <div>
-        <span data-doodle="star5" class="doodle-red" style="width:34px;height:34px;display:inline-block;margin-bottom:.8rem;" aria-hidden="true"></span>
+        <span data-doodle="star5" class="doodle-gold" style="width:34px;height:34px;display:inline-block;margin-bottom:.8rem;" aria-hidden="true"></span>
         <h2 class="h-xl" style="color:var(--paper);">Get the good list</h2>
-        <p class="lede" style="color:rgba(245,242,234,.75);margin-top:.8rem;">
-          One email a month: new arrivals, staff picks, and first notice on events. No spam, ever.
+        <p class="lede" style="color:rgba(243,236,220,.78);margin-top:.8rem;">
+          One email a month: new arrivals, wishlist wins, and first notice on events. Inkling writes it personally. No spam, ever.
         </p>
       </div>
       <div>
         <form data-form class="inline-form">
           <input type="email" required placeholder="you@example.com" aria-label="Email address">
-          <button type="submit" class="btn btn-ghost-light btn-sm">Subscribe</button>
+          <button type="submit" class="btn btn-gold btn-sm">Subscribe</button>
         </form>
         <p class="form-success" style="color:var(--paper);margin-top:.9rem;">
           <span data-doodle="check" style="width:16px;height:16px;"></span> You're on the list — welcome.
@@ -194,8 +219,31 @@
 <footer class="site-footer" id="site-footer"></footer>
 <div id="cart-root"></div>
 
+<!-- SPIN THE SHELF MODAL -->
+<div class="modal-scrim" id="spin-modal">
+  <div class="modal">
+    <button type="button" class="modal__close" id="spin-close-btn" aria-label="Close">✕</button>
+    <div class="eyebrow" style="justify-content:center;width:100%;">🐮 Inkling's pick</div>
+    <div class="spin-wheel" id="spin-wheel-cover" style="margin-top:1rem;">
+      <div class="spin-wheel__cover"></div>
+    </div>
+    <div class="spin-result">
+      <div class="h-md serif" id="spin-result-title" style="text-transform:none;font-size:1.3rem;">—</div>
+      <div style="color:var(--muted);font-size:.85rem;margin-top:.3rem;" id="spin-result-author">—</div>
+      <div class="h-md" style="margin-top:.8rem;font-size:1.3rem;" id="spin-result-price">₹0</div>
+      <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1.4rem;flex-wrap:wrap;">
+        <button type="button" class="btn btn-outline btn-sm" id="spin-again-btn">Spin again</button>
+        <button type="button" class="btn btn-red btn-sm" id="spin-add-btn">Add to bag</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/data.js"></script>
 <script src="js/doodles.js"></script>
+<script src="js/catalogue.js"></script>
+<script src="js/requests.js"></script>
+<script src="js/mascot.js"></script>
 <script src="js/partials.js"></script>
 <script src="js/main.js"></script>
 </body>

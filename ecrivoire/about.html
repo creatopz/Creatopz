@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Écrivoire Studios</title>
-<meta name="description" content="The story of Écrivoire Studios — an independent bookstore and bindery, and the people who run it.">
+<meta name="description" content="The story of Écrivoire Studios — a luxury independent bookstore built on purple cow psychology, its bindery, its mascot family, and the people who run it.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="about">
@@ -41,6 +41,43 @@
   </section>
 
   <hr class="rule wrap" style="max-width:var(--container);margin-inline:auto;">
+
+  <!-- MASCOT BAND -->
+  <section>
+    <div class="wrap" style="padding-block:2rem 0;">
+      <div class="eyebrow">The cast</div>
+      <h2 class="h-lg" style="margin-top:.5rem;">Meet the crew</h2>
+    </div>
+    <div class="mascot-band" id="mascot-band-root-about" style="margin-top:1.5rem;"></div>
+  </section>
+
+  <!-- PURPLE COW PHILOSOPHY -->
+  <section class="section-pad">
+    <div class="wrap grid" style="align-items:center;">
+      <div style="grid-column:1/6;">
+        <span class="eyebrow">Why a purple cow</span>
+        <h2 class="h-lg" style="margin-top:.6rem;">Safe is invisible.<br>Remarkable gets talked about.</h2>
+      </div>
+      <div style="grid-column:7/-1;">
+        <p class="body">
+          Drive past a field of brown cows and you don't look twice. Drive
+          past one purple cow and you pull over, take a photo, and tell
+          everyone you know. That's the whole idea behind this shop —
+          "purple cow" marketing thinking, borrowed shamelessly and applied
+          literally: in a city where every good bookstore has learned the
+          same quiet, minimal playbook, being genuinely remarkable is worth
+          more than being merely competent.
+        </p>
+        <p class="body" style="margin-top:1.2rem;">
+          So instead of another beige interior, we built thick black
+          borders, hard drop shadows, a rich purple-and-gold palette, and a
+          mascot family that lives in the margins of every page. Inkling
+          isn't a logo — she's a promise that this shop is trying, on
+          purpose, to be impossible to confuse with anywhere else.
+        </p>
+      </div>
+    </div>
+  </section>
 
   <!-- STATS -->
   <section class="section-pad-sm">
@@ -146,12 +183,30 @@
     </div>
   </section>
 
+  <!-- MEMBERSHIP -->
+  <section class="section-pad" id="club">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Membership</span>
+          <h2 class="h-lg" style="margin-top:.6rem;">The Purple Cow Club</h2>
+        </div>
+      </div>
+      <p class="body" style="margin-bottom:2.4rem;">
+        Three tiers, no fine print. Join in-store or via the newsletter —
+        Collector and Patron memberships are billed once a year and can be
+        cancelled any time you like.
+      </p>
+      <div class="tier-grid" id="about-tiers"></div>
+    </div>
+  </section>
+
   <!-- NEWSLETTER -->
   <section class="newsletter">
     <div class="wrap newsletter__grid">
       <div>
         <h2 class="h-xl" style="color:var(--paper);">Come say hello</h2>
-        <p class="lede" style="color:rgba(245,242,234,.75);margin-top:.8rem;">Open Tuesday through Sunday. The corner chair is usually free.</p>
+        <p class="lede" style="color:rgba(243,236,220,.78);margin-top:.8rem;">Open Tuesday through Sunday. The corner chair is usually free.</p>
       </div>
       <div>
         <a href="contact.html" class="btn btn-ghost-light">Visit &amp; hours</a>
@@ -165,6 +220,9 @@
 
 <script src="js/data.js"></script>
 <script src="js/doodles.js"></script>
+<script src="js/catalogue.js"></script>
+<script src="js/requests.js"></script>
+<script src="js/mascot.js"></script>
 <script src="js/partials.js"></script>
 <script src="js/main.js"></script>
 <script>

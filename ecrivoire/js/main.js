@@ -1,15 +1,16 @@
 /* ==========================================================================
    ÉCRIVOIRE STUDIOS — application logic
    Cart, filtering, rendering and small interactions for a fully working
-   front-end demo. No backend: state lives in localStorage.
+   front-end demo. No backend: state lives in localStorage. Prices in ₹.
    ========================================================================== */
 
 (function () {
   "use strict";
   const DATA = window.ECRIVOIRE_DATA;
+  const Catalogue = window.EcrivoireCatalogue;
   const $ = (sel, ctx) => (ctx || document).querySelector(sel);
   const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
-  const fmt = (n) => "$" + n.toFixed(0);
+  const fmt = (n) => "₹" + Math.round(n || 0).toLocaleString("en-IN");
   const CART_KEY = "ecrivoire_cart_v1";
 
   /* ---------------------------------------------------------------- */
@@ -23,13 +24,20 @@
     try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {}
     renderCartDrawer();
   }
-  function addToCart(id, qty) {
+  function addToCart(id, qty, opts) {
     qty = qty || 1;
     const cart = getCart();
     const line = cart.find((l) => l.id === id);
     if (line) line.qty += qty; else cart.push({ id, qty });
     saveCart(cart);
-    openCart();
+    if (!opts || opts.openDrawer !== false) openCart();
+    const book = Catalogue.getBook(id);
+    const btn = $("#cart-open-btn");
+    if (btn) {
+      const r = btn.getBoundingClientRect();
+      window.EcrivoireMascot?.confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 20);
+    }
+    if (book) window.EcrivoireMascot?.toast(`Added to bag — ${book.title}`);
   }
   function setQty(id, qty) {
     let cart = getCart();
@@ -40,13 +48,12 @@
   function removeFromCart(id) { saveCart(getCart().filter((l) => l.id !== id)); }
   function cartCount() { return getCart().reduce((n, l) => n + l.qty, 0); }
   function cartLines() {
-    return getCart().map((l) => ({ ...l, book: DATA.BOOKS.find((b) => b.id === l.id) })).filter((l) => l.book);
+    return getCart().map((l) => ({ ...l, book: Catalogue.getBook(l.id) })).filter((l) => l.book);
   }
   function cartTotal() { return cartLines().reduce((sum, l) => sum + l.book.price * l.qty, 0); }
 
   function renderCartDrawer() {
-    const countEls = $$("#cart-count");
-    countEls.forEach((el) => (el.textContent = cartCount()));
+    $$("#cart-count").forEach((el) => (el.textContent = cartCount()));
     const body = $("#cart-body");
     const subtotal = $("#cart-subtotal");
     if (subtotal) subtotal.textContent = fmt(cartTotal());
@@ -110,7 +117,7 @@
       if (!foot || !cartLines().length) return;
       foot.innerHTML = `
         <p style="font-weight:700;display:flex;align-items:center;gap:.5em;">
-          <span data-doodle="check" style="width:20px;height:20px;color:var(--red);flex-shrink:0;"></span>
+          <span data-doodle="check" style="width:20px;height:20px;color:var(--purple);flex-shrink:0;"></span>
           Order confirmed — thank you!
         </p>
         <p class="cart-drawer__note">This is a demo store, so nothing was actually charged or shipped. Your bag has been cleared.</p>
@@ -135,10 +142,10 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* Reveal-on-scroll                                                  */
+  /* Reveal-on-scroll (.reveal fades/slides, .pop-in bounces in)        */
   /* ---------------------------------------------------------------- */
   function initReveal() {
-    const items = $$(".reveal:not(.is-visible)");
+    const items = $$(".reveal:not(.is-visible), .pop-in:not(.is-visible)");
     if (!items.length) return;
     if (!("IntersectionObserver" in window)) {
       items.forEach((el) => el.classList.add("is-visible"));
@@ -150,15 +157,13 @@
       });
     }, { threshold: 0.01, rootMargin: "0px 0px -5% 0px" });
     items.forEach((el) => io.observe(el));
-    // Safety net: never leave content permanently invisible (slow observers,
-    // restored-from-cache pages, unusual viewports).
     window.setTimeout(() => items.forEach((el) => el.classList.add("is-visible")), 1800);
   }
 
   /* ---------------------------------------------------------------- */
   /* Book rendering helpers                                            */
   /* ---------------------------------------------------------------- */
-  function coverHTML(book, size) {
+  function coverHTML(book) {
     return `
     <div class="cover pal-${book.pal}">
       <div class="cover__mark">${book.mark}</div>
@@ -175,6 +180,12 @@
     return `<span class="badge badge--red">${badge}</span>`;
   }
 
+  function stampHTML(book) {
+    if (!book.stampPick) return "";
+    const icon = window.EcrivoireMascot ? window.EcrivoireMascot.mascotSVG("inkling") : "";
+    return `<div class="stamp" title="Purple Cow Approved — a house favourite"><span class="stamp__icon">${icon}</span><span>Cow<br>Approved</span></div>`;
+  }
+
   function bookCardHTML(book) {
     return `
     <article class="book-card reveal">
@@ -183,6 +194,7 @@
           ${badgeHTML(book.badge)}
           ${coverHTML(book)}
         </a>
+        ${stampHTML(book)}
         <button type="button" class="book-card__add" data-add-to-cart="${book.id}" aria-label="Add ${book.title} to bag" title="Add to bag">+</button>
       </div>
       <a href="book.html?id=${book.id}" class="book-card__info">
@@ -206,7 +218,7 @@
 
   function renderGrid(container, books) {
     if (!container) return;
-    container.innerHTML = books.map(bookCardHTML).join("") || `<p class="body" style="grid-column:1/-1;">No books match those filters yet — try clearing them.</p>`;
+    container.innerHTML = books.map(bookCardHTML).join("") || `<p class="body" style="grid-column:1/-1;">No books match those filters yet — try clearing them, or <a href="requests.html" style="text-decoration:underline;">tell us what you're after</a>.</p>`;
     wireAddButtons(container);
     window.EcrivoireDoodles?.paint(container);
     initReveal();
@@ -231,6 +243,66 @@
         }
       });
     });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Membership tiers — The Purple Cow Club                            */
+  /* ---------------------------------------------------------------- */
+  function renderTiers(containerId) {
+    const root = document.getElementById(containerId);
+    if (!root) return;
+    root.innerHTML = DATA.TIERS.map((t) => `
+      <div class="tier-card reveal${t.featured ? " tier-card--feature" : ""}">
+        ${t.ribbon ? `<div class="tier-card__ribbon">${t.ribbon}</div>` : ""}
+        <div class="tier-card__name serif">${t.name}</div>
+        <div class="tier-card__price">${t.price ? fmt(t.price) : "Free"} <span>/ ${t.period}</span></div>
+        <p class="tier-card__desc">${t.desc}</p>
+        <ul class="tier-card__list">${t.perks.map((p) => `<li>${p}</li>`).join("")}</ul>
+      </div>`).join("");
+    initReveal();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Spin the Shelf — random-pick modal                                 */
+  /* ---------------------------------------------------------------- */
+  function initSpinWheel() {
+    const openBtn = $("#spin-open-btn");
+    const modalScrim = $("#spin-modal");
+    if (!openBtn || !modalScrim) return;
+    const wheel = $("#spin-wheel-cover");
+    const nameEl = $("#spin-result-title");
+    const authorEl = $("#spin-result-author");
+    const priceEl = $("#spin-result-price");
+    let current = null;
+
+    function pick() {
+      const books = Catalogue.getAllBooks();
+      current = books[Math.floor(Math.random() * books.length)];
+      wheel.className = "spin-wheel";
+      wheel.querySelector(".spin-wheel__cover").innerHTML = coverHTML(current) + stampHTML(current);
+      void wheel.offsetWidth;
+      wheel.classList.add("is-spinning");
+      window.EcrivoireDoodles?.paint(wheel);
+      nameEl.textContent = current.title;
+      authorEl.textContent = "by " + current.author;
+      priceEl.textContent = fmt(current.price);
+    }
+
+    function open() {
+      modalScrim.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+      pick();
+    }
+    function close() {
+      modalScrim.classList.remove("is-open");
+      document.body.style.overflow = "";
+    }
+
+    openBtn.addEventListener("click", open);
+    $("#spin-close-btn")?.addEventListener("click", close);
+    modalScrim.addEventListener("click", (e) => { if (e.target === modalScrim) close(); });
+    $("#spin-again-btn")?.addEventListener("click", pick);
+    $("#spin-add-btn")?.addEventListener("click", () => { if (current) { addToCart(current.id, 1); close(); } });
   }
 
   /* ---------------------------------------------------------------- */
@@ -259,7 +331,7 @@
     const countEl = $("#shop-result-count");
 
     function apply() {
-      let list = DATA.BOOKS.slice();
+      let list = Catalogue.getAllBooks();
       if (state.genre && state.genre !== "All") list = list.filter((b) => b.genre === state.genre);
       if (state.badge) list = list.filter((b) => (b.badge || "").toLowerCase() === state.badge.toLowerCase());
       if (state.q) {
@@ -269,7 +341,7 @@
       if (state.sort === "price-asc") list.sort((a, b) => a.price - b.price);
       else if (state.sort === "price-desc") list.sort((a, b) => b.price - a.price);
       else if (state.sort === "title") list.sort((a, b) => a.title.localeCompare(b.title));
-      else if (state.sort === "newest") list.sort((a, b) => b.year - a.year);
+      else if (state.sort === "newest") list.sort((a, b) => (b.year - a.year) || (b._addedAt || 0) - (a._addedAt || 0));
 
       renderGrid(grid, list);
       if (countEl) countEl.textContent = `${list.length} book${list.length === 1 ? "" : "s"}`;
@@ -306,7 +378,7 @@
     const root = $("#book-detail-root");
     if (!root) return;
     const id = new URLSearchParams(location.search).get("id");
-    const book = DATA.BOOKS.find((b) => b.id === id);
+    const book = Catalogue.getBook(id);
     const notFound = $("#book-not-found");
 
     if (!book) {
@@ -316,14 +388,14 @@
     }
     document.title = `${book.title} — Écrivoire Studios`;
     $("#book-crumb-title") && ($("#book-crumb-title").textContent = book.title);
-    $("#book-cover-slot").innerHTML = `${badgeHTML(book.badge)}${coverHTML(book)}`;
+    $("#book-cover-slot").innerHTML = `${badgeHTML(book.badge)}${coverHTML(book)}${stampHTML(book)}`;
     $("#book-title").textContent = book.title;
     $("#book-author").textContent = "by " + book.author;
     $("#book-price").textContent = fmt(book.price);
     $("#book-blurb").textContent = book.blurb;
     $("#book-genre-tag").textContent = book.genre;
     const specs = { Publisher: book.publisher, Published: book.year, Pages: book.pages, ISBN: book.isbn, Genre: book.genre };
-    $("#book-specs").innerHTML = Object.entries(specs).map(([k, v]) => `<div class="event-row" style="grid-template-columns:1fr 1fr;padding-block:.9rem;"><span class="mono" style="color:var(--muted);">${k}</span><span>${v}</span></div>`).join("");
+    $("#book-specs").innerHTML = Object.entries(specs).map(([k, v]) => `<div class="event-row" style="grid-template-columns:1fr 1fr;padding:.9rem 1.1rem;margin-bottom:.5rem;box-shadow:3px 3px 0 0 var(--ink);"><span class="mono" style="color:var(--muted);">${k}</span><span>${v}</span></div>`).join("");
     $("#book-rating").innerHTML = Array.from({ length: 5 }).map((_, i) => `<span data-doodle="${i < book.rating ? "sparkle" : "circleScribble"}"></span>`).join("");
 
     let qty = 1;
@@ -332,7 +404,7 @@
     $("#qty-down")?.addEventListener("click", () => { qty = Math.max(1, qty - 1); qtyEl.textContent = qty; });
     $("#book-add-btn")?.addEventListener("click", () => addToCart(book.id, qty));
 
-    const related = DATA.BOOKS.filter((b) => b.genre === book.genre && b.id !== book.id).slice(0, 4);
+    const related = Catalogue.getAllBooks().filter((b) => b.genre === book.genre && b.id !== book.id).slice(0, 4);
     const relatedWrap = $("#book-related-grid");
     if (relatedWrap) {
       if (related.length) renderGrid(relatedWrap, related);
@@ -361,7 +433,7 @@
 
   function formatDate(iso) {
     const d = new Date(iso + "T00:00:00");
-    return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    return d.toLocaleDateString("en-IN", { month: "long", day: "numeric", year: "numeric" });
   }
 
   function initJournalPage() {
@@ -421,7 +493,7 @@
       const isReserved = reserved.includes(ev.id);
       return `
       <div class="event-row">
-        <div class="event-row__date">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}<span>${d.getFullYear()}</span></div>
+        <div class="event-row__date">${d.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}<span>${d.getFullYear()}</span></div>
         <div>
           <div class="event-row__title">${ev.title}</div>
           <div class="event-row__place">${ev.place} · ${ev.desc}</div>
@@ -442,6 +514,7 @@
       btn.textContent = "✓ Reserved";
       btn.disabled = true;
       btn.classList.add("btn-outline");
+      window.EcrivoireMascot?.toast("Seat reserved — see you there!");
     });
   }
 
@@ -451,13 +524,17 @@
   function initHomePage() {
     const newGrid = $("#home-new-grid");
     if (!newGrid) return;
-    const featured = DATA.BOOKS.filter((b) => b.badge).slice(0, 8);
-    renderGrid(newGrid, featured.length ? featured : DATA.BOOKS.slice(0, 8));
+    const all = Catalogue.getAllBooks();
+    const featured = all.filter((b) => b.badge).slice(0, 8);
+    renderGrid(newGrid, featured.length ? featured : all.slice(0, 8));
+
+    const statTitles = $("#stat-titles");
+    if (statTitles) statTitles.textContent = all.length;
 
     const tileWrap = $("#home-genre-tiles");
     if (tileWrap) {
       tileWrap.innerHTML = DATA.GENRES.map((g, i) => {
-        const count = DATA.BOOKS.filter((b) => b.genre === g).length;
+        const count = all.filter((b) => b.genre === g).length;
         return `
         <a class="tile reveal" href="shop.html?genre=${encodeURIComponent(g)}">
           <span class="tile__num">${String(i + 1).padStart(2, "0")}</span>
@@ -484,7 +561,7 @@
         const d = new Date(ev.date + "T00:00:00");
         return `
         <div class="event-row">
-          <div class="event-row__date">${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}<span>${d.getFullYear()}</span></div>
+          <div class="event-row__date">${d.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}<span>${d.getFullYear()}</span></div>
           <div><div class="event-row__title">${ev.title}</div><div class="event-row__place">${ev.place}</div></div>
           <div class="event-row__time">${ev.time}</div>
           <a href="events.html" class="btn btn-sm btn-outline">Details</a>
@@ -494,6 +571,10 @@
 
     const journalWrap = $("#home-journal-preview");
     if (journalWrap) journalWrap.innerHTML = DATA.JOURNAL.slice(0, 3).map(journalCardHTML).join("");
+
+    renderTiers("home-tiers");
+    window.EcrivoireMascot?.renderMascotBand("mascot-band-root");
+    initSpinWheel();
 
     window.EcrivoireDoodles?.paint(document);
     initReveal();
@@ -515,9 +596,11 @@
     initJournalPage();
     initJournalPostPage();
     initEventsPage();
+    renderTiers("about-tiers");
+    window.EcrivoireMascot?.renderMascotBand("mascot-band-root-about");
     initReveal();
     window.EcrivoireDoodles?.paint(document);
   });
 
-  window.EcrivoireApp = { addToCart, fmt, bookCardHTML, renderGrid };
+  window.EcrivoireApp = { addToCart, fmt, bookCardHTML, coverHTML, badgeHTML, stampHTML, renderGrid, renderTiers, initReveal, initPopIn: initReveal };
 })();
