@@ -88,16 +88,16 @@ function initBottomNav() {
     </a>
     <div class="bottom-nav-pill">
       <a href="campaigns.html" class="${activeClass("campaigns.html").trim()}" aria-label="Campaigns" title="Campaigns">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6 6-2z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-20 12 12)"><path d="M4 10v4h2l7 4V6l-7 4H4z"/><path d="M15.5 10a2.6 2.6 0 0 1 0 4"/><path d="M18.3 8a5.6 5.6 0 0 1 0 8"/></g></svg>
       </a>
       <a href="auth.html" class="bottom-nav-account" aria-label="Account" title="Account">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1.6-3.6 4.5-5.5 7.5-5.5s5.9 1.9 7.5 5.5"/></svg>
       </a>
       <a href="directory.html" class="${activeClass("directory.html").trim()}" aria-label="Creators" title="Creators">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.1-7-11a7 7 0 0 1 14 0c0 5.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c1-3.2 3.2-5 5.5-5s4.5 1.8 5.5 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 13.3c2 .3 3.6 1.8 4.3 4.2"/></svg>
       </a>
       <a href="briefs.html" class="${activeClass("briefs.html").trim()}" aria-label="Open briefs" title="Open briefs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="11" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><line x1="3.5" y1="13" x2="20.5" y2="13"/></svg>
       </a>
     </div>
     <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%20have%20a%20question" target="_blank" rel="noopener" class="bottom-nav-chat" aria-label="Chat with us on WhatsApp" title="Chat with us">
