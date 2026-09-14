@@ -190,9 +190,14 @@ function renderApplicationsTable() {
            ${feedback.note ? `<div style="margin-top:4px;">"${escapeHtml(feedback.note)}"</div>` : ""}
          </div>`
       : "";
+    const brand = a.campaigns?.brands;
+    const brandLinks = brand ? socialLinksHtml([
+      ["Website", brand.website], ["Instagram", brand.instagram_url], ["YouTube", brand.youtube_url],
+      ["Facebook", brand.facebook_url], ["Twitter", brand.twitter_url],
+    ]) : "";
     return `<tr>
       <td><b>${escapeHtml(a.campaigns?.title || "Campaign")}</b><div class="caption">${escapeHtml(a.campaigns?.brief || "")}</div>${deliverablesNote}${feedbackNote}</td>
-      <td>${escapeHtml(a.campaigns?.brands?.company_name || "Brand")}</td>
+      <td>${escapeHtml(brand?.company_name || "Brand")}${brandLinks ? `<div class="caption" style="margin-top:2px;">${brandLinks}</div>` : ""}</td>
       <td><span class="badge ${p.cls}">${p.label}</span></td>
       <td class="caption">${new Date(a.created_at).toLocaleDateString()}</td>
       <td>${actions}</td>
@@ -355,14 +360,30 @@ async function applyToBrief(campaignId, btn) {
   renderBriefs();
 }
 
+// campaign_applications -> campaigns -> brands is blocked by RLS for a
+// creator (brands: owner can read own), so brand info is fetched
+// separately through brands_public -- the same safe-view pattern used
+// everywhere else -- and stitched back onto each application's campaign.
+async function attachBrandInfo(apps) {
+  const brandIds = [...new Set(apps.map((a) => a.campaigns?.brand_id).filter(Boolean))];
+  if (!brandIds.length) return apps;
+  const { data: brandRows } = await supabaseClient
+    .from("brands_public")
+    .select("id, company_name, website, instagram_url, youtube_url, facebook_url, twitter_url")
+    .in("id", brandIds);
+  const brandsById = Object.fromEntries((brandRows || []).map((b) => [b.id, b]));
+  apps.forEach((a) => { if (a.campaigns) a.campaigns.brands = brandsById[a.campaigns.brand_id] || null; });
+  return apps;
+}
+
 async function refreshApplications() {
   if (!CREATOR) return;
   const { data } = await supabaseClient
     .from("campaign_applications")
-    .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name)), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
+    .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brand_id), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
     .eq("creator_id", CREATOR.id)
     .order("created_at", { ascending: false });
-  APPS = data || [];
+  APPS = await attachBrandInfo(data || []);
   document.getElementById("statApps").textContent = APPS.length;
   document.getElementById("statBooked").textContent = APPS.filter((a) => a.status === "accepted").length;
   renderApplicationsTable();
@@ -385,10 +406,10 @@ async function boot() {
   if (creator) {
     const { data: appsRaw } = await supabaseClient
       .from("campaign_applications")
-      .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brands(company_name)), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
+      .select("id, campaign_id, status, created_at, deliverables, campaigns(title, brief, niche, brand_id), application_feedback(content_format_fit, niche_fit, reach_fit, note)")
       .eq("creator_id", creator.id)
       .order("created_at", { ascending: false });
-    APPS = appsRaw || [];
+    APPS = await attachBrandInfo(appsRaw || []);
   }
 
   document.getElementById("loadingState").style.display = "none";

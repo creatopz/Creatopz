@@ -150,6 +150,14 @@
         <div class="field"><label>Category / industry</label><input class="input" id="bIndustry"></div>
         <div class="field"><label>Logo</label><input class="input" type="file" accept="image/*" id="bLogo"></div>
         <div class="field"><label>Bio</label><textarea class="input" id="bBio" rows="3"></textarea></div>
+        <p class="caption" style="margin:4px 0 10px;">Shown to creators once you're connected — helps them recognise and check out your brand.</p>
+        <div class="field"><label for="bWebsite">Website</label><input class="input" type="url" id="bWebsite" placeholder="https://..."></div>
+        <div class="grid grid-2">
+          <div class="field"><label for="bInstagram">Instagram</label><input class="input" type="url" id="bInstagram" placeholder="https://instagram.com/..."></div>
+          <div class="field"><label for="bYoutube">YouTube</label><input class="input" type="url" id="bYoutube" placeholder="https://youtube.com/..."></div>
+          <div class="field"><label for="bFacebook">Facebook</label><input class="input" type="url" id="bFacebook" placeholder="https://facebook.com/..."></div>
+          <div class="field"><label for="bTwitter">Twitter / X</label><input class="input" type="url" id="bTwitter" placeholder="https://x.com/..."></div>
+        </div>
         <div class="error-text" id="bError" style="min-height:20px;margin-bottom:10px;"></div>
         <button type="submit" class="btn btn-accent btn-block" id="bSubmit">Save company profile</button>
       </form>
@@ -730,6 +738,11 @@ function openCompanyModal() {
   document.getElementById("bName").value = BRAND?.company_name || "";
   document.getElementById("bIndustry").value = BRAND?.industry || "";
   document.getElementById("bBio").value = BRAND?.description || "";
+  document.getElementById("bWebsite").value = BRAND?.website || "";
+  document.getElementById("bInstagram").value = BRAND?.instagram_url || "";
+  document.getElementById("bYoutube").value = BRAND?.youtube_url || "";
+  document.getElementById("bFacebook").value = BRAND?.facebook_url || "";
+  document.getElementById("bTwitter").value = BRAND?.twitter_url || "";
   document.getElementById("bError").textContent = "";
   openModal("companyModal");
 }
@@ -796,6 +809,11 @@ document.getElementById("companyForm").addEventListener("submit", async (e) => {
   const name = document.getElementById("bName").value.trim();
   const industry = document.getElementById("bIndustry").value.trim();
   const bio = document.getElementById("bBio").value.trim();
+  const website = document.getElementById("bWebsite").value.trim();
+  const instagram = document.getElementById("bInstagram").value.trim();
+  const youtube = document.getElementById("bYoutube").value.trim();
+  const facebook = document.getElementById("bFacebook").value.trim();
+  const twitter = document.getElementById("bTwitter").value.trim();
   const file = document.getElementById("bLogo").files[0];
   errorEl.textContent = "";
   if (!name) return (errorEl.textContent = "Company name is required.");
@@ -815,7 +833,11 @@ document.getElementById("companyForm").addEventListener("submit", async (e) => {
     logoUrl = pub.publicUrl + "?t=" + Date.now();
   }
   const { data: updated, error } = await supabaseClient.from("brands")
-    .update({ company_name: name, industry: industry || null, description: bio || null, logo_url: logoUrl })
+    .update({
+      company_name: name, industry: industry || null, description: bio || null, logo_url: logoUrl,
+      website: website || null, instagram_url: instagram || null, youtube_url: youtube || null,
+      facebook_url: facebook || null, twitter_url: twitter || null,
+    })
     .eq("user_id", BRAND.user_id).select().single();
   setButtonLoading(btn, false);
   if (error) return (errorEl.textContent = friendlyAuthError(error));
