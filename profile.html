@@ -126,6 +126,7 @@
           <div class="field"><label>Instagram username <span class="hint">(private)</span></label><input class="input" id="fUsername" placeholder="@yourhandle"></div>
           <div class="field"><label>Instagram URL <span class="hint">(private)</span></label><input class="input" type="url" id="fInstagramUrl" placeholder="https://instagram.com/yourhandle"></div>
           <div class="field"><label>Follower count</label><input class="input" type="number" min="0" id="fFollowers"></div>
+          <div class="field"><label>WhatsApp number <span class="hint">(private — for campaign alerts)</span></label><input class="input" type="tel" id="fWhatsapp" placeholder="e.g. +91 98765 43210"></div>
           <div class="field"><label>Audience — female %</label><input class="input" type="number" min="0" max="100" id="fFemalePct"></div>
           <div class="field"><label>Audience — male %</label><input class="input" type="number" min="0" max="100" id="fMalePct"></div>
         </div>
@@ -431,6 +432,7 @@ function toggleEdit() {
     document.getElementById("fUsername").value = c.username || "";
     document.getElementById("fInstagramUrl").value = c.instagram_url || "";
     document.getElementById("fFollowers").value = c.followers || "";
+    document.getElementById("fWhatsapp").value = c.whatsapp_number || "";
     EDIT_RATE_CARD = (Array.isArray(c.rate_card) && c.rate_card.length ? c.rate_card : DEFAULT_RATE_CARD)
       .map((r) => ({ type: r.type || "", rate: r.rate ?? "" }));
     renderRateCardRows();
@@ -523,6 +525,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     locations: val("fCity").trim() ? [val("fCity").trim()] : [],
     username: val("fUsername").trim() || null,
     instagram_url: val("fInstagramUrl").trim() || null,
+    whatsapp_number: val("fWhatsapp").trim() || null,
     followers: followers === "" ? 0 : parseInt(followers, 10),
     rate_card: rateCard,
     rate_min: rates.length ? Math.min(...rates) : null,
