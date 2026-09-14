@@ -36,12 +36,16 @@ html { scroll-behavior: smooth; }
   --on-dark:#f0f0f0;
   --on-dark-soft:#a8a8a8;
 
-  --success:#2f6f8f;
-  --success-soft:#e2edf1;
+  /* Strict palette: white/black/grey + red only -- success and warning
+     used to borrow a teal and a gold that don't belong to it. They're
+     told apart by weight/contrast now instead of hue: success reads as
+     solid ink-on-white, warning as a bordered mid-grey. */
+  --success:#000000;
+  --success-soft:#ececec;
   --danger:#b3261e;
   --danger-soft:#fbe6e2;
-  --warning:#a8721f;
-  --warning-soft:#f7ecd8;
+  --warning:#4a4a4a;
+  --warning-soft:#e9e9e9;
 
   /* ---- type ----
      One light, quiet grotesk for everything -- no separate "display"
@@ -179,7 +183,7 @@ h4{ font-size:15px; font-weight:600; }
 .badge-accent{ background:var(--accent-soft); color:var(--accent-700); }
 .badge-success{ background:var(--success-soft); color:var(--success); }
 .badge-danger{ background:var(--danger-soft); color:var(--danger); }
-.badge-warning{ background:var(--warning-soft); color:var(--warning); }
+.badge-warning{ background:var(--warning-soft); color:var(--warning); border:1px solid var(--border-strong); }
 .badge-dark{ background:var(--dark); color:#fff; }
 .badge-dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
 
@@ -538,16 +542,14 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 @media (max-width:640px){ .slider-card{ flex-basis:190px; } }
 
 /* ---------------- Homepage "app window" hero ---------------- */
-/* A framed product-shot: soft dot-grid backdrop with corner tick
+/* A framed product-shot: flat monochrome backdrop with corner tick
    marks, a dark rounded "window" holding a decorative chrome bar and
    the live creator slider, small italic footnotes underneath. This is
-   the very first thing on the page, replacing the old plain hero. */
-.hero-frame-outer{ position:relative; padding:48px 20px 64px; overflow:hidden; background:linear-gradient(165deg, #f3efec 0%, #ece4e0 45%, #f2eeec 100%); }
-.hero-frame-outer::before{
-  content:""; position:absolute; inset:0;
-  background-image:radial-gradient(rgba(0,0,0,.05) 1px, transparent 1px);
-  background-size:26px 26px; pointer-events:none;
-}
+   the very first thing on the page, replacing the old plain hero.
+   Extreme-minimal pass: dropped the warm gradient, dot-grid texture
+   and red glow -- flat var(--bg), a plain frame, nothing decorative
+   competing with the content. */
+.hero-frame-outer{ position:relative; padding:48px 20px 64px; overflow:hidden; background:var(--bg); }
 .hero-corner{ position:absolute; width:20px; height:20px; border:1px solid rgba(0,0,0,.18); pointer-events:none; z-index:1; }
 .hero-corner.tl{ top:20px; left:20px; border-right:none; border-bottom:none; }
 .hero-corner.tr{ top:20px; right:20px; border-left:none; border-bottom:none; }
@@ -556,12 +558,6 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 @media (max-width:480px){ .hero-corner{ display:none; } }
 .hero-meta-strip{ position:relative; display:flex; justify-content:space-between; gap:12px; max-width:1080px; margin:0 auto 24px; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600; }
 .hero-window{ position:relative; max-width:1080px; margin:0 auto; background:#0b0b0c; border-radius:20px; padding:22px 22px 26px; box-shadow:0 30px 70px -35px rgba(0,0,0,.4); }
-.hero-window::after{
-  content:""; position:absolute; inset:-30px; z-index:-1; border-radius:36px; pointer-events:none;
-  background:radial-gradient(55% 55% at 25% 15%, rgba(231,71,60,.12), transparent 70%),
-             radial-gradient(45% 45% at 85% 90%, rgba(231,71,60,.07), transparent 70%);
-  filter:blur(26px);
-}
 .hero-window-chrome{ display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:18px; }
 .hero-window-brand{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:600; color:#fff; font-size:14px; }
 .hero-window-brand img{ height:22px; filter:invert(1) brightness(2); }
@@ -583,8 +579,8 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 .hero-slide:hover{ transform:translateY(-5px); }
 .hero-slide-intro{
   width:220px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; color:#fff;
-  background:linear-gradient(155deg, #1a1517 0%, #100e0f 70%);
-  border:1px solid rgba(231,71,60,.18);
+  background:var(--dark-2);
+  border:1px solid rgba(255,255,255,.1);
 }
 .hero-slide-intro .hero-slide-accent-bar{ width:28px; height:3px; border-radius:2px; background:var(--accent); margin-bottom:14px; }
 .hero-slide-intro p{ font-size:13px; color:rgba(255,255,255,.6); line-height:1.5; margin:10px 0 16px; }

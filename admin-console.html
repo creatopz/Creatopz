@@ -238,7 +238,7 @@ function renderApps() {
           const href = safeExternalUrl(a.creators?.instagram_url);
           if (!href) return `<span style="color:#fff;">Not connected</span>`;
           const label = a.creators?.username ? "@" + String(a.creators.username).replace(/^@/, "") : href.replace(/^https?:\/\//, "");
-          return `<a href="${href}" target="_blank" rel="noopener" style="color:#7ee787;font-weight:600;">${escapeHtml(label)} ↗</a>`;
+          return `<a href="${href}" target="_blank" rel="noopener" style="color:#ff6f61;font-weight:600;">${escapeHtml(label)} ↗</a>`;
         })()}</div></div>
         <div><div class="caption" style="text-transform:uppercase;">Creator's rate card</div><div style="margin-top:5px;color:#fff;">${rateCardSummary(a.creators?.rate_card)}</div></div>
       </div>
@@ -292,10 +292,10 @@ function renderCreators() {
       <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
       <td class="caption" style="max-width:220px;">${rateCardSummary(c.rate_card)}</td>
       <td>${c.whatsapp_number
-        ? `<a href="${waLink(c.whatsapp_number)}" target="_blank" rel="noopener" style="color:#7ee787;font-weight:600;white-space:nowrap;">${escapeHtml(c.whatsapp_number)} ↗</a>`
+        ? `<a href="${waLink(c.whatsapp_number)}" target="_blank" rel="noopener" style="color:#ff6f61;font-weight:600;white-space:nowrap;">${escapeHtml(c.whatsapp_number)} ↗</a>`
         : `<span class="caption">Not shared</span>`}</td>
       <td><button class="btn-ghost admin-toggle-public" data-id="${c.id}" data-next="${!c.is_public}" style="background:none;border:none;color:${c.is_public ? "#c9c9c9" : "#6d6d6d"};font-weight:600;cursor:pointer;font-size:12.5px;">${c.is_public ? "Listed" : "Hidden"}</button></td>
-      <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#8a6420;color:#e8b84b;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
+      <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:var(--accent);color:#ff6f61;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
       <td><button class="btn btn-sm ${c.is_verified ? "btn-accent" : "admin-btn-out"} toggle-verify-btn" data-id="${c.id}" data-next="${!c.is_verified}">${c.is_verified ? "Verified ✓" : "Verify"}</button></td>
     </tr>`).join("");
   document.querySelectorAll(".admin-toggle-public").forEach((btn) => btn.addEventListener("click", () => togglePublic(btn.dataset.id, btn.dataset.next === "true")));
@@ -403,7 +403,7 @@ function openNotifyModal(campaignId) {
           <b style="font-size:14px;">${escapeHtml(cr.name || "Creator")}</b>
           ${cr.category ? `<span class="caption" style="margin-left:8px;">${escapeHtml(cr.category)}${c.niche && cr.category === c.niche ? " · match" : ""}</span>` : ""}
         </span>
-        <span style="color:#1fa855;font-weight:600;white-space:nowrap;">WhatsApp ↗</span>
+        <span style="color:#ff6f61;font-weight:600;white-space:nowrap;">WhatsApp ↗</span>
       </a>`).join("");
   }
   openModal("notifyModal");

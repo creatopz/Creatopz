@@ -88,7 +88,7 @@ function initScrollProgress() {
   const bar = document.createElement("div");
   bar.id = "scrollProgressBar";
   bar.style.cssText =
-    "position:fixed;top:0;left:0;height:3px;width:0%;background:var(--red,#FF3300);" +
+    "position:fixed;top:0;left:0;height:3px;width:0%;background:var(--accent,#e7473c);" +
     "z-index:9999;transition:width .1s linear;";
   document.body.appendChild(bar);
   if (PREFERS_REDUCED_MOTION) return;

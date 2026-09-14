@@ -15,10 +15,13 @@ function showToast(message, type = "info") {
     document.body.appendChild(host);
   }
   const el = document.createElement("div");
+  // Strict monochrome + red palette: info/success both read as solid
+  // black (the message text itself carries the distinction), error is
+  // the site's one accent red -- no other hues in a toast, ever.
   const colors = {
-    info: "#17140f",
-    success: "#3E7C6B",
-    error: "#B8493D",
+    info: "#000000",
+    success: "#000000",
+    error: "#e7473c",
   };
   el.textContent = message;
   el.style.cssText =
