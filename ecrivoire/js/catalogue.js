@@ -70,6 +70,10 @@
       pal: Number.isInteger(book.pal) ? book.pal : Math.floor(Math.random() * 6),
       blurb: book.blurb || "A new arrival, fresh on the shelf — description coming soon.",
       stampPick: !!book.stampPick,
+      editionNo: book.editionNo || null,
+      dropMonth: book.dropMonth || null,
+      copiesTotal: Number.isFinite(book.copiesTotal) ? book.copiesTotal : undefined,
+      copiesLeft: Number.isFinite(book.copiesLeft) ? book.copiesLeft : (Number.isFinite(book.copiesTotal) ? book.copiesTotal : undefined),
       _admin: true,
       _addedAt: Date.now()
     };

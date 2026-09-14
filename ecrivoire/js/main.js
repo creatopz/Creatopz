@@ -186,16 +186,34 @@
     return `<div class="stamp" title="Purple Cow Approved — a house favourite"><span class="stamp__icon">${icon}</span><span>Cow<br>Approved</span></div>`;
   }
 
+  /* Scarcity — every Écrivoire Edition is a small, numbered print run. */
+  function isSoldOut(book) {
+    return typeof book.copiesLeft === "number" && book.copiesLeft <= 0;
+  }
+  function stockLineHTML(book) {
+    if (typeof book.copiesLeft !== "number") return "";
+    if (isSoldOut(book)) {
+      return `<div class="stock-line stock-line--out">Sold out — ${book.dropMonth || "past edition"}</div>`;
+    }
+    const pct = book.copiesTotal ? book.copiesLeft / book.copiesTotal : 1;
+    const low = pct <= 0.2;
+    return `<div class="stock-line${low ? " stock-line--low" : ""}">${low ? "Only " : ""}${book.copiesLeft} of ${book.copiesTotal} left${book.editionNo ? " · " + book.editionNo : ""}</div>`;
+  }
+
   function bookCardHTML(book) {
+    const soldOut = isSoldOut(book);
+    const addControl = soldOut
+      ? `<button type="button" class="book-card__add book-card__add--notify" data-notify="${book.id}" aria-label="Join the waitlist for ${book.title}" title="Join the waitlist">🔔</button>`
+      : `<button type="button" class="book-card__add" data-add-to-cart="${book.id}" aria-label="Add ${book.title} to bag" title="Add to bag">+</button>`;
     return `
-    <article class="book-card reveal">
+    <article class="book-card reveal${soldOut ? " book-card--sold-out" : ""}">
       <div class="book-card__cover-wrap">
         <a href="book.html?id=${book.id}" aria-label="${book.title}">
-          ${badgeHTML(book.badge)}
+          ${badgeHTML(soldOut ? "Sold Out" : book.badge)}
           ${coverHTML(book)}
         </a>
         ${stampHTML(book)}
-        <button type="button" class="book-card__add" data-add-to-cart="${book.id}" aria-label="Add ${book.title} to bag" title="Add to bag">+</button>
+        ${addControl}
       </div>
       <a href="book.html?id=${book.id}" class="book-card__info">
         <span>
@@ -204,7 +222,17 @@
         </span>
         <span class="book-card__price">${fmt(book.price)}</span>
       </a>
+      ${stockLineHTML(book)}
     </article>`;
+  }
+
+  function joinWaitlist(id) {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem("ecrivoire_waitlist_v1")) || []; } catch (e) {}
+    if (!list.includes(id)) list.push(id);
+    try { localStorage.setItem("ecrivoire_waitlist_v1", JSON.stringify(list)); } catch (e) {}
+    const book = Catalogue.getBook(id);
+    window.EcrivoireMascot?.toast(`You're on the waitlist for ${book ? book.title : "the next run"}.`);
   }
 
   function wireAddButtons(root) {
@@ -212,6 +240,14 @@
       btn.addEventListener("click", (e) => {
         e.preventDefault(); e.stopPropagation();
         addToCart(btn.dataset.addToCart, 1);
+      });
+    });
+    $$("[data-notify]", root || document).forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault(); e.stopPropagation();
+        joinWaitlist(btn.dataset.notify);
+        btn.textContent = "✓";
+        btn.disabled = true;
       });
     });
   }
@@ -388,21 +424,35 @@
     }
     document.title = `${book.title} — Écrivoire Studios`;
     $("#book-crumb-title") && ($("#book-crumb-title").textContent = book.title);
-    $("#book-cover-slot").innerHTML = `${badgeHTML(book.badge)}${coverHTML(book)}${stampHTML(book)}`;
+    const soldOut = isSoldOut(book);
+    $("#book-cover-slot").innerHTML = `${badgeHTML(soldOut ? "Sold Out" : book.badge)}${coverHTML(book)}${stampHTML(book)}`;
     $("#book-title").textContent = book.title;
     $("#book-author").textContent = "by " + book.author;
     $("#book-price").textContent = fmt(book.price);
     $("#book-blurb").textContent = book.blurb;
     $("#book-genre-tag").textContent = book.genre;
-    const specs = { Publisher: book.publisher, Published: book.year, Pages: book.pages, ISBN: book.isbn, Genre: book.genre };
+    const yearLabel = book.year < 0 ? `c. ${Math.abs(book.year)} BCE` : book.year;
+    const specs = { "Original work": `${book.author}, ${yearLabel}`, "This edition": book.editionNo ? `${book.editionNo} — ${book.dropMonth}` : "Écrivoire Editions", Pages: book.pages, ISBN: book.isbn, Genre: book.genre };
     $("#book-specs").innerHTML = Object.entries(specs).map(([k, v]) => `<div class="event-row" style="grid-template-columns:1fr 1fr;padding:.9rem 1.1rem;margin-bottom:.5rem;box-shadow:3px 3px 0 0 var(--ink);"><span class="mono" style="color:var(--muted);">${k}</span><span>${v}</span></div>`).join("");
     $("#book-rating").innerHTML = Array.from({ length: 5 }).map((_, i) => `<span data-doodle="${i < book.rating ? "sparkle" : "circleScribble"}"></span>`).join("");
+    const stockWrap = $("#book-stock");
+    if (stockWrap) stockWrap.innerHTML = stockLineHTML(book);
 
     let qty = 1;
     const qtyEl = $("#book-qty");
-    $("#qty-up")?.addEventListener("click", () => { qty++; qtyEl.textContent = qty; });
-    $("#qty-down")?.addEventListener("click", () => { qty = Math.max(1, qty - 1); qtyEl.textContent = qty; });
-    $("#book-add-btn")?.addEventListener("click", () => addToCart(book.id, qty));
+    const addBtn = $("#book-add-btn");
+    if (soldOut && addBtn) {
+      addBtn.textContent = "🔔 Join the Waitlist";
+      addBtn.classList.remove("btn-red");
+      addBtn.classList.add("btn-outline");
+      $("#qty-up")?.setAttribute("disabled", "");
+      $("#qty-down")?.setAttribute("disabled", "");
+      addBtn.addEventListener("click", () => joinWaitlist(book.id));
+    } else {
+      $("#qty-up")?.addEventListener("click", () => { qty++; qtyEl.textContent = qty; });
+      $("#qty-down")?.addEventListener("click", () => { qty = Math.max(1, qty - 1); qtyEl.textContent = qty; });
+      addBtn?.addEventListener("click", () => addToCart(book.id, qty));
+    }
 
     const related = Catalogue.getAllBooks().filter((b) => b.genre === book.genre && b.id !== book.id).slice(0, 4);
     const relatedWrap = $("#book-related-grid");
@@ -525,8 +575,13 @@
     const newGrid = $("#home-new-grid");
     if (!newGrid) return;
     const all = Catalogue.getAllBooks();
-    const featured = all.filter((b) => b.badge).slice(0, 8);
-    renderGrid(newGrid, featured.length ? featured : all.slice(0, 8));
+    const newDrop = all.filter((b) => b.badge === "New Drop");
+    const thisMonth = all.filter((b) => b.badge === "This Month");
+    const featured = [...newDrop, ...thisMonth].slice(0, 8);
+    renderGrid(newGrid, featured.length ? featured : all.filter((b) => !isSoldOut(b)).slice(0, 8));
+
+    const dropLabel = $("#home-drop-label");
+    if (dropLabel && newDrop[0]) dropLabel.textContent = newDrop[0].dropMonth;
 
     const statTitles = $("#stat-titles");
     if (statTitles) statTitles.textContent = all.length;

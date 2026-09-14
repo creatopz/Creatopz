@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Écrivoire Studios — The Purple Cow Bookstore</title>
-<meta name="description" content="Écrivoire Studios — a luxury independent bookstore and bindery with a purple cow for a mascot. Hand-picked fiction, poetry, essays, art and design books in ₹, a bookbinding studio, and a reading series you'll actually want to attend.">
+<title>Écrivoire Studios — Numbered Editions of Public-Domain Classics</title>
+<meta name="description" content="Écrivoire Studios is a small press: we design, typeset and hand-bind our own limited-run editions of public-domain classics, release a new numbered drop every month, and publish a few original manuscripts a year. Nowhere else stocks our editions.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,37 +22,38 @@
   <section class="hero">
     <div class="wrap grid">
       <div class="hero__top">
-        <span class="eyebrow"><b>Est. 2014</b> — Lower Marsh Quarter</span>
+        <span class="eyebrow"><b>Online now</b> — a shopfront is coming later</span>
         <span class="eyebrow">No. 001 / Home</span>
       </div>
       <div class="hero__headline">
         <h1 class="h-display">
-          Be a<br>
-          <span style="position:relative;display:inline-block;">purple
+          Classics,<br>
+          <span style="position:relative;display:inline-block;">remade
             <span data-doodle="underline" class="doodle-red" style="position:absolute;left:-4%;right:-4%;bottom:-.18em;height:.3em;"></span>
-          </span> reader.
+          </span>.
         </h1>
         <p class="lede" style="margin-top:1.75rem;">
-          Every other bookshop is beige. We built ours around one loud idea: the
-          books worth remembering are the ones nobody warned you about. Fiction,
-          poetry, essays, art and design — hand-picked, shelved by feeling, priced
-          honestly in ₹.
+          We're a small press, not a reseller. Every book here is a public-domain
+          classic we've designed, typeset and hand-bound ourselves — released in a
+          small, numbered run, once a month. When a drop sells out, it's gone for
+          good. No one else stocks our editions, because no one else made them.
         </p>
-        <div style="display:flex;align-items:center;gap:1.6rem;margin-top:2.2rem;flex-wrap:wrap;">
-          <a href="shop.html" class="btn btn-red">Browse the shelf</a>
+        <div style="display:flex;align-items:center;gap:1.6rem;margin-top:2.2rem;flex-wrap:wrap;position:relative;">
+          <a href="shop.html" class="btn btn-red">Browse this month's drop</a>
           <button type="button" id="spin-open-btn" class="btn btn-gold">🐮 Spin the Shelf</button>
-          <span data-doodle="swirl" class="doodle-float" style="width:46px;height:46px;--r:-6deg;" aria-hidden="true"></span>
+          <span data-doodle="catYarn" class="doodle-float" style="width:78px;height:72px;--r:-3deg;" aria-hidden="true"></span>
         </div>
       </div>
       <div class="hero__side">
         <div class="hero__meta">
           <div><strong id="stat-titles">19</strong>Titles on the shelf</div>
           <div><strong>8</strong>Categories</div>
-          <div><strong>₹199+</strong>Where prices start</div>
+          <div><strong>₹249+</strong>Where prices start</div>
         </div>
         <p class="body" style="font-size:.88rem;">
-          “Why blend in with every other quiet, minimal bookshop when you could
-          be the purple cow in a field of brown ones?” — Odile, founder
+          “We're online first, a physical shopfront later — but every edition is
+          real, numbered, and printed in a run small enough to actually run out.”
+          — Odile, founder
         </p>
       </div>
     </div>
@@ -69,15 +70,18 @@
     <div class="mascot-band" id="mascot-band-root" style="margin-top:1.5rem;"></div>
   </section>
 
-  <!-- NEW ARRIVALS -->
+  <!-- THIS MONTH'S EDITIONS -->
   <section class="section-pad">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="eyebrow"><span class="num">01</span> — On the front table</span>
-          <h2 class="h-lg" style="margin-top:.6rem;">New &amp; noted</h2>
+          <span class="eyebrow"><span class="num">01</span> — <span id="home-drop-label">This month's</span> drop</span>
+          <h2 class="h-lg" style="margin-top:.6rem;">Numbered. Limited.<br>Once it's gone, it's gone.</h2>
         </div>
-        <a href="shop.html" class="btn btn-outline btn-sm">View all books</a>
+        <a href="shop.html" class="btn btn-outline btn-sm">View all editions</a>
+      </div>
+      <div style="position:relative;">
+        <span data-doodle="catSleep" class="doodle-float" style="width:92px;height:76px;--r:2deg;position:absolute;top:-58px;right:0;" aria-hidden="true"></span>
       </div>
       <div class="book-grid" id="home-new-grid"></div>
     </div>
@@ -106,22 +110,21 @@
           <div class="cover__mark" style="font-size:4.5rem;">É</div>
           <div>
             <div class="cover__rule"></div>
-            <div class="cover__title" style="font-size:1.3rem;">Since 2014, one shopfront in the Lower Marsh Quarter.</div>
+            <div class="cover__title" style="font-size:1.3rem;">Since 2025, nineteen editions and counting — no shopfront yet.</div>
           </div>
         </div>
         <span data-doodle="bookmark" class="doodle-red doodle-float" style="width:40px;height:70px;position:absolute;top:-18px;right:12%;--r:8deg;" aria-hidden="true"></span>
       </div>
       <div style="grid-column:7/-1;">
         <span class="eyebrow"><span class="num">03</span> — About the studio</span>
-        <h2 class="h-lg" style="margin-top:.6rem;">Part bookstore,<br>part bindery,<br>one purple cow.</h2>
+        <h2 class="h-lg" style="margin-top:.6rem;">Part press,<br>part bindery,<br>one purple cow.</h2>
         <p class="body" style="margin-top:1.4rem;">
-          Écrivoire Studios opened in a former print shop, and we never quite
-          stopped acting like one. Downstairs is the shop floor — fiction,
-          poetry, essays, art and design, staff-picked and hand-labelled.
-          Through the back is the bindery, where we repair broken spines and
-          rebind well-loved paperbacks. Everywhere else is Inkling, our
-          purple cow, making sure this place is impossible to confuse with
-          any other bookshop in the city.
+          Écrivoire Studios started online, with a plan to open a real
+          shopfront once the editions earn it. Every title is public-domain
+          — copyright expired, free to reprint — which means we can design,
+          typeset and hand-bind our own version instead of just reordering
+          someone else's stock. A small numbered run goes out every month.
+          Once it sells out, that exact edition never comes back the same way.
         </p>
         <a href="about.html" class="btn btn-outline" style="margin-top:1.8rem;">Read our story</a>
       </div>
@@ -147,6 +150,30 @@
         </div>
       </div>
       <div class="testimonial-grid" id="home-testimonials"></div>
+    </div>
+  </section>
+
+  <!-- PUBLISH WITH US -->
+  <section class="section-pad-sm">
+    <div class="wrap">
+      <div class="info-card tilt-1" style="padding:2.6rem 2.2rem;position:relative;overflow:visible;">
+        <span data-doodle="catPounce" class="doodle-float" style="width:82px;height:64px;--r:-4deg;position:absolute;top:-46px;right:2rem;" aria-hidden="true"></span>
+        <div class="grid" style="align-items:center;">
+          <div style="grid-column:1/8;">
+            <span class="eyebrow">Not just classics</span>
+            <h2 class="h-lg" style="margin-top:.6rem;">Have you written something?</h2>
+            <p class="body" style="margin-top:1rem;">
+              Alongside our public-domain editions, we publish a small number of
+              original manuscripts every year — a debut collection, a strange
+              first novella, an essay nobody else wanted to take a chance on.
+              We read every submission ourselves.
+            </p>
+          </div>
+          <div style="grid-column:9/-1;">
+            <a href="publish.html" class="btn btn-red btn-block">Publish With Us</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

@@ -115,6 +115,57 @@
     star4Small: {
       vb: "0 0 40 40", filter: "rough-b",
       body: `<path d="M20,2 L24,17 L38,20 L24,23 L20,38 L16,23 L2,20 L16,17 Z" fill="currentColor"/>`
+    },
+    /* Reading-cat doodles — cute, animated, meant to catch the eye.
+       Sub-parts carry their own class (cat-paw, cat-yarn-ball, …) so
+       css/style.css can animate just that limb, not the whole drawing. */
+    catYarn: {
+      vb: "0 0 120 110", filter: "rough-a",
+      body: `<path d="M35,95 C25,95 20,80 24,68 C18,60 20,45 32,42 C30,30 40,20 52,22 C56,14 66,14 70,22 C82,20 90,30 86,42 C96,46 96,62 88,68 C90,80 82,95 68,95 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+             <path d="M40,26 L34,10 L50,20 Z" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/>
+             <path d="M78,20 L88,8 L82,26 Z" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/>
+             <circle cx="50" cy="36" r="2.6" fill="currentColor"/><circle cx="68" cy="36" r="2.6" fill="currentColor"/>
+             <path d="M56,44 Q59,48 62,44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+             <path d="M30,38 L14,34 M30,42 L14,42 M88,38 L104,34 M88,42 L104,42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+             <path d="M86,80 Q104,76 100,56" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+             <g class="cat-paw" style="transform-origin:28px 70px;"><path d="M28,70 C18,74 10,84 14,92 C22,96 30,90 30,80 Z" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/></g>
+             <g class="cat-yarn-ball" style="transform-origin:14px 98px;"><circle cx="14" cy="98" r="12" fill="none" stroke="currentColor" stroke-width="2.8"/><path d="M4,98 Q14,90 24,98 M4,98 Q14,106 24,98 M8,90 Q14,98 8,106 M20,90 Q14,98 20,106" fill="none" stroke="currentColor" stroke-width="1.6"/></g>`
+    },
+    catStretch: {
+      vb: "0 0 120 90", filter: "rough-a",
+      body: `<g class="cat-stretch-scene" style="transform-origin:60px 74px;">
+             <path d="M10,70 C8,60 14,55 22,56 C20,44 30,34 42,36 C44,26 56,22 64,28 C70,20 84,22 88,32 C100,32 108,44 102,56 C108,62 106,72 96,74 L18,74 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+             <path d="M14,74 L6,84 M24,74 L18,86" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+             <path d="M92,74 L94,86 M100,72 L104,86" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+             <circle cx="20" cy="52" r="14" fill="none" stroke="currentColor" stroke-width="3"/>
+             <path d="M10,44 L6,32 L18,40 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <path d="M26,42 L34,30 L28,44 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <circle cx="16" cy="52" r="2" fill="currentColor"/><circle cx="24" cy="52" r="2" fill="currentColor"/>
+             <path d="M100,60 Q116,52 110,36" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></g>`
+    },
+    catPounce: {
+      vb: "0 0 120 90", filter: "rough-a",
+      body: `<g class="cat-pounce-scene">
+             <path d="M14,60 C8,48 16,36 30,38 C34,26 50,22 60,30 C72,22 88,28 88,42 C100,42 106,54 98,62 C100,72 90,78 80,74 C70,80 54,78 48,70 C34,74 20,70 14,60 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+             <path d="M26,36 L20,24 L34,32 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <path d="M42,28 L48,16 L52,30 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <circle cx="34" cy="42" r="2.2" fill="currentColor"/><circle cx="46" cy="40" r="2.2" fill="currentColor"/>
+             <path d="M18,58 L6,66 M30,64 L22,76" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+             <path d="M84,66 L92,76 M94,60 L104,66" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+             <path d="M92,50 Q112,46 114,60" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+             <rect x="60" y="78" width="24" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.4"/></g>`
+    },
+    catSleep: {
+      vb: "0 -6 120 96", filter: "rough-b",
+      body: `<rect x="30" y="70" width="60" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.6"/>
+             <rect x="35" y="61" width="50" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.6"/>
+             <path d="M60,60 C38,60 30,44 42,32 C36,20 48,10 60,16 C68,8 82,12 82,24 C94,24 98,38 88,46 C92,56 80,64 68,60 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+             <path d="M44,24 L38,12 L52,20 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <path d="M70,14 L78,4 L74,18 Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+             <path d="M52,30 Q56,34 60,30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+             <path d="M48,26 Q51,28 54,26 M62,26 Q65,28 68,26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+             <path d="M84,46 Q100,50 92,62 Q84,70 74,62" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+             <g class="cat-zzz"><text x="86" y="20" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="10" fill="currentColor">z</text><text x="96" y="10" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="14" fill="currentColor">z</text><text x="107" y="-2" font-family="'Space Grotesk',sans-serif" font-weight="700" font-size="18" fill="currentColor">z</text></g>`
     }
   };
 

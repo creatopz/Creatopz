@@ -128,6 +128,24 @@ section{position:relative;}
 @keyframes doodleFloat{0%,100%{transform:translateY(0) rotate(var(--r,0deg));}50%{transform:translateY(-8px) rotate(var(--r,0deg));}}
 @media (prefers-reduced-motion:reduce){.doodle-float{animation:none;}}
 
+/* Reading cats — cute, looping, attention-catching */
+.cat-doodle{position:relative;}
+[data-doodle="catYarn"] .cat-paw{animation:catPawBat 1.6s ease-in-out infinite;}
+@keyframes catPawBat{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(26deg);}}
+[data-doodle="catYarn"] .cat-yarn-ball{animation:catYarnSpin 2.4s linear infinite;}
+@keyframes catYarnSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+[data-doodle="catStretch"] .cat-stretch-scene{animation:catBreathe 2.6s ease-in-out infinite;}
+@keyframes catBreathe{0%,100%{transform:scale(1);}50%{transform:scale(1.045,.97);}}
+[data-doodle="catPounce"] .cat-pounce-scene{animation:catPounceBounce 1.4s cubic-bezier(.45,0,.55,1) infinite;}
+@keyframes catPounceBounce{0%,100%{transform:translateY(0) rotate(0deg);}45%{transform:translateY(-13px) rotate(-4deg);}55%{transform:translateY(-13px) rotate(-4deg);}}
+[data-doodle="catSleep"] .cat-zzz{animation:catZzz 2.8s ease-in-out infinite;transform-origin:90px 10px;}
+@keyframes catZzz{0%{opacity:.15;transform:translateY(4px) scale(.9);}50%{opacity:1;transform:translateY(-4px) scale(1);}100%{opacity:.15;transform:translateY(4px) scale(.9);}}
+@media (prefers-reduced-motion:reduce){
+  [data-doodle="catYarn"] .cat-paw,[data-doodle="catYarn"] .cat-yarn-ball,
+  [data-doodle="catStretch"] .cat-stretch-scene,[data-doodle="catPounce"] .cat-pounce-scene,
+  [data-doodle="catSleep"] .cat-zzz{animation:none;}
+}
+
 .pop-in{opacity:0;transform:translateY(24px) scale(.9) rotate(-4deg);transition:opacity .5s var(--bounce),transform .55s var(--bounce);}
 .pop-in.is-visible{opacity:1;transform:translateY(0) scale(1) rotate(0deg);}
 
@@ -183,7 +201,7 @@ section{position:relative;}
   border-bottom:var(--bw-lg) solid var(--ink);
 }
 .nav{display:flex;align-items:center;justify-content:space-between;padding-block:.85rem;gap:1rem;}
-.nav__links{display:flex;align-items:center;gap:1.9rem;}
+.nav__links{display:flex;align-items:center;gap:1.5rem;}
 .nav__links a{
   font-family:var(--ff-display);
   font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
@@ -203,7 +221,7 @@ section{position:relative;}
 .nav__burger span{width:22px;height:3px;background:var(--ink);display:block;}
 .nav__mobile{display:none;}
 
-@media (max-width:940px){
+@media (max-width:1080px){
   .nav__links{display:none;}
   .nav__burger{display:flex;}
   .nav__mobile{
@@ -330,6 +348,11 @@ section{position:relative;}
 .book-card__title{font-family:var(--ff-serif);font-weight:600;font-size:1.02rem;line-height:1.25;}
 .book-card__author{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem;}
 .book-card__price{font-family:var(--ff-display);font-weight:700;font-size:.95rem;white-space:nowrap;}
+.stock-line{font-size:.72rem;color:var(--muted);margin-top:-.5rem;}
+.stock-line--low{color:var(--ink);font-weight:700;}
+.stock-line--out{color:var(--muted);font-style:italic;}
+.book-card--sold-out .cover{opacity:.55;filter:grayscale(1);}
+.book-card__add--notify{font-size:1rem;}
 .book-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2.4rem 1.6rem;}
 @media (max-width:960px){.book-grid{grid-template-columns:repeat(3,1fr);}}
 @media (max-width:680px){.book-grid{grid-template-columns:repeat(2,1fr);gap:1.8rem 1rem;}}

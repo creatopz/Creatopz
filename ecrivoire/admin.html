@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Studio Console — Écrivoire Studios</title>
-<meta name="description" content="Internal inventory console for Écrivoire Studios — add products, manage the catalogue, and work the wishlist wall.">
+<meta name="description" content="Internal console for Écrivoire Studios — launch new numbered editions, manage inventory and scarcity, review author submissions, and work the wishlist wall.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,7 +22,7 @@
     <div class="admin-gate__box">
       <span data-doodle="book" style="width:52px;height:52px;display:inline-block;margin-bottom:1rem;" aria-hidden="true"></span>
       <h1 class="h-lg">Studio Console</h1>
-      <p class="body" style="margin:1rem auto 0;">Staff only. Enter the demo password to manage inventory and the wishlist wall.</p>
+      <p class="body" style="margin:1rem auto 0;">Staff only. Enter the demo password to launch editions, manage stock, and review submissions.</p>
       <form id="gate-form" style="margin-top:1.6rem;text-align:left;">
         <div class="field">
           <label for="gate-password">Password</label>
@@ -49,7 +49,8 @@
 
       <div class="admin-tabs">
         <button type="button" class="admin-tab is-active" data-tab="inventory">Inventory</button>
-        <button type="button" class="admin-tab" data-tab="add">Add product</button>
+        <button type="button" class="admin-tab" data-tab="add">Launch an edition</button>
+        <button type="button" class="admin-tab" data-tab="submissions">Author submissions</button>
         <button type="button" class="admin-tab" data-tab="requests">Wishlist requests</button>
       </div>
 
@@ -61,7 +62,7 @@
         </div>
         <div class="admin-table-wrap">
           <table class="admin-table">
-            <thead><tr><th>Cover</th><th>Title</th><th>Author</th><th>Genre</th><th>Price</th><th>Badge</th><th>Source</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Cover</th><th>Edition</th><th>Title</th><th>Author</th><th>Price</th><th>Stock</th><th>Badge</th><th>Source</th><th>Actions</th></tr></thead>
             <tbody id="inventory-body"></tbody>
           </table>
         </div>
@@ -69,27 +70,29 @@
 
       <!-- ADD / EDIT PRODUCT -->
       <div class="admin-panel" data-panel="add">
-        <span class="eyebrow" id="form-mode-label">New product</span>
-        <h2 class="h-lg" style="margin-top:.6rem;margin-bottom:1.8rem;">Upload to the shelf</h2>
+        <span class="eyebrow" id="form-mode-label">New edition</span>
+        <h2 class="h-lg" style="margin-top:.6rem;margin-bottom:1.8rem;">Launch an edition</h2>
         <form id="product-form">
           <input type="hidden" id="p-edit-id" value="">
           <div class="admin-form-grid">
-            <div class="field"><label for="p-title">Title</label><input id="p-title" required placeholder="The Book's Title"></div>
-            <div class="field"><label for="p-author">Author</label><input id="p-author" required placeholder="Author name"></div>
+            <div class="field"><label for="p-title">Title</label><input id="p-title" required placeholder="e.g. Moby-Dick"></div>
+            <div class="field"><label for="p-author">Original author</label><input id="p-author" required placeholder="e.g. Herman Melville"></div>
             <div class="field"><label for="p-genre">Genre</label><select id="p-genre"></select></div>
             <div class="field"><label for="p-price">Price (₹)</label><input id="p-price" type="number" min="0" step="1" required placeholder="499"></div>
-            <div class="field"><label for="p-year">Year</label><input id="p-year" type="number" min="1900" max="2100" placeholder="2026"></div>
+            <div class="field"><label for="p-year">Original publication year</label><input id="p-year" type="number" placeholder="e.g. 1851"></div>
             <div class="field"><label for="p-pages">Pages</label><input id="p-pages" type="number" min="1" placeholder="240"></div>
-            <div class="field"><label for="p-publisher">Publisher</label><input id="p-publisher" placeholder="Écrivoire Editions"></div>
+            <div class="field"><label for="p-edition-no">Edition number</label><input id="p-edition-no" placeholder="e.g. No. 20"></div>
+            <div class="field"><label for="p-drop-month">Drop month</label><input id="p-drop-month" placeholder="e.g. November 2026"></div>
+            <div class="field"><label for="p-copies-total">Print run size</label><input id="p-copies-total" type="number" min="1" placeholder="e.g. 200"></div>
+            <div class="field"><label for="p-copies-left">Copies remaining</label><input id="p-copies-left" type="number" min="0" placeholder="e.g. 200"></div>
             <div class="field"><label for="p-isbn">ISBN</label><input id="p-isbn" placeholder="978-0-0000-0000-0"></div>
             <div class="field"><label for="p-badge">Badge</label>
               <select id="p-badge">
-                <option value="">None</option>
-                <option>New</option>
-                <option>Bestseller</option>
-                <option>Staff Pick</option>
-                <option>Signed</option>
-                <option>Limited</option>
+                <option value="">None (auto — sold out / low stock still shows)</option>
+                <option value="New Drop">New Drop</option>
+                <option value="This Month">This Month</option>
+                <option value="Staff Pick">Staff Pick</option>
+                <option value="Signed">Signed</option>
               </select>
             </div>
             <div class="field"><label for="p-mark">Cover initial</label><input id="p-mark" maxlength="1" placeholder="Auto from title"></div>
@@ -110,12 +113,26 @@
               <input type="checkbox" id="p-stamp" style="width:1.1rem;height:1.1rem;"> Mark as “Purple Cow Approved” (adds the wax stamp)
             </label>
           </div>
-          <div class="field"><label for="p-blurb">Blurb</label><textarea id="p-blurb" placeholder="A short shelf-card description."></textarea></div>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <button type="submit" class="btn btn-red" id="product-submit-btn">Add to shelf</button>
+          <div class="field"><label for="p-blurb">Blurb</label><textarea id="p-blurb" placeholder="A short shelf-card description, in our own words."></textarea></div>
+          <p class="form-note">Publisher is always “Écrivoire Editions” — every title here is our own print run, not a reseller listing. Only publish public-domain works (copyright expired) unless it came through Publish With Us.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
+            <button type="submit" class="btn btn-red" id="product-submit-btn">Launch edition</button>
             <button type="button" class="btn btn-outline" id="product-cancel-btn" hidden>Cancel edit</button>
           </div>
         </form>
+      </div>
+
+      <!-- AUTHOR SUBMISSIONS -->
+      <div class="admin-panel" data-panel="submissions">
+        <div class="toolbar">
+          <span class="eyebrow" id="submissions-count">0 submissions</span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Manuscript</th><th>Author</th><th>Genre</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="submissions-body"></tbody>
+          </table>
+        </div>
       </div>
 
       <!-- REQUESTS -->
@@ -141,6 +158,7 @@
 <script src="js/doodles.js"></script>
 <script src="js/catalogue.js"></script>
 <script src="js/requests.js"></script>
+<script src="js/submissions.js"></script>
 <script src="js/mascot.js"></script>
 <script src="js/partials.js"></script>
 <script src="js/main.js"></script>
@@ -201,20 +219,26 @@
 
     $("#product-form").addEventListener("submit", (e) => {
       e.preventDefault();
+      const copiesTotal = Number($("#p-copies-total").value) || undefined;
+      const copiesLeftRaw = $("#p-copies-left").value;
       const data = {
         title: $("#p-title").value.trim(),
         author: $("#p-author").value.trim(),
         genre: $("#p-genre").value,
         price: Number($("#p-price").value),
-        year: Number($("#p-year").value) || undefined,
+        year: $("#p-year").value !== "" ? Number($("#p-year").value) : undefined,
         pages: Number($("#p-pages").value) || undefined,
-        publisher: $("#p-publisher").value.trim() || undefined,
+        publisher: "Écrivoire Editions",
         isbn: $("#p-isbn").value.trim() || undefined,
         badge: $("#p-badge").value || null,
         mark: $("#p-mark").value.trim() || undefined,
         pal: Number($("input[name=p-pal]:checked")?.value ?? 1),
         stampPick: $("#p-stamp").checked,
-        blurb: $("#p-blurb").value.trim() || undefined
+        blurb: $("#p-blurb").value.trim() || undefined,
+        editionNo: $("#p-edition-no").value.trim() || undefined,
+        dropMonth: $("#p-drop-month").value.trim() || undefined,
+        copiesTotal: copiesTotal,
+        copiesLeft: copiesLeftRaw !== "" ? Number(copiesLeftRaw) : copiesTotal
       };
       const editId = $("#p-edit-id").value;
       if (editId) {
@@ -222,7 +246,7 @@
         window.EcrivoireMascot?.toast(`Updated “${data.title}”`);
       } else {
         window.EcrivoireCatalogue.addBook(data);
-        window.EcrivoireMascot?.toast(`Added “${data.title}” to the shelf`);
+        window.EcrivoireMascot?.toast(`Launched “${data.title}” — live on the shelf now`);
       }
       resetForm();
       $$('.admin-tab').forEach((t) => t.classList.toggle("is-active", t.dataset.tab === "inventory"));
@@ -236,8 +260,8 @@
   function resetForm() {
     $("#product-form").reset();
     $("#p-edit-id").value = "";
-    $("#form-mode-label").textContent = "New product";
-    $("#product-submit-btn").textContent = "Add to shelf";
+    $("#form-mode-label").textContent = "New edition";
+    $("#product-submit-btn").textContent = "Launch edition";
     $("#product-cancel-btn").hidden = true;
   }
 
@@ -249,9 +273,12 @@
     $("#p-author").value = book.author;
     $("#p-genre").value = book.genre;
     $("#p-price").value = book.price;
-    $("#p-year").value = book.year || "";
+    $("#p-year").value = book.year ?? "";
     $("#p-pages").value = book.pages || "";
-    $("#p-publisher").value = book.publisher || "";
+    $("#p-edition-no").value = book.editionNo || "";
+    $("#p-drop-month").value = book.dropMonth || "";
+    $("#p-copies-total").value = book.copiesTotal ?? "";
+    $("#p-copies-left").value = book.copiesLeft ?? "";
     $("#p-isbn").value = book.isbn || "";
     $("#p-badge").value = book.badge || "";
     $("#p-mark").value = book.mark || "";
@@ -270,20 +297,25 @@
   function renderInventory() {
     const books = window.EcrivoireCatalogue.getAllBooks();
     $("#inventory-count").textContent = `${books.length} title${books.length === 1 ? "" : "s"}`;
-    $("#inventory-body").innerHTML = books.map((b) => `
+    $("#inventory-body").innerHTML = books.map((b) => {
+      const soldOut = typeof b.copiesLeft === "number" && b.copiesLeft <= 0;
+      const stock = typeof b.copiesLeft === "number" ? `${b.copiesLeft} / ${b.copiesTotal}` : "—";
+      return `
       <tr>
         <td><span class="admin-swatch pal-${b.pal}"></span></td>
+        <td>${b.editionNo || "—"}</td>
         <td><strong>${b.title}</strong></td>
         <td>${b.author}</td>
-        <td>${b.genre}</td>
         <td>${fmt(b.price)}</td>
+        <td>${soldOut ? "Sold out" : stock}</td>
         <td>${b.badge || "—"}${b.stampPick ? " 🐮" : ""}</td>
         <td>${b._admin ? "Admin" : "Seed"}</td>
         <td>
           <button type="button" class="admin-row-btn" data-edit="${b.id}">Edit</button>
           <button type="button" class="admin-row-btn admin-row-btn--danger" data-delete="${b.id}">Delete</button>
         </td>
-      </tr>`).join("");
+      </tr>`;
+    }).join("");
 
     $$("[data-edit]", $("#inventory-body")).forEach((btn) => btn.addEventListener("click", () => editBook(btn.dataset.edit)));
     $$("[data-delete]", $("#inventory-body")).forEach((btn) => btn.addEventListener("click", () => {
@@ -293,6 +325,32 @@
         window.EcrivoireMascot?.toast("Removed from the shelf.");
         refreshAll();
       }
+    }));
+  }
+
+  function renderSubmissions() {
+    const items = window.EcrivoireSubmissions.getAll();
+    $("#submissions-count").textContent = `${items.length} submission${items.length === 1 ? "" : "s"}`;
+    $("#submissions-body").innerHTML = items.map((s) => `
+      <tr>
+        <td><strong>${s.title}</strong><br><span style="color:var(--muted);font-size:.8rem;">${s.pitch || ""}</span>${s.link ? `<br><a href="${s.link}" target="_blank" rel="noopener" style="font-size:.78rem;text-decoration:underline;">Sample link</a>` : ""}</td>
+        <td>${s.name}<br><span style="color:var(--muted);font-size:.78rem;">${s.email}</span></td>
+        <td>${s.genre}</td>
+        <td>${s.status}</td>
+        <td>
+          ${window.EcrivoireSubmissions.STATUSES.filter((st) => st !== s.status).map((st) => `<button type="button" class="admin-row-btn" data-status="${s.id}" data-set="${st}">${st}</button>`).join("")}
+          <button type="button" class="admin-row-btn admin-row-btn--danger" data-del-sub="${s.id}">Delete</button>
+        </td>
+      </tr>`).join("") || `<tr><td colspan="5" style="color:var(--muted);">No submissions yet.</td></tr>`;
+
+    $$("[data-status]", $("#submissions-body")).forEach((btn) => btn.addEventListener("click", () => {
+      window.EcrivoireSubmissions.setStatus(btn.dataset.status, btn.dataset.set);
+      window.EcrivoireMascot?.toast(`Marked as ${btn.dataset.set}`);
+      renderSubmissions();
+      renderStats();
+    }));
+    $$("[data-del-sub]", $("#submissions-body")).forEach((btn) => btn.addEventListener("click", () => {
+      if (confirm("Delete this submission?")) { window.EcrivoireSubmissions.deleteSubmission(btn.dataset.delSub); renderSubmissions(); renderStats(); }
     }));
   }
 
@@ -326,10 +384,11 @@
   function renderStats() {
     const cat = window.EcrivoireCatalogue.stats();
     const req = window.EcrivoireRequests.stats();
+    const sub = window.EcrivoireSubmissions.stats();
     $("#admin-stats").innerHTML = `
-      <div class="stat-card"><strong>${cat.totalTitles}</strong><span>Titles live on the shelf</span></div>
+      <div class="stat-card"><strong>${cat.totalTitles}</strong><span>Editions live on the shelf</span></div>
       <div class="stat-card"><strong>${fmt(cat.totalValue)}</strong><span>Total inventory value</span></div>
-      <div class="stat-card"><strong>${cat.adminAdded}</strong><span>Added via this console</span></div>
+      <div class="stat-card"><strong>${sub.new}</strong><span>New submissions to read</span></div>
       <div class="stat-card"><strong>${req.open}</strong><span>Open wishlist requests</span></div>`;
   }
 
@@ -337,6 +396,7 @@
     if ($("#admin-shell").hidden) return;
     renderStats();
     renderInventory();
+    renderSubmissions();
     renderRequests();
   }
 })();

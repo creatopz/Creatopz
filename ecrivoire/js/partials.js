@@ -21,6 +21,7 @@
     { href: "journal.html", label: "Journal", key: "journal" },
     { href: "events.html", label: "Events", key: "events" },
     { href: "requests.html", label: "Wishlist", key: "requests" },
+    { href: "publish.html", label: "Publish", key: "publish" },
     { href: "about.html", label: "About", key: "about" },
     { href: "contact.html", label: "Contact", key: "contact" }
   ];
@@ -57,8 +58,8 @@
 
   function marqueeHTML(items) {
     const list = items && items.length ? items : [
-      "🐮 Purple Cow Approved picks every week", "Free delivery in Lower Marsh Quarter over ₹999", "Signed first editions in stock",
-      "The Purple Cow Club — members save 10–18%", "Reading series every second Friday", "Spin the Shelf for a surprise read"
+      "🐮 Purple Cow Approved picks every drop", "Free pan-India delivery over ₹999", "A new numbered edition every month",
+      "The Purple Cow Club — members save 10–18%", "Publish With Us — we read every submission", "Spin the Shelf for a surprise read"
     ];
     const track = list.map((t) => `<span>${t}</span>`).join("");
     return `<div class="marquee"><div class="marquee__track">${track}${track}</div></div>`;
@@ -72,17 +73,17 @@
         <div>
           <a href="index.html" aria-label="Écrivoire Studios — home">${logo("md")}</a>
           <p class="body" style="margin-top:1.4rem;font-size:.9rem;max-width:32ch;">
-            An independent bookstore and bindery for people who read slowly and underline too much.
+            A small press: numbered editions of public-domain classics, hand-bound in-house, released in a limited run every month.
           </p>
         </div>
         <div>
           <div class="footer__title">Shop</div>
           <ul class="footer__links">
-            <li><a href="shop.html">All books</a></li>
+            <li><a href="shop.html">All editions</a></li>
             <li><a href="shop.html?genre=Fiction">Fiction</a></li>
             <li><a href="shop.html?genre=Poetry">Poetry</a></li>
-            <li><a href="shop.html?badge=New">New arrivals</a></li>
-            <li><a href="shop.html?badge=Bestseller">Bestsellers</a></li>
+            <li><a href="shop.html?badge=New Drop">This month's drop</a></li>
+            <li><a href="shop.html?badge=Staff Pick">Staff picks</a></li>
           </ul>
         </div>
         <div>
@@ -92,16 +93,17 @@
             <li><a href="journal.html">Journal</a></li>
             <li><a href="events.html">Events</a></li>
             <li><a href="requests.html">Wishlist wall</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="publish.html">Publish with us</a></li>
           </ul>
         </div>
         <div>
-          <div class="footer__title">Visit</div>
+          <div class="footer__title">Reach us</div>
           <ul class="footer__links">
-            <li>14 Rue des Feuillants</li>
-            <li>Lower Marsh Quarter</li>
-            <li>Open Tue–Sun, 10:00–19:00</li>
+            <li>Online only, for now</li>
+            <li>Shipping pan-India</li>
+            <li>Shopfront: planned, not open yet</li>
             <li><a href="mailto:hello@ecrivoirestudios.example">hello@ecrivoirestudios.example</a></li>
+            <li><a href="contact.html">Contact form</a></li>
           </ul>
         </div>
       </div>
