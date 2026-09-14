@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book — Écrivoire Studios</title>
+<meta name="description" content="Book details at Écrivoire Studios.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='29' fill='%23ffffff' stroke='%23141311' stroke-width='2.5'/%3E%3Ctext x='32' y='30' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3E%C3%89crivoire%3C/text%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='15' text-anchor='middle' fill='%23141311'%3EStudios%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="shop">
+
+<header class="site-header" id="site-header"></header>
+
+<main>
+  <div id="book-not-found" class="wrap not-found" hidden>
+    <span data-doodle="circleScribble" style="width:70px;height:70px;display:inline-block;margin-bottom:1rem;" aria-hidden="true"></span>
+    <h1 class="h-lg">We couldn't find that book</h1>
+    <p class="body" style="margin:1rem auto 0;">It may have sold out of our demo shelf. Try browsing the full catalogue instead.</p>
+    <a href="shop.html" class="btn btn-red" style="margin-top:1.6rem;">Back to shop</a>
+  </div>
+
+  <div id="book-detail-root">
+    <section class="section-pad-sm" style="padding-bottom:0;">
+      <div class="wrap">
+        <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <a href="shop.html">Shop</a> <span>/</span> <span id="book-crumb-title">Book</span></div>
+      </div>
+    </section>
+
+    <section class="section-pad">
+      <div class="wrap grid">
+        <div style="grid-column:1/6;position:relative;" id="book-cover-slot"></div>
+        <div style="grid-column:7/-1;">
+          <span class="eyebrow" id="book-genre-tag">Genre</span>
+          <h1 class="h-xl serif" style="text-transform:none;margin-top:.6rem;" id="book-title">Title</h1>
+          <p class="lede" style="margin-top:.5rem;color:var(--muted);font-size:1.1rem;" id="book-author">by Author</p>
+          <div class="rating" id="book-rating" style="margin-top:.9rem;"></div>
+          <p class="body" style="margin-top:1.4rem;" id="book-blurb">Blurb.</p>
+
+          <div style="display:flex;align-items:center;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;">
+            <span class="h-lg" id="book-price" style="font-size:1.8rem;">$0</span>
+            <div class="qty-select">
+              <button type="button" id="qty-down" aria-label="Decrease quantity">–</button>
+              <span id="book-qty">1</span>
+              <button type="button" id="qty-up" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+          <button type="button" id="book-add-btn" class="btn btn-red btn-block" style="margin-top:1.4rem;max-width:340px;">Add to bag</button>
+          <p class="form-note">Demo store — items add to a working bag, but no real orders are placed.</p>
+
+          <hr class="rule-soft" style="margin:2rem 0 1rem;">
+          <div id="book-specs"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad-sm related-strip" id="book-related-section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">You might also like</span>
+            <h2 class="h-lg" style="margin-top:.6rem;">More from this shelf</h2>
+          </div>
+        </div>
+        <div class="book-grid" id="book-related-grid"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer" id="site-footer"></footer>
+<div id="cart-root"></div>
+
+<script src="js/data.js"></script>
+<script src="js/doodles.js"></script>
+<script src="js/partials.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
