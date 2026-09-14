@@ -126,12 +126,18 @@ async function loadBriefs() {
   const brandIds = [...new Set(rows.map((c) => c.brand_id).filter(Boolean))];
   let brandsById = {};
   if (brandIds.length) {
-    const { data: brandRows } = await supabaseClient.from("brands_public").select("id, company_name").in("id", brandIds);
+    const { data: brandRows } = await supabaseClient.from("brands_public").select("id, company_name, website, instagram_url, youtube_url, facebook_url, twitter_url").in("id", brandIds);
     brandsById = Object.fromEntries((brandRows || []).map((b) => [b.id, b]));
   }
 
   stateHost.innerHTML = "";
-  grid.innerHTML = rows.map((c) => `
+  grid.innerHTML = rows.map((c) => {
+    const brand = brandsById[c.brand_id];
+    const brandLinks = brand ? socialLinksHtml([
+      ["Website", brand.website], ["Instagram", brand.instagram_url], ["YouTube", brand.youtube_url],
+      ["Facebook", brand.facebook_url], ["Twitter", brand.twitter_url],
+    ]) : "";
+    return `
     <div class="campaign-card card-hover">
       <div style="display:flex;justify-content:space-between;align-items:baseline;">
         <span class="badge badge-accent">${escapeHtml(c.niche || "General")}</span>
@@ -140,10 +146,11 @@ async function loadBriefs() {
       <h3 class="cp-title">${escapeHtml(c.title)}</h3>
       <p class="cp-desc">${escapeHtml(c.brief || c.description || "")}</p>
       <div class="cp-foot">
-        <span class="caption">${escapeHtml(brandsById[c.brand_id]?.company_name || "Brand")}</span>
+        <span class="caption">${escapeHtml(brand?.company_name || "Brand")}${brandLinks ? ` · ${brandLinks}` : ""}</span>
         <b>${fmtBudget(c.budget_min, c.budget_max)}</b>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
   staggerInGrid("#briefsGrid", ".campaign-card");
 }
 

@@ -234,7 +234,12 @@ function renderApps() {
       </div>
       <div class="grid grid-3" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-border);gap:14px;">
         <div><div class="caption" style="text-transform:uppercase;">Creator</div><div style="margin-top:5px;color:#fff;">${escapeHtml(a.creators?.name || "Creator")}</div></div>
-        <div><div class="caption" style="text-transform:uppercase;">Instagram</div><div style="margin-top:5px;color:#fff;overflow-wrap:anywhere;">${escapeHtml(a.creators?.instagram_url || "Not connected")}</div></div>
+        <div><div class="caption" style="text-transform:uppercase;">Instagram</div><div style="margin-top:5px;overflow-wrap:anywhere;">${(() => {
+          const href = safeExternalUrl(a.creators?.instagram_url);
+          if (!href) return `<span style="color:#fff;">Not connected</span>`;
+          const label = a.creators?.username ? "@" + String(a.creators.username).replace(/^@/, "") : href.replace(/^https?:\/\//, "");
+          return `<a href="${href}" target="_blank" rel="noopener" style="color:#7ee787;font-weight:600;">${escapeHtml(label)} ↗</a>`;
+        })()}</div></div>
         <div><div class="caption" style="text-transform:uppercase;">Creator's rate card</div><div style="margin-top:5px;color:#fff;">${rateCardSummary(a.creators?.rate_card)}</div></div>
       </div>
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--dark-border);">
@@ -274,8 +279,15 @@ function renderCreators() {
   toggleEmpty(filtered.length === 0);
   document.getElementById("creatorsBody").innerHTML = filtered.map((c) => `
     <tr>
-      <td><a href="profile.html?id=${encodeURIComponent(c.id)}" style="display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;"><span class="avatar-fallback" style="width:32px;height:32px;background:#fff;color:#000;font-size:12px;">${(c.name || "?").split(" ").map((w) => w[0]).join("")}</span>${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
-      <td style="overflow-wrap:anywhere;">${escapeHtml(c.instagram_url || "Not connected")}</td>
+      <td><a href="profile.html?id=${encodeURIComponent(c.id)}" style="display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;">${c.profile_image
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+        : `<span class="avatar-fallback" style="width:32px;height:32px;background:#fff;color:#000;font-size:12px;">${(c.name || "?").split(" ").map((w) => w[0]).join("")}</span>`}${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
+      <td style="overflow-wrap:anywhere;">${(() => {
+        const href = safeExternalUrl(c.instagram_url);
+        if (!href) return `<span class="caption">Not connected</span>`;
+        const label = c.username ? "@" + String(c.username).replace(/^@/, "") : "View profile";
+        return `<a href="${href}" target="_blank" rel="noopener" style="color:#fff;font-weight:600;white-space:nowrap;">${escapeHtml(label)} ↗</a>`;
+      })()}</td>
       <td>${escapeHtml(c.category || "—")}</td>
       <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
       <td class="caption" style="max-width:220px;">${rateCardSummary(c.rate_card)}</td>

@@ -295,6 +295,35 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+// Guards against a stray "javascript:"/"data:" value sneaking into an
+// href from a free-text field (Instagram URL, brand website, ...) --
+// only http(s) URLs make it through; a bare domain like "site.com" gets
+// "https://" added rather than rejected.
+function safeExternalUrl(url) {
+  if (!url) return null;
+  const trimmed = String(url).trim();
+  if (!trimmed) return null;
+  try {
+    const withScheme = /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
+    const parsed = new URL(withScheme);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    return parsed.href;
+  } catch {
+    return null;
+  }
+}
+
+// Renders "Label ↗" links for whichever [label, url] pairs actually have
+// a usable URL -- used to show a brand's website/social handles wherever
+// they're safe to reveal to creators (once connected, or on public briefs).
+function socialLinksHtml(entries) {
+  const links = entries.map(([label, url]) => [label, safeExternalUrl(url)]).filter(([, href]) => href);
+  if (!links.length) return "";
+  return links
+    .map(([label, href]) => `<a href="${href}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">${escapeHtml(label)} ↗</a>`)
+    .join(" · ");
+}
+
 // ---------- Password show/hide toggle ----------
 // Wrap a password <input> in <div class="password-field"> and add
 // <button type="button" class="password-toggle" data-target="INPUT_ID">
