@@ -100,6 +100,7 @@
           <div class="field"><label for="youtube">YouTube URL</label><input class="input" type="url" id="youtube" placeholder="https://youtube.com/..."></div>
         </div>
         <div class="field"><label for="website">Website</label><input class="input" type="url" id="website" placeholder="https://..."></div>
+        <div class="field"><label for="whatsapp">WhatsApp number <span class="hint">(private — used only if Creatopz has a campaign for you)</span></label><input class="input" type="tel" id="whatsapp" placeholder="e.g. +91 98765 43210"></div>
         <div class="grid grid-2">
           <div class="field"><label for="followers">Followers</label><input class="input" type="number" id="followers" min="0" placeholder="e.g. 45000"></div>
           <div class="field">
@@ -275,6 +276,7 @@ async function init() {
     document.getElementById("instagram").value = profile.instagram_url || "";
     document.getElementById("youtube").value = profile.youtube_url || "";
     document.getElementById("website").value = profile.website_url || "";
+    document.getElementById("whatsapp").value = profile.whatsapp_number || "";
     document.getElementById("followers").value = profile.followers || "";
     document.getElementById("engagement").value = profile.engagement_rate || "";
     document.getElementById("audienceLocations").value = (profile.audience_locations || []).join(", ");
@@ -317,6 +319,7 @@ document.getElementById("onboardingForm").addEventListener("submit", async (e) =
       instagram_url: document.getElementById("instagram").value.trim(),
       youtube_url: document.getElementById("youtube").value.trim(),
       website_url: document.getElementById("website").value.trim(),
+      whatsapp_number: document.getElementById("whatsapp").value.trim() || null,
       followers: Number(document.getElementById("followers").value) || 0,
       engagement_rate: Number(document.getElementById("engagement").value) || 0,
       audience_locations: document.getElementById("audienceLocations").value.split(",").map((s) => s.trim()).filter(Boolean),

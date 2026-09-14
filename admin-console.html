@@ -84,7 +84,7 @@
         </section>
 
         <section id="view-creators" style="display:none;">
-          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Instagram</th><th>Niche</th><th>Reach</th><th>Rate card</th><th>Public</th><th>Flag</th><th>Verify</th></tr></thead><tbody id="creatorsBody"></tbody></table></div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Instagram</th><th>Niche</th><th>Reach</th><th>Rate card</th><th>WhatsApp</th><th>Public</th><th>Flag</th><th>Verify</th></tr></thead><tbody id="creatorsBody"></tbody></table></div>
         </section>
 
         <section id="view-campaigns" style="display:none;">
@@ -153,6 +153,20 @@
   </div>
 </div>
 
+<!-- Notify creators on WhatsApp modal -->
+<div class="modal-backdrop" id="notifyModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-head">
+      <div><span class="eyebrow">Manual notify</span><h2 style="margin-top:8px;" id="notifyModalTitle">Campaign</h2></div>
+      <button class="modal-close" data-modal-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="body-sm" style="color:var(--on-dark-soft);margin-bottom:14px;">Click a creator to open WhatsApp with a message pre-filled — you still hit send yourself, nothing goes out automatically.</p>
+      <div id="notifyList" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/utils.js"></script>
@@ -163,6 +177,19 @@ let SESSION = null, VIEW = "apps", QUERY = "";
 let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [], SPOTLIGHTS = [];
 let ACTIVE_CONVO_ID = null, THREAD = [];
 const AGREED_DRAFTS = {};
+
+// Builds a wa.me deep link that opens WhatsApp with a message pre-filled —
+// admin still hits send by hand (no Business API / bulk-send involved).
+// Numbers are stored however a creator typed them, so this just strips
+// everything but digits; if it looks too short to already carry a country
+// code, it assumes India (+91), the site's only market so far.
+function waLink(rawNumber, message) {
+  if (!rawNumber) return null;
+  const digits = String(rawNumber).replace(/\D/g, "");
+  if (!digits) return null;
+  const withCountryCode = digits.length <= 10 ? "91" + digits : digits;
+  return `https://wa.me/${withCountryCode}${message ? "?text=" + encodeURIComponent(message) : ""}`;
+}
 
 function fmtMoney(v) { return (!v && v !== 0) ? "—" : "₹" + Number(v).toLocaleString("en-IN"); }
 function fmtRange(min, max) {
@@ -252,6 +279,9 @@ function renderCreators() {
       <td>${escapeHtml(c.category || "—")}</td>
       <td style="color:#fff;font-weight:700;">${(c.followers || 0) >= 1000 ? Math.round(c.followers / 1000) + "K" : String(c.followers || 0)}</td>
       <td class="caption" style="max-width:220px;">${rateCardSummary(c.rate_card)}</td>
+      <td>${c.whatsapp_number
+        ? `<a href="${waLink(c.whatsapp_number)}" target="_blank" rel="noopener" style="color:#7ee787;font-weight:600;white-space:nowrap;">${escapeHtml(c.whatsapp_number)} ↗</a>`
+        : `<span class="caption">Not shared</span>`}</td>
       <td><button class="btn-ghost admin-toggle-public" data-id="${c.id}" data-next="${!c.is_public}" style="background:none;border:none;color:${c.is_public ? "#c9c9c9" : "#6d6d6d"};font-weight:600;cursor:pointer;font-size:12.5px;">${c.is_public ? "Listed" : "Hidden"}</button></td>
       <td>${c.flagged_for_review ? `<button class="admin-btn-out clear-flag-btn" data-id="${c.id}" style="border-color:#8a6420;color:#e8b84b;" title="Auto-flagged: stats look implausible">⚠ Review</button>` : ""}</td>
       <td><button class="btn btn-sm ${c.is_verified ? "btn-accent" : "admin-btn-out"} toggle-verify-btn" data-id="${c.id}" data-next="${!c.is_verified}">${c.is_verified ? "Verified ✓" : "Verify"}</button></td>
@@ -319,7 +349,10 @@ function renderCampaigns() {
                <button class="btn admin-btn-out btn-sm decline-campaign-btn" data-id="${c.id}" style="flex:1;">Decline</button>
              </div>
            </div>`
-        : `<button class="btn admin-btn-out btn-block btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="margin-top:14px;">${c.status === "closed" ? "Reopen" : "Close"}</button>`}
+        : `<div style="display:flex;gap:8px;margin-top:14px;">
+             <button class="btn admin-btn-out btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="flex:1;">${c.status === "closed" ? "Reopen" : "Close"}</button>
+             ${c.status === "open" ? `<button class="btn btn-accent btn-sm notify-creators-btn" data-id="${c.id}" style="flex:1;">Notify on WhatsApp</button>` : ""}
+           </div>`}
       ${rosterHtml}
     </article>`;
   }).join("");
@@ -331,6 +364,37 @@ function renderCampaigns() {
   document.querySelectorAll(".decline-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "closed")));
   document.querySelectorAll(".toggle-campaign-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status === "closed" ? "open" : "closed")));
   document.querySelectorAll(".approve-pick-btn").forEach((btn) => btn.addEventListener("click", () => approveTeamPick(btn.dataset.campaign, btn.dataset.creator)));
+  document.querySelectorAll(".notify-creators-btn").forEach((btn) => btn.addEventListener("click", () => openNotifyModal(btn.dataset.id)));
+}
+
+// ===== Manual WhatsApp campaign notifications =====
+function openNotifyModal(campaignId) {
+  const c = CAMPAIGNS.find((x) => x.id === campaignId);
+  if (!c) return;
+  document.getElementById("notifyModalTitle").textContent = c.title || "Campaign";
+  const message = `Hi! A new campaign "${c.title}" just went live on Creatopz${c.niche ? ` (${c.niche})` : ""} — thought it could be a fit for you. Log in and apply here: https://creatopz.in/campaigns.html`;
+  // Everyone with a WhatsApp number on file, niche match first -- admin
+  // still eyeballs the list and only sends to whoever they pick.
+  const withNumber = CREATORS.filter((cr) => cr.whatsapp_number);
+  const sorted = [...withNumber].sort((a, b) => {
+    const aMatch = c.niche && a.category === c.niche ? 0 : 1;
+    const bMatch = c.niche && b.category === c.niche ? 0 : 1;
+    return aMatch - bMatch;
+  });
+  const host = document.getElementById("notifyList");
+  if (!sorted.length) {
+    host.innerHTML = `<p class="body-sm" style="color:var(--on-dark-soft);">No creators have shared a WhatsApp number yet.</p>`;
+  } else {
+    host.innerHTML = sorted.map((cr) => `
+      <a href="${waLink(cr.whatsapp_number, message)}" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface-2);border-radius:var(--r-md);padding:12px 14px;color:var(--ink);text-decoration:none;">
+        <span>
+          <b style="font-size:14px;">${escapeHtml(cr.name || "Creator")}</b>
+          ${cr.category ? `<span class="caption" style="margin-left:8px;">${escapeHtml(cr.category)}${c.niche && cr.category === c.niche ? " · match" : ""}</span>` : ""}
+        </span>
+        <span style="color:#1fa855;font-weight:600;white-space:nowrap;">WhatsApp ↗</span>
+      </a>`).join("");
+  }
+  openModal("notifyModal");
 }
 
 function renderGallery() {
