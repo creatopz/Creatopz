@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f4f1ea;
+  --paper2: #eae6dc;
+  --ink: #111111;
+  --red: #ff3b30;
+  --blue: #245cff;
+  --acid: #c7ff00;
+  --fault-progress: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  color: var(--ink);
+  background: var(--paper);
+  font-feature-settings: "ss01" on, "case" on;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* focus states — always visible, never removed */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* thin swiss rule */
+.rule {
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.18;
+}
+
+.rule-strong {
+  height: 2px;
+  background: var(--ink);
+}
+
+/* the fault line — a hairline crack that runs through sections */
+.fault-thread {
+  position: relative;
+}
+.fault-thread::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 6px,
+    transparent 6px 10px
+  );
+  opacity: 0.35;
+}
+
+/* pixel-perfect edges for avatar / icon art */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* mono system-text style used for timestamps, tags, usernames */
+.sys {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* pixel font, sparing use only */
+.px-font {
+  font-family: var(--font-pixel);
+}
+
+/* a hand-scribbled underline, drawn with an svg-esque border trick */
+.scribble-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 20 1, 35 8, 50 4 S 80 1, 99 5' fill='none' stroke='%23111111' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 10px;
+  padding-bottom: 6px;
+}
+
+.crack-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M0 4 L18 4 L24 0 L30 7 L36 2 L44 4 L100 4' fill='none' stroke='%23FF3B30' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 8px;
+  padding-bottom: 6px;
+}
+
+/* grain overlay, extremely subtle, gives paper texture without images */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* generic doodle wiggle, applied selectively */
+.doodle {
+  animation: wiggle 5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.btn {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border: 1.5px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  position: relative;
+}
+.btn:active {
+  transform: translate(1px, 1px);
+}
+.btn:hover {
+  box-shadow: 4px 4px 0 var(--red);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-outline:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+  background: var(--paper);
+}
+
+.field {
+  width: 100%;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+}
+.field:focus {
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.field-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  display: block;
+  margin-bottom: 0.4rem;
+  opacity: 0.7;
+}
+
+.tag-chip {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--ink);
+  padding: 0.3rem 0.6rem;
+  display: inline-block;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
