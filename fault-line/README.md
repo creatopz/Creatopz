@@ -139,6 +139,32 @@ Set the same environment variables in your hosting provider's dashboard.
 Make sure `NEXT_PUBLIC_SITE_URL` matches your real production domain (used
 to build auth email redirect links).
 
+### Deploying to Netlify
+
+This repo includes a `netlify.toml` that wires up `@netlify/plugin-nextjs`,
+which is required — this app uses middleware, API routes, and
+server-rendered pages throughout, none of which work as a plain static
+export.
+
+1. Connect the repo (or `netlify deploy`) as normal — Netlify picks up
+   `netlify.toml` and installs the Next.js runtime automatically.
+2. **Site configuration → Environment variables** — add every variable
+   from `.env.example` (Netlify does **not** read your local `.env.local`;
+   it only deploys what's committed, and secrets are never committed).
+   At minimum, the site won't render at all without:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   And these are required for admin actions / payments to work:
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_WEBHOOK_SECRET`
+3. Set `NEXT_PUBLIC_SITE_URL` to your real Netlify URL (e.g.
+   `https://myfaultline1.netlify.app`), and add that same URL (plus
+   `/auth/callback`) to **Supabase → Authentication → URL Configuration →
+   Redirect URLs**, or magic links / password resets / OAuth will redirect
+   to the wrong place.
+4. Trigger a redeploy after adding env vars — Netlify does not hot-reload
+   them into an already-built site.
+
 ## 5. Project structure
 
 ```
