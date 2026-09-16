@@ -293,6 +293,73 @@ function initWordReveal() {
   });
 }
 
+// ---------- Mask-line reveal ----------
+// Author lines as <span class="mask-line"><span class="inner">...</span></span>
+// inside a container carrying data-mask-group; this arms .is-visible
+// on that container once it's scrolled into view (theme.css staggers
+// each line's transition-delay by nth-child).
+function initMaskReveal() {
+  const groups = document.querySelectorAll("[data-mask-group]");
+  if (!groups.length) return;
+  if (PREFERS_REDUCED_MOTION || typeof IntersectionObserver === "undefined") {
+    groups.forEach((g) => g.classList.add("is-visible"));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add("is-visible"); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.3, rootMargin: "0px 0px -60px 0px" });
+  groups.forEach((g) => io.observe(g));
+  setTimeout(() => groups.forEach((g) => g.classList.add("is-visible")), 4000); // safety net
+}
+
+// ---------- Pinned horizontal scroll gallery ----------
+// Converts vertical scroll into horizontal track motion while pinned,
+// with no scroll library -- a tall wrapper (#id .pin-gallery-wrap) is
+// sized by JS to give just enough scroll room to pan the whole track,
+// and a scroll listener sets translateX from scroll progress. Falls
+// back to a plain native horizontally-scrollable strip below 769px
+// and under prefers-reduced-motion -- scroll-jacking a phone is bad
+// UX regardless of how it looks on desktop.
+function initPinGallery(wrapSelector) {
+  const wrap = document.querySelector(wrapSelector);
+  if (!wrap) return;
+  const sticky = wrap.querySelector(".pin-gallery-sticky");
+  const track = wrap.querySelector(".pin-gallery-track");
+  if (!sticky || !track) return;
+
+  const useNativeScroll = PREFERS_REDUCED_MOTION || !window.matchMedia("(min-width:769px)").matches;
+  if (useNativeScroll) {
+    wrap.style.height = "auto";
+    sticky.style.position = "static";
+    sticky.style.height = "auto";
+    track.classList.add("is-native-scroll");
+    return;
+  }
+
+  function setHeight() {
+    const extra = Math.max(track.scrollWidth - window.innerWidth, 0);
+    wrap.style.height = window.innerHeight + extra + "px";
+  }
+  function update() {
+    const rect = wrap.getBoundingClientRect();
+    const scrollable = wrap.offsetHeight - window.innerHeight;
+    const progress = scrollable > 0 ? Math.min(Math.max(-rect.top / scrollable, 0), 1) : 0;
+    const maxX = Math.max(track.scrollWidth - window.innerWidth, 0);
+    track.style.transform = `translateX(${-progress * maxX}px)`;
+  }
+  setHeight();
+  update();
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
+  window.addEventListener("resize", () => { setHeight(); update(); });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initAutoReveal(); // must run before initScrollReveal reads [data-reveal]
   initScrollReveal();
@@ -304,4 +371,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initCustomCursor();
   initSpotlightCards();
   initWordReveal();
+  initMaskReveal();
 });
