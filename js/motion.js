@@ -202,6 +202,97 @@ function staggerInGrid(gridSelector, itemSelector) {
   }, 1200);
 }
 
+// ---------- Custom cursor ----------
+// A small dot + trailing ring on desktop pointers, skipped entirely on
+// touch/coarse pointers and under prefers-reduced-motion. Off inside
+// the dashboard/admin shell -- a work tool, not the marketing site.
+function initCustomCursor() {
+  if (PREFERS_REDUCED_MOTION) return;
+  if (!window.matchMedia("(min-width:901px) and (hover:hover) and (pointer:fine)").matches) return;
+  if (document.querySelector(".dash-shell")) return;
+
+  const dot = document.createElement("div");
+  dot.id = "ctzCursorDot";
+  const ring = document.createElement("div");
+  ring.id = "ctzCursorRing";
+  document.body.append(dot, ring);
+  document.body.classList.add("custom-cursor");
+
+  let x = 0, y = 0, rx = 0, ry = 0;
+  window.addEventListener("mousemove", (e) => {
+    x = e.clientX; y = e.clientY;
+    dot.style.left = x + "px"; dot.style.top = y + "px";
+  });
+  (function loop() {
+    rx += (x - rx) * 0.18; ry += (y - ry) * 0.18;
+    ring.style.left = rx + "px"; ring.style.top = ry + "px";
+    requestAnimationFrame(loop);
+  })();
+
+  const hideOn = "input, textarea, select, [contenteditable]";
+  const growOn = "a, button, .btn, .card-hover, .creator-card, .campaign-card, .spotlight-card";
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.closest(hideOn)) { dot.classList.add("is-hidden"); ring.classList.add("is-hidden"); return; }
+    dot.classList.remove("is-hidden"); ring.classList.remove("is-hidden");
+    const grown = e.target.closest(growOn);
+    ring.classList.toggle("is-hover", !!grown);
+    ring.classList.toggle("is-dark", !!(grown && grown.closest(".hero-window, .cta-panel, .section-dark, [style*='background:var(--ink)'], [style*='background: var(--ink)']")));
+  });
+}
+
+// ---------- Spotlight cards ----------
+// Cursor-follow glow inside existing card components -- adds
+// .spotlight-card and tracks --mx/--my per card, no markup needed.
+function initSpotlightCards() {
+  if (PREFERS_REDUCED_MOTION) return;
+  if (document.querySelector(".dash-shell")) return; // keep the work-tool chrome calm, like every other effect here
+  document.querySelectorAll(".card-hover, .creator-card, .campaign-card").forEach((card) => {
+    card.classList.add("spotlight-card");
+    card.addEventListener("mousemove", (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      card.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  });
+}
+
+// ---------- Ambient particles ----------
+// Populates a .particles-host panel with a handful of faintly drifting
+// motes. Call once per host after it's in the DOM.
+function initParticles(selectorOrEl, count = 16) {
+  if (PREFERS_REDUCED_MOTION) return;
+  const host = typeof selectorOrEl === "string" ? document.querySelector(selectorOrEl) : selectorOrEl;
+  if (!host) return;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("span");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.setProperty("--dx", (Math.random() * 40 - 20) + "px");
+    p.style.animationDuration = 6 + Math.random() * 6 + "s";
+    p.style.animationDelay = Math.random() * 8 + "s";
+    host.appendChild(p);
+  }
+}
+
+// ---------- Word-by-word reveal ----------
+// Wraps each word of a heading (marked data-word-reveal) in a span so
+// theme.css can stagger them in on load. Preserves inner tags like <em>.
+function initWordReveal() {
+  document.querySelectorAll("[data-word-reveal]").forEach((el) => {
+    const chunks = el.innerHTML.split(/(<[^>]+>.*?<\/[^>]+>|\s+)/g).filter(Boolean);
+    let html = "", delay = 0;
+    chunks.forEach((chunk) => {
+      if (/^\s+$/.test(chunk)) { html += chunk; return; }
+      const isTag = /^</.test(chunk);
+      html += isTag
+        ? chunk.replace(/^<([a-z]+)([^>]*)>(.*)<\/\1>$/i, (m, tag, attrs, inner) => `<span class="word" style="animation-delay:${delay}ms;"><${tag}${attrs}>${inner}</${tag}></span>`)
+        : `<span class="word" style="animation-delay:${delay}ms;">${chunk}</span>`;
+      delay += 90;
+    });
+    el.innerHTML = html;
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initAutoReveal(); // must run before initScrollReveal reads [data-reveal]
   initScrollReveal();
@@ -210,4 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initMagneticButtons();
   initLinkSweep();
   initCountUp();
+  initCustomCursor();
+  initSpotlightCards();
+  initWordReveal();
 });
