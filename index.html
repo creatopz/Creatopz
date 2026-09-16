@@ -107,15 +107,14 @@
       <a href="directory.html" class="hero-live-cta">Explore all creators →</a>
     </div>
 
+    <div class="hero-slider-heading-row">
+      <h2 class="hero-slider-heading">Hidden gems, matched fast.</h2>
+      <a href="directory.html" class="btn btn-accent btn-sm">Explore creators →</a>
+    </div>
+
     <div class="hero-slider-track" id="heroSliderTrack">
-      <a href="directory.html" class="hero-slide hero-slide-intro">
-        <div>
-          <div class="hero-slide-accent-bar"></div>
-          <b style="font-family:var(--font-display);font-size:17px;">Hidden Gems, matched fast</b>
-          <p>Explore vetted creators across beauty, fitness &amp; food — or post a brief and let applications come to you.</p>
-        </div>
-        <span class="btn btn-accent btn-block" style="pointer-events:none;">Explore creators</span>
-      </a>
+      <!-- populated by loadHeroSlider() -- real creators only, visible
+           from the very first slide, no intro card in front of them -->
     </div>
   </div>
 
@@ -332,21 +331,52 @@
     document.getElementById("spotlightSection").style.display = "block";
   }
 
+  // Gentle auto-advance so the slider visibly moves on its own (paused the
+  // moment a visitor touches/hovers it, and never armed at all under
+  // prefers-reduced-motion) -- real native overflow-x scroll still handles
+  // manual drag/swipe underneath, this just nudges scrollLeft forward.
+  let heroAutoTimer = null;
+  function startHeroAutoScroll(track) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    clearInterval(heroAutoTimer);
+    heroAutoTimer = setInterval(() => {
+      const card = track.querySelector(".hero-slide");
+      if (!card) return;
+      const step = card.getBoundingClientRect().width + 16;
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
+      track.scrollTo({ left: atEnd ? 0 : track.scrollLeft + step, behavior: "smooth" });
+    }, 2800);
+  }
+  function pauseHeroAutoScroll() { clearInterval(heroAutoTimer); }
+
   async function loadHeroSlider() {
     document.getElementById("heroYear").textContent = new Date().getFullYear();
     document.getElementById("heroLiveDate").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
 
+    const track = document.getElementById("heroSliderTrack");
     const { data, error } = await supabaseClient
       .from("creators_public")
       .select("id, name, category, profile_image, followers, is_verified")
       .order("followers", { ascending: false })
       .limit(12);
-    if (error || !data) return;
-    document.getElementById("heroLiveCount").textContent = data.length;
-    if (!data.length) return; // intro slide alone still reads fine
 
-    const track = document.getElementById("heroSliderTrack");
-    track.insertAdjacentHTML("beforeend", data.map((c) => {
+    if (error || !data || !data.length) {
+      document.getElementById("heroLiveCount").textContent = data ? data.length : "0";
+      // No creators to show yet -- the only time this card appears at all.
+      track.innerHTML = `
+        <a href="directory.html" class="hero-slide hero-slide-intro">
+          <div>
+            <div class="hero-slide-accent-bar"></div>
+            <b style="font-family:var(--font-display);font-size:17px;">New creators joining</b>
+            <p>Be the first vetted profile in beauty, fitness or food — or check back shortly.</p>
+          </div>
+          <span class="btn btn-accent btn-block" style="pointer-events:none;">Explore creators</span>
+        </a>`;
+      return;
+    }
+    document.getElementById("heroLiveCount").textContent = data.length;
+
+    track.innerHTML = data.map((c) => {
       const photo = c.profile_image
         ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'font-size:30px;',textContent:'${initials(c.name)}'}))">`
         : `<div class="avatar-fallback" style="font-size:30px;">${initials(c.name)}</div>`;
@@ -358,7 +388,13 @@
             <span class="hero-slide-caption"><b>${escapeHtml(c.name || "Creator")}</b><span>${escapeHtml(c.category || "Creator")}</span></span>
           </div>
         </a>`;
-    }).join(""));
+    }).join("");
+
+    if (data.length > 1) {
+      startHeroAutoScroll(track);
+      ["pointerdown", "touchstart", "mouseenter"].forEach((evt) => track.addEventListener(evt, pauseHeroAutoScroll, { passive: true }));
+      ["pointerup", "touchend", "mouseleave"].forEach((evt) => track.addEventListener(evt, () => startHeroAutoScroll(track), { passive: true }));
+    }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
