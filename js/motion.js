@@ -103,6 +103,82 @@ function initScrollProgress() {
   );
 }
 
+// ---------- Auto-reveal ----------
+// Tags common content blocks with data-reveal automatically, so a page
+// gets the scroll-reveal treatment just by loading this file -- no
+// hand-added markup needed on every section of every page. Skipped
+// inside the dashboard/admin shell (a working tool, not a marketing
+// page) and inside anything that opts out with data-no-reveal.
+function initAutoReveal() {
+  if (document.querySelector(".dash-shell")) return;
+  const els = document.querySelectorAll(
+    ".grid > *, .card:not([data-reveal]), .stat-card:not([data-reveal]), .panel:not([data-reveal]), .creator-card:not([data-reveal]), .campaign-card:not([data-reveal]), .section-head:not([data-reveal])"
+  );
+  els.forEach((el) => {
+    if (el.closest("[data-reveal]") || el.closest("[data-enter]")) return;
+    if (el.hasAttribute("data-reveal") || el.hasAttribute("data-no-reveal")) return;
+    el.setAttribute("data-reveal", "");
+  });
+}
+
+// ---------- Magnetic buttons ----------
+// A small cursor-pull on hover -- skipped for full-width buttons (a
+// pull looks wrong on something that already spans the container) and
+// respects prefers-reduced-motion like everything else here.
+function initMagneticButtons() {
+  if (PREFERS_REDUCED_MOTION) return;
+  const strength = 8;
+  document.querySelectorAll(".btn:not(.btn-block)").forEach((btn) => {
+    btn.addEventListener("mousemove", (e) => {
+      const r = btn.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width - 0.5) * strength * 2;
+      const y = ((e.clientY - r.top) / r.height - 0.5) * strength * 2;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
+  });
+}
+
+// ---------- Animated underline on nav/footer links ----------
+// Adds .link-sweep to the common link lists site-wide (see [theme.css])
+// rather than requiring the class hand-added in every page's markup.
+function initLinkSweep() {
+  document.querySelectorAll(".nav-links a, .site-footer a, .hero-window-nav a").forEach((a) => a.classList.add("link-sweep"));
+}
+
+// ---------- Count-up numbers ----------
+// Animates an element's number from 0 -> target once it's on screen.
+// Two ways in: mark static HTML with data-count-to="1234" and it's
+// picked up automatically on load, or call animateCountUp(el, value)
+// directly once you have a value back from an async fetch (the usual
+// case for this site's live Supabase counts).
+function animateCountUp(el, target, { duration = 900, formatter } = {}) {
+  if (!el) return;
+  const fmt = formatter || ((n) => Math.round(n).toLocaleString("en-IN"));
+  const targetNum = Number(target) || 0;
+  if (PREFERS_REDUCED_MOTION) { el.textContent = fmt(targetNum); return; }
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(targetNum * eased);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+function initCountUp() {
+  const els = document.querySelectorAll("[data-count-to]");
+  if (!els.length) return;
+  const run = (el) => animateCountUp(el, parseFloat(el.dataset.countTo));
+  if (typeof IntersectionObserver === "undefined") { els.forEach(run); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) { run(entry.target); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.4 });
+  els.forEach((el) => io.observe(el));
+}
+
 // ---------- Stagger-in a freshly-rendered grid (e.g. after a fetch) ----------
 // Call right after you set grid.innerHTML with fresh cards.
 function staggerInGrid(gridSelector, itemSelector) {
@@ -127,7 +203,11 @@ function staggerInGrid(gridSelector, itemSelector) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initAutoReveal(); // must run before initScrollReveal reads [data-reveal]
   initScrollReveal();
   initEnterStagger();
   initScrollProgress();
+  initMagneticButtons();
+  initLinkSweep();
+  initCountUp();
 });

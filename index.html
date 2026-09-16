@@ -28,6 +28,7 @@
     <div class="nav-links">
       <a href="index.html#platform">Platform</a>
       <a href="directory.html">Creators</a>
+      <a href="for-brands.html">For Brands</a>
       <a href="campaigns.html">Campaigns</a>
       <a href="index.html#how">How it works</a>
       <a href="gallery.html">Gallery</a>
@@ -56,6 +57,7 @@
   </div>
   <div class="nav-drawer-links">
     <a href="directory.html">Creators</a>
+    <a href="for-brands.html">For Brands</a>
     <a href="campaigns.html">Campaigns</a>
     <a href="index.html#how">How it works</a>
     <a href="gallery.html">Gallery</a>
@@ -83,13 +85,13 @@
     <span id="heroYear">2026</span>
   </div>
 
-  <div class="hero-window" data-enter>
+  <div class="hero-window cursor-glow" data-enter>
     <div class="hero-window-chrome">
       <div class="hero-window-brand"><img src="assets/logo.png" alt="">Creatopz<sup style="font-size:9px;">™</sup></div>
       <nav class="hero-window-nav">
         <a href="directory.html">Creators</a>
         <a href="campaigns.html">Campaigns</a>
-        <a href="index.html#platform">For Brands</a>
+        <a href="for-brands.html">For Brands</a>
       </nav>
       <div class="hero-window-actions">
         <a href="auth.html" class="hero-ghost-link">Log in</a>
@@ -123,6 +125,14 @@
     <p data-reveal>New faces every week — this lineup updates as creators join and campaigns close.</p>
   </div>
 </section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span><b>Vetted creators</b><i></i><b>Real budgets shown</b><i></i><b>No cold DMs</b><i></i><b>Admin-mediated</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
+    <span><b>Vetted creators</b><i></i><b>Real budgets shown</b><i></i><b>No cold DMs</b><i></i><b>Admin-mediated</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
+  </div>
+</div>
 
 <!-- ============ TRUST STRIP ============
      Real counts pulled live from Supabase below — never hardcode a
@@ -292,8 +302,8 @@
     ]);
     // Leave the "—" placeholder rather than show a wrong/fake number if
     // either query fails — never fall back to a made-up figure here.
-    if (!creatorsRes.error) creatorsEl.textContent = (creatorsRes.count ?? 0).toLocaleString("en-IN");
-    if (!campaignsRes.error) campaignsEl.textContent = (campaignsRes.count ?? 0).toLocaleString("en-IN");
+    if (!creatorsRes.error) animateCountUp(creatorsEl, creatorsRes.count ?? 0);
+    if (!campaignsRes.error) animateCountUp(campaignsEl, campaignsRes.count ?? 0);
   }
 
   function initials(name) {
@@ -356,6 +366,7 @@
     loadTrustStripStats();
     loadHomeSpotlight();
     loadHeroSlider();
+    initCursorGlow(".hero-window");
   });
 </script>
 </body>
