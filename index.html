@@ -85,7 +85,7 @@
     <span id="heroYear">2026</span>
   </div>
 
-  <div class="hero-window cursor-glow" data-enter>
+  <div class="hero-window cursor-glow border-beam particles-host" data-enter>
     <div class="hero-window-chrome">
       <div class="hero-window-brand"><img src="assets/logo.png" alt="">Creatopz<sup style="font-size:9px;">™</sup></div>
       <nav class="hero-window-nav">
@@ -108,7 +108,7 @@
     </div>
 
     <div class="hero-slider-heading-row">
-      <h2 class="hero-slider-heading">Hidden gems, matched fast.</h2>
+      <h2 class="hero-slider-heading" data-word-reveal>Hidden gems, matched fast.</h2>
       <a href="directory.html" class="btn btn-accent btn-sm">Explore creators →</a>
     </div>
 
@@ -130,6 +130,12 @@
   <div class="marquee-track">
     <span><b>Vetted creators</b><i></i><b>Real budgets shown</b><i></i><b>No cold DMs</b><i></i><b>Admin-mediated</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
     <span><b>Vetted creators</b><i></i><b>Real budgets shown</b><i></i><b>No cold DMs</b><i></i><b>Admin-mediated</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
+  </div>
+</div>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track rev">
+    <span><b>Post a brief</b><i></i><b>Get matched</b><i></i><b>Collab &amp; get paid</b><i></i><b>Jodhpur, India</b><i></i><b>Est. 2026</b><i></i></span>
+    <span><b>Post a brief</b><i></i><b>Get matched</b><i></i><b>Collab &amp; get paid</b><i></i><b>Jodhpur, India</b><i></i><b>Est. 2026</b><i></i></span>
   </div>
 </div>
 
@@ -242,7 +248,7 @@
 <!-- ============ FINAL CTA ============ -->
 <section class="section" style="padding-bottom:100px;">
   <div class="wrap">
-    <div class="panel" style="padding:56px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;background:var(--ink);border-color:var(--ink);">
+    <div class="panel border-beam particles-host" style="padding:56px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;background:var(--ink);border-color:var(--ink);overflow:hidden;">
       <h2 data-reveal style="color:#fff;max-width:600px;">The collab economy needed a front door. This is it.</h2>
       <div data-reveal style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="auth.html?mode=signup&role=creator" class="btn btn-white btn-lg">Join as Creator</a>
@@ -403,6 +409,7 @@
     loadHomeSpotlight();
     loadHeroSlider();
     initCursorGlow(".hero-window");
+    document.querySelectorAll(".particles-host").forEach((el) => initParticles(el, 14));
   });
 </script>
 </body>

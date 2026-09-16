@@ -66,7 +66,7 @@
 <section class="section" style="padding-bottom:48px;">
   <div class="wrap">
     <span class="eyebrow" data-enter><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>For brands</span>
-    <h1 data-enter style="margin-top:14px;max-width:760px;">Post the brief. We bring the creators.</h1>
+    <h1 data-enter data-word-reveal style="margin-top:14px;max-width:760px;">Post the brief. We bring the creators.</h1>
     <p class="lede" data-enter style="max-width:560px;margin:16px 0 0;">Set your budget and deliverables once. We match you with vetted micro-influencers in beauty, fitness and food — no cold DMs, no screenshots, no chasing.</p>
     <div data-enter style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px;">
       <a href="auth.html?mode=signup&role=brand" class="btn btn-primary btn-lg">Post a brief →</a>
@@ -80,6 +80,12 @@
   <div class="marquee-track">
     <span><b>Vetted creators only</b><i></i><b>Admin-mediated</b><i></i><b>Your budget, your call</b><i></i><b>No cold DMs</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
     <span><b>Vetted creators only</b><i></i><b>Admin-mediated</b><i></i><b>Your budget, your call</b><i></i><b>No cold DMs</b><i></i><b>Beauty</b><i></i><b>Fitness</b><i></i><b>Food</b><i></i></span>
+  </div>
+</div>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track rev">
+    <span><b>Post a brief</b><i></i><b>We shortlist</b><i></i><b>You confirm</b><i></i><b>15% flat fee</b><i></i><b>Jodhpur, India</b><i></i></span>
+    <span><b>Post a brief</b><i></i><b>We shortlist</b><i></i><b>You confirm</b><i></i><b>15% flat fee</b><i></i><b>Jodhpur, India</b><i></i></span>
   </div>
 </div>
 
@@ -148,7 +154,7 @@
 </section>
 
 <!-- ============ FEE TRANSPARENCY ============ -->
-<section class="section cursor-glow" style="background:var(--ink); border-radius:var(--r-xl); margin-inline:auto; max-width:var(--container); overflow:hidden;">
+<section class="section cursor-glow border-beam particles-host" style="background:var(--ink); border-radius:var(--r-xl); margin-inline:auto; max-width:var(--container); overflow:hidden;">
   <div class="wrap" style="max-width:760px;">
     <span class="eyebrow on-dark">Fee, in full</span>
     <h2 style="margin-top:14px;color:#fff;">One flat 15%. Shown before you post, not after.</h2>
@@ -201,7 +207,7 @@
 <!-- ============ FINAL CTA ============ -->
 <section class="section" style="padding-bottom:100px;">
   <div class="wrap">
-    <div class="panel" style="padding:56px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;background:var(--ink);border-color:var(--ink);">
+    <div class="panel border-beam particles-host" style="padding:56px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;background:var(--ink);border-color:var(--ink);overflow:hidden;">
       <h2 style="color:#fff;max-width:600px;">Your first brief takes less time than reading this page did.</h2>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="auth.html?mode=signup&role=brand" class="btn btn-white btn-lg">Post a brief</a>
@@ -231,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAuthNav("#authNav");
   loadCreatorCount();
   initCursorGlow(".cursor-glow");
+  document.querySelectorAll(".particles-host").forEach((el) => initParticles(el, 14));
 });
 </script>
 </body>
