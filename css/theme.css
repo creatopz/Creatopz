@@ -749,3 +749,62 @@ html:not(.reveal-armed) [data-reveal]{ opacity:1; transform:none; }
   .profile-stats-row{ gap:8px; }
   .profile-stat b{ font-size:18px; }
 }
+
+/* ============================================================
+   Motion system, part 2 — link sweep, marquee, cursor-glow,
+   hamburger morph, count-up, page entrance. Shared by every page
+   that loads js/motion.js; all of it collapses to nothing under
+   prefers-reduced-motion via the global rule at the top of this file.
+   ============================================================ */
+
+/* Page entrance: a quick fade so a fresh navigation never flashes
+   unstyled content in. Kept short (220ms) so it reads as "the page is
+   ready", not a loading screen. */
+body{ animation:ctzPageIn .22s ease both; }
+@keyframes ctzPageIn{ from{ opacity:0; } to{ opacity:1; } }
+
+/* Animated underline sweep -- applied automatically by initLinkSweep()
+   to nav/footer link lists, not hand-added per page. */
+.link-sweep{ position:relative; }
+.link-sweep::after{
+  content:""; position:absolute; left:0; right:100%; bottom:-3px; height:1.5px;
+  background:currentColor; transition:right .3s cubic-bezier(.16,1,.3,1);
+}
+.link-sweep:hover::after, .link-sweep.active::after{ right:0; }
+
+/* Hamburger -> X morph on open, driven by the aria-expanded state
+   js/nav.js already sets -- no extra JS needed for the icon itself. */
+.nav-burger svg line{ transform-origin:12px 12px; transition:transform .3s cubic-bezier(.16,1,.3,1), opacity .2s ease; }
+.nav-burger[aria-expanded="true"] svg line:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+.nav-burger[aria-expanded="true"] svg line:nth-child(2){ opacity:0; }
+.nav-burger[aria-expanded="true"] svg line:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+/* Marquee ticker -- a thin auto-scrolling text strip. Duplicate the
+   content once inside two <span data-marquee-item> so the loop is
+   seamless; pause on hover so it's readable on demand. */
+.marquee{ overflow:hidden; white-space:nowrap; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--surface); }
+.marquee-track{ display:inline-flex; width:max-content; animation:ctzMarquee 26s linear infinite; }
+.marquee:hover .marquee-track{ animation-play-state:paused; }
+.marquee-track span{ display:inline-flex; align-items:center; gap:14px; padding:15px 0; }
+.marquee-track span b{
+  font-family:var(--font-display); font-weight:500; font-size:13.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft);
+}
+.marquee-track span i{ width:5px; height:5px; border-radius:50%; background:var(--accent); flex-shrink:0; font-style:normal; }
+.marquee-track span + span{ margin-left:44px; }
+@keyframes ctzMarquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+@media (prefers-reduced-motion: reduce){ .marquee-track{ animation:none; flex-wrap:wrap; } }
+
+/* Cursor-glow spotlight -- opt in with class="cursor-glow" on a dark
+   panel, driven by initCursorGlow('selector') setting --mx/--my. */
+.cursor-glow{ position:relative; overflow:hidden; }
+.cursor-glow::before{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%), rgba(231,71,60,.16), transparent 70%);
+  transition:opacity .3s ease;
+}
+.cursor-glow:hover::before{ opacity:1; }
+.cursor-glow > *{ position:relative; z-index:1; }
+
+/* Stable digit width while a number counts up, so the layout doesn't
+   jitter as the digit count/width changes mid-animation. */
+[data-count-to]{ font-variant-numeric:tabular-nums; }
