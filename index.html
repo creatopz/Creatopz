@@ -214,6 +214,25 @@
   </div>
 </section>
 
+<!-- ============ RECENT WORK (pinned horizontal scroll) ============ -->
+<section id="recentWorkSection" style="display:none;">
+  <div class="wrap" style="padding-bottom:28px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+      <div data-mask-group>
+        <span class="eyebrow">From the gallery</span>
+        <h2 class="mask-line" style="margin-top:14px;"><span class="inner">Real posts, real graphics —</span></h2>
+        <h2 class="mask-line"><span class="inner">no stock photos.</span></h2>
+      </div>
+      <a href="gallery.html" class="btn btn-outline">See the full gallery →</a>
+    </div>
+  </div>
+  <div class="pin-gallery-wrap" id="recentWorkWrap">
+    <div class="pin-gallery-sticky">
+      <div class="pin-gallery-track" id="recentWorkTrack"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ CREATOR OF THE WEEK ============ -->
 <section class="section" id="spotlightSection" style="display:none;">
   <div class="wrap">
@@ -267,11 +286,11 @@
       <div style="display:flex;gap:56px;flex-wrap:wrap;">
         <div>
           <h5>Platform</h5>
-          <a href="directory.html" style="display:block;margin-bottom:10px;">Directory</a>
-          <a href="campaigns.html" style="display:block;margin-bottom:10px;">Campaigns</a>
-          <a href="dashboard-brand.html" style="display:block;margin-bottom:10px;">Brand dashboard</a>
-          <a href="dashboard-creator.html" style="display:block;margin-bottom:10px;">Creator dashboard</a>
-          <a href="gallery.html" style="display:block;">Gallery</a>
+          <a href="directory.html" class="swap-link" style="margin-bottom:10px;"><span class="layer top">Directory</span><span class="layer bottom">Directory</span></a>
+          <a href="campaigns.html" class="swap-link" style="margin-bottom:10px;"><span class="layer top">Campaigns</span><span class="layer bottom">Campaigns</span></a>
+          <a href="dashboard-brand.html" class="swap-link" style="margin-bottom:10px;"><span class="layer top">Brand dashboard</span><span class="layer bottom">Brand dashboard</span></a>
+          <a href="dashboard-creator.html" class="swap-link" style="margin-bottom:10px;"><span class="layer top">Creator dashboard</span><span class="layer bottom">Creator dashboard</span></a>
+          <a href="gallery.html" class="swap-link"><span class="layer top">Gallery</span><span class="layer bottom">Gallery</span></a>
         </div>
         <div>
           <h5>Follow</h5>
@@ -314,6 +333,30 @@
   function initials(name) {
     return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   }
+
+  async function loadRecentWork() {
+    const { data, error } = await supabaseClient
+      .from("gallery_posts")
+      .select("*")
+      .eq("is_published", true)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(8);
+    if (error || !data || !data.length) return; // stays hidden -- no placeholder tiles
+
+    document.getElementById("recentWorkSection").style.display = "block";
+    document.getElementById("recentWorkTrack").innerHTML = data.map((post) => {
+      const tag = post.instagram_url ? "a" : "div";
+      const href = post.instagram_url ? `href="${escapeHtml(post.instagram_url)}" target="_blank" rel="noopener"` : "";
+      return `
+        <${tag} class="pin-panel" ${href}>
+          <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.caption || "Creatopz post")}" loading="lazy">
+          ${post.caption ? `<div class="pin-panel-caption"><p>${escapeHtml(post.caption)}</p></div>` : ""}
+        </${tag}>`;
+    }).join("");
+    initPinGallery("#recentWorkWrap");
+  }
+
   async function loadHomeSpotlight() {
     const { data, error } = await supabaseClient
       .from("creator_spotlights_public")
@@ -408,6 +451,7 @@
     loadTrustStripStats();
     loadHomeSpotlight();
     loadHeroSlider();
+    loadRecentWork();
     initCursorGlow(".hero-window");
     document.querySelectorAll(".particles-host").forEach((el) => initParticles(el, 14));
   });

@@ -892,3 +892,55 @@ body.custom-cursor input, body.custom-cursor textarea, body.custom-cursor select
 /* Dual-direction marquee -- pair a second row with class="rev" for
    the two-rows-opposite-ways rhythm. */
 .marquee-track.rev{ animation-direction:reverse; }
+
+/* ============================================================
+   Motion system, part 4 — vanilla reimplementations of a reference
+   (an animation-pattern teardown built with GSAP/ScrollTrigger):
+   mask-line reveal, pinned horizontal scroll, hover text-swap. No new
+   dependency -- same plain CSS/JS approach as everything else here.
+   The counter pattern from that reference is already covered by
+   animateCountUp()/data-count-to further up this file.
+   ============================================================ */
+
+/* Mask-line reveal: each line sits in an overflow-hidden wrapper,
+   starts pushed down, and slides up into place -- author the HTML as
+   <span class="mask-line"><span class="inner">text</span></span> per
+   line inside a container carrying data-mask-group; initMaskReveal()
+   adds .is-visible to that container once it scrolls into view. */
+.mask-line{ overflow:hidden; display:block; }
+.mask-line .inner{ display:inline-block; transform:translateY(100%); transition:transform .8s cubic-bezier(.16,1,.3,1); }
+[data-mask-group].is-visible .mask-line .inner{ transform:translateY(0); }
+[data-mask-group] .mask-line:nth-child(2) .inner{ transition-delay:.06s; }
+[data-mask-group] .mask-line:nth-child(3) .inner{ transition-delay:.12s; }
+[data-mask-group] .mask-line:nth-child(4) .inner{ transition-delay:.18s; }
+@media (prefers-reduced-motion: reduce){ .mask-line .inner{ transform:none; transition:none; } }
+
+/* Pinned horizontal scroll: a tall wrapper (height set by JS) holds a
+   sticky viewport; the track's translateX is driven by scroll
+   progress instead of native overflow-x, so vertical scroll reads as
+   horizontal motion while pinned. initPinGallery() also handles the
+   mobile/reduced-motion fallback to a plain swipeable strip. */
+.pin-gallery-wrap{ position:relative; }
+.pin-gallery-sticky{ position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; }
+.pin-gallery-track{ display:flex; gap:20px; padding-left:6vw; will-change:transform; }
+.pin-gallery-track.is-native-scroll{ overflow-x:auto; scroll-snap-type:x proximity; padding-right:6vw; -webkit-overflow-scrolling:touch; }
+.pin-panel{
+  flex-shrink:0; width:min(78vw,460px); aspect-ratio:4/5; border-radius:var(--r-xl);
+  position:relative; overflow:hidden; background:var(--surface-2); scroll-snap-align:start;
+}
+.pin-panel img{ width:100%; height:100%; object-fit:cover; display:block; }
+.pin-panel .pin-panel-caption{
+  position:absolute; left:0; right:0; bottom:0; padding:22px;
+  background:linear-gradient(0deg, rgba(0,0,0,.72) 0%, transparent 65%); color:#fff;
+}
+.pin-panel .pin-panel-caption p{ margin:0; font-size:14px; line-height:1.4; }
+
+/* Hover text-swap: two stacked copies of a label, one starting just
+   below the visible row -- on hover both slide up together, so the
+   label appears to slide through itself. Pure CSS. */
+.swap-link{ position:relative; height:1.4em; overflow:hidden; display:block; }
+.swap-link .layer{ position:absolute; inset:0; display:flex; align-items:center; transition:transform .45s cubic-bezier(.65,0,.35,1); }
+.swap-link .layer.bottom{ transform:translateY(100%); }
+.swap-link:hover .layer.top{ transform:translateY(-100%); }
+.swap-link:hover .layer.bottom{ transform:translateY(0); }
+@media (prefers-reduced-motion: reduce){ .swap-link .layer{ transition:none; } }
