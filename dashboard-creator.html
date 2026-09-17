@@ -38,25 +38,37 @@
       </div>
 
       <div id="dashContent" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
+        <div data-reveal style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
           <div>
             <span class="eyebrow" id="heroTag">Creator</span>
             <h1 style="margin-top:8px;">Good to see you, <span id="creatorFirstName" style="color:var(--accent);">there</span>.</h1>
             <p class="body-sm" id="heroSubline" style="margin-top:6px;">Loading your dashboard…</p>
           </div>
-          <div class="avatar-fallback" id="avatarInitials" style="width:52px;height:52px;font-size:18px;"></div>
+          <div id="avatarHost" class="avatar-fallback" style="width:52px;height:52px;font-size:18px;background:var(--accent);color:#fff;"></div>
         </div>
 
         <!-- ===== OVERVIEW ===== -->
         <section id="view-overview">
           <div class="grid grid-4" style="margin-bottom:32px;">
-            <div class="stat-card"><div class="stat-value" id="statApps">0</div><div class="stat-label">Applications sent</div></div>
-            <div class="stat-card"><div class="stat-value" id="statBriefs">0</div><div class="stat-label">Open briefs</div></div>
-            <div class="stat-card"><div class="stat-value" id="statBooked">0</div><div class="stat-label">Collabs booked</div></div>
-            <div class="stat-card"><div class="stat-value" id="statScore">—</div><div class="stat-label">Creatopz Score</div></div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+              <div class="stat-value" id="statApps">0</div><div class="stat-label">Applications sent</div>
+            </div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+              <div class="stat-value" id="statBriefs">0</div><div class="stat-label">Open briefs</div>
+            </div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <div class="stat-value" id="statBooked">0</div><div class="stat-label">Collabs booked</div>
+            </div>
+            <div class="stat-card stat-card-accent card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              <div class="stat-value" id="statScore">—</div><div class="stat-label">Creatopz Score</div>
+            </div>
           </div>
 
-          <div class="panel" style="padding:28px;margin-bottom:32px;">
+          <div class="panel" style="padding:28px;margin-bottom:32px;" data-reveal>
             <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start;">
               <div>
                 <span class="eyebrow">Profile strength</span>
@@ -70,7 +82,7 @@
 
           <div id="selectedBanner" style="display:none;margin-bottom:32px;"></div>
 
-          <div class="panel" style="padding:24px 28px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div class="panel" style="padding:24px 28px;margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;" data-reveal>
             <div>
               <span class="eyebrow">Invite a creator</span>
               <h3 style="margin-top:8px;">Refer a friend, you both get priority access</h3>
@@ -417,7 +429,13 @@ async function boot() {
 
   const name = creator?.name || profile.full_name || "there";
   document.getElementById("creatorFirstName").textContent = name.split(" ")[0];
-  document.getElementById("avatarInitials").textContent = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  const avatarHost = document.getElementById("avatarHost");
+  const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  if (creator?.profile_image) {
+    avatarHost.outerHTML = `<img src="${escapeHtml(creator.profile_image)}" alt="" class="avatar" style="width:52px;height:52px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'width:52px;height:52px;font-size:18px;background:var(--accent);color:#fff;',textContent:'${initials}'}))">`;
+  } else {
+    avatarHost.textContent = initials;
+  }
   document.getElementById("heroTag").textContent = (creator?.is_verified ? "Verified creator" : "Creator") + (creator?.category ? " · " + creator.category : "");
   document.getElementById("heroSubline").textContent = BRIEFS.length ? `${BRIEFS.length} open brief${BRIEFS.length === 1 ? "" : "s"} on Creatopz right now.` : "No open briefs right now — check back soon.";
 
