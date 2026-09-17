@@ -1,6 +1,6 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-17T13:46:54.052Z",
+  "run_at": "2026-09-17T13:50:06.394Z",
   "pages_scanned_dynamically": [
     "auth.html",
     "briefs.html",
@@ -133,33 +133,33 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "admin-console.html",
-      "line": 276,
+      "line": 242,
       "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:276."
+      "reproduction": "admin-console.html:242."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "admin-console.html",
-      "line": 330,
+      "line": 296,
       "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:330."
+      "reproduction": "admin-console.html:296."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "admin-console.html",
-      "line": 333,
+      "line": 299,
       "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:333."
+      "reproduction": "admin-console.html:299."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "admin-console.html",
-      "line": 441,
+      "line": 407,
       "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:441."
+      "reproduction": "admin-console.html:407."
     },
     {
       "severity": "Low",

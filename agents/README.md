@@ -4,39 +4,42 @@ Six agents were scoped: Trend Research, QA/Bug Detection, SEO, Lead/Visitor
 Communicator, Design/Creative, and Marketing/Business Promotion. Per the
 brief, the two with the most immediate operational value were built and
 verified first — **QA/Bug Detection** and **Lead/Visitor Communicator** —
-before touching the rest. Both are real, running code, not mockups.
+before touching the rest.
 
-## What's live
+**Current status: kept off the live site entirely, at explicit request.**
+The QA agent (below) is backend/dev tooling only — it never touched any
+page. A Lead/Visitor Communicator widget and an admin "Virtual Office"
+dashboard were also built and verified (17-check and 14-check functional
+tests, plus a real RLS check on the `leads` table), then deliberately
+reverted out of every public page and out of admin-console.html — none of
+that code is linked from anywhere live right now. It's still in this
+branch's git history (commits adding "Lead/Visitor Communicator Agent" and
+"Virtual Office dashboard") if it's ever wanted back. The `leads` and
+`agent_reports` tables from migration_023 still exist (empty, harmless).
+
+## What actually runs today
 
 - **`agents/qa-agent/run.js`** — a Node + Playwright scanner that reads
   every real HTML/JS file and drives a real headless browser across every
   public page. See `agents/qa-agent/README.md`. Verified against the real
   repo: 0 critical/high findings, 49 low-stakes ones, every finding hand
-  checked to rule out false positives before being logged.
-- **`js/lead-agent.js`** — a rule-based FAQ + lead-qualification widget on
-  11 public pages, backed by the `leads` Supabase table. See the widget's
-  own doc comment and `agents/qa-agent/reports/lead-agent-test.md` for its
-  17-check functional test plus a direct (rolled-back) RLS verification.
-- **Virtual Office** — a new view in `admin-console.html` (the business
-  owner's existing single pane of glass) showing both agents' live output:
-  a Needs Human Review queue, the full leads table, the QA agent's latest
-  report, and status cards for all 6 agents (2 live, 4 planned). Verified
-  with a 14-check functional test
-  (`agents/qa-agent/test-virtual-office.js`).
+  checked to rule out false positives before being logged. Run on demand
+  (`NODE_PATH=$(npm root -g) node agents/qa-agent/run.js`); its output
+  currently just writes local report files, not surfaced anywhere on the
+  site since Virtual Office was reverted.
 
-## Coordination rules, as actually implemented
+## Coordination rules, as designed (not currently surfaced anywhere)
 
-- **Shared dashboard**: both agents log to Supabase tables
-  (`agent_reports`, `leads`) that only `is_admin()` can read, surfaced in
-  Virtual Office.
-- **Needs human review**: the Lead Agent flags `needs_human_review: true`
-  on anything touching negotiated pricing, contracts, refunds, or payment
-  specifics — those visitors get routed to the lead form instead of a
-  canned answer, and show up in the review queue, not sent or published
-  anywhere autonomously. The QA agent's findings are code/site-health
-  data, not commitments, so it never sets this flag.
-- **Modular, one at a time**: each agent is its own file/table, callable
-  independently, already plugged into the one shared Virtual Office view.
+- **Shared dashboard**: agents were designed to log to Supabase tables
+  (`agent_reports`, `leads`) that only `is_admin()` can read, for a shared
+  admin dashboard — that dashboard isn't live right now (see above).
+- **Needs human review**: the Lead Agent's design flags
+  `needs_human_review: true` on anything touching negotiated pricing,
+  contracts, refunds, or payment specifics, rather than answering on its
+  own authority. The QA agent's findings are code/site-health data, not
+  commitments, so it never sets this flag.
+- **Modular, one at a time**: each agent is its own file/table, buildable
+  and pluggable independently.
 
 ## Honest scope — what this is and isn't
 
