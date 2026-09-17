@@ -254,7 +254,7 @@
       <span class="eyebrow">The community</span>
       <h2 style="margin-top:14px;">Collabs land here first — before they're anywhere else.</h2>
       <p class="lede" style="margin:18px 0 28px;max-width:480px;">Join the Creatopz community for daily updates on new briefs and what brands are actually looking for right now.</p>
-      <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20join%20the%20community" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Join the community →</a>
+      <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%27d%20like%20to%20join%20the%20community" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Join our WhatsApp community →</a>
     </div>
     <div class="card card-pad" data-reveal>
       <div style="display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);font-size:14.5px;"><span class="text-muted">Status</span><b>Cohort forming</b></div>
@@ -320,14 +320,24 @@
   async function loadTrustStripStats() {
     const creatorsEl = document.getElementById("statCreators");
     const campaignsEl = document.getElementById("statCampaigns");
-    const [creatorsRes, campaignsRes] = await Promise.all([
-      supabaseClient.from("creators_public").select("id", { count: "exact", head: true }),
-      supabaseClient.from("campaigns_public").select("id", { count: "exact", head: true }),
-    ]);
-    // Leave the "—" placeholder rather than show a wrong/fake number if
-    // either query fails — never fall back to a made-up figure here.
-    if (!creatorsRes.error) animateCountUp(creatorsEl, creatorsRes.count ?? 0);
-    if (!campaignsRes.error) animateCountUp(campaignsEl, campaignsRes.count ?? 0);
+    let creatorsRes = { count: 0, error: null };
+    let campaignsRes = { count: 0, error: null };
+    try {
+      [creatorsRes, campaignsRes] = await Promise.all([
+        supabaseClient.from("creators_public").select("id", { count: "exact", head: true }),
+        supabaseClient.from("campaigns_public").select("id", { count: "exact", head: true }),
+      ]);
+    } catch (e) {
+      console.error("Trust strip stats failed to load:", e);
+    }
+    // Show 0 rather than leave the "—" placeholder stuck forever — a
+    // failed fetch shouldn't look identical to "still loading" to a
+    // visitor who never opens devtools. The real error still goes to
+    // the console above so it's debuggable.
+    if (creatorsRes.error) console.error("Creator count fetch failed:", creatorsRes.error);
+    if (campaignsRes.error) console.error("Campaign count fetch failed:", campaignsRes.error);
+    animateCountUp(creatorsEl, creatorsRes.count ?? 0);
+    animateCountUp(campaignsEl, campaignsRes.count ?? 0);
   }
 
   function initials(name) {
@@ -342,9 +352,16 @@
       .order("display_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(8);
-    if (error || !data || !data.length) return; // stays hidden -- no placeholder tiles
-
     document.getElementById("recentWorkSection").style.display = "block";
+    if (error || !data || !data.length) {
+      document.getElementById("recentWorkWrap").innerHTML = `
+        <div class="state-block" style="margin:0 auto;max-width:480px;">
+          <div class="state-icon">◎</div>
+          <h3>No posts yet</h3>
+          <p>Check back soon, or follow along on <a href="https://instagram.com/creatopz" target="_blank" rel="noopener">@creatopz</a>.</p>
+        </div>`;
+      return;
+    }
     document.getElementById("recentWorkTrack").innerHTML = data.map((post) => {
       const tag = post.instagram_url ? "a" : "div";
       const href = post.instagram_url ? `href="${escapeHtml(post.instagram_url)}" target="_blank" rel="noopener"` : "";
@@ -363,7 +380,16 @@
       .select("*")
       .order("week_start", { ascending: false })
       .limit(1);
-    if (error || !data || !data.length) return; // stays hidden -- no fake placeholder
+    document.getElementById("spotlightSection").style.display = "block";
+    if (error || !data || !data.length) {
+      document.getElementById("homeSpotlight").innerHTML = `
+        <div class="state-block" style="margin:0 auto;max-width:480px;">
+          <div class="state-icon">◎</div>
+          <h3>No feature yet this week</h3>
+          <p>Be the first vetted profile in beauty, fitness or food. <a href="auth.html?mode=signup">Join as a creator →</a></p>
+        </div>`;
+      return;
+    }
     const s = data[0];
     const photo = s.profile_image
       ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;height:260px;',textContent:'${initials(s.name)}'}))">`
@@ -377,7 +403,6 @@
           ${s.headline ? `<p class="body-sm" style="margin-top:8px;">${escapeHtml(s.headline)}</p>` : ""}
         </div>
       </a>`;
-    document.getElementById("spotlightSection").style.display = "block";
   }
 
   // Gentle auto-advance so the slider visibly moves on its own (paused the
