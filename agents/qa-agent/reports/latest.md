@@ -1,6 +1,6 @@
 # QA / Bug Detection Agent — report
 
-Run at: 2026-09-17T17:04:44.143Z
+Run at: 2026-09-17T17:37:48.268Z
 
 49 findings — 0 critical, 0 high, 12 medium, 37 low. Scanned 15 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically.
 
