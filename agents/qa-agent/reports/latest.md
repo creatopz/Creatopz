@@ -1,6 +1,6 @@
 # QA / Bug Detection Agent — report
 
-Run at: 2026-09-17T13:41:58.981Z
+Run at: 2026-09-17T13:46:54.052Z
 
 49 findings — 0 critical, 0 high, 12 medium, 37 low. Scanned 15 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically.
 
@@ -18,10 +18,10 @@ Run at: 2026-09-17T13:41:58.981Z
 | Medium | SEO/meta | privacy.html | Missing <meta name="description"> tag. | View page source; no description meta tag in <head>. |
 | Medium | SEO/meta | reset-password.html | Missing <meta name="description"> tag. | View page source; no description meta tag in <head>. |
 | Medium | SEO/meta | terms.html | Missing <meta name="description"> tag. | View page source; no description meta tag in <head>. |
-| Low | Palette compliance | admin-console.html:242 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:242. |
-| Low | Palette compliance | admin-console.html:296 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:296. |
-| Low | Palette compliance | admin-console.html:299 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:299. |
-| Low | Palette compliance | admin-console.html:407 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:407. |
+| Low | Palette compliance | admin-console.html:276 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:276. |
+| Low | Palette compliance | admin-console.html:330 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:330. |
+| Low | Palette compliance | admin-console.html:333 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:333. |
+| Low | Palette compliance | admin-console.html:441 | Hardcoded color #ff6f61 isn't in the approved monochrome+red palette. | admin-console.html:441. |
 | Low | Palette compliance | play.html:21 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:21. |
 | Low | Palette compliance | play.html:22 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:22. |
 | Low | Palette compliance | play.html:24 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:24. |

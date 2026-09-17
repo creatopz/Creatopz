@@ -364,3 +364,44 @@ and a stat-click tab switch, public-viewer view confirming the
 share tile and edit button both correctly stay hidden, and the
 existing edit-and-save flow end-to-end), full-site overflow sweep
 (320-1280px, every page) clean.
+
+## Multi-agent workforce: QA agent, Lead agent, Virtual Office (migration_023)
+First two agents of a planned six-agent system (see `agents/README.md` for
+the full scope/coordination rules and an honest disclosure of what "agent"
+means in a static site with no persistent server process). Additive only
+-- one new migration, two new tables, no existing table/view touched.
+
+- **QA / Bug Detection Agent** (`agents/qa-agent/run.js`): a real Node +
+  Playwright scanner, run on demand (not continuously) against the actual
+  codebase and every public page -- broken links, missing alt text/meta,
+  layout overflow, JS errors, off-palette colors, leftover debug code.
+  Severity-ranked (Critical/High/Medium/Low), written to
+  `agents/qa-agent/reports/latest.{json,md}`, and logged to the new
+  `agent_reports` table (admin-only RLS) so it shows up in Virtual Office.
+  Run it with `NODE_PATH=$(npm root -g) node agents/qa-agent/run.js`.
+- **Lead / Visitor Communicator Agent** (`js/lead-agent.js`): a rule-based
+  (not free-form LLM -- no server-side API key available to run one)
+  FAQ + lead-qualification floating widget on 11 public pages (index,
+  directory, campaigns, gallery, briefs, spotlight, earnings-stats,
+  for-brands, profile, privacy, terms -- deliberately not auth.html or any
+  logged-in/admin page). Its answers are pulled verbatim from copy already
+  live on for-brands.html; anything it can't answer confidently, or that
+  touches negotiated pricing/contracts/refunds/payment specifics, routes
+  to a lead-capture form instead of guessing, flagged
+  `needs_human_review: true`. Captured leads write to the new `leads`
+  table -- anon can INSERT only (validated by a length `CHECK`, no way to
+  read back what was submitted), admin can SELECT/UPDATE/DELETE.
+- **Virtual Office** (new view in admin-console.html, `#agents`): the
+  coordination-rules-mandated shared dashboard -- a Needs Human Review
+  queue (every lead an agent deliberately held back from an autonomous
+  answer), the full leads table, the QA agent's latest report in full,
+  and status cards for all 6 agents (2 live, 4 planned).
+
+Verified: the QA agent run against the real repo (0 critical/high,
+49 low-stakes findings, each hand-checked to rule out false positives --
+see `agents/qa-agent/reports/latest.md`); a 17-check headless-browser
+functional test of the Lead Agent widget plus a direct rolled-back RLS
+check of the `leads` table (`agents/qa-agent/reports/lead-agent-test.md`);
+a 14-check functional test of the Virtual Office view
+(`agents/qa-agent/test-virtual-office.js`); a full-site QA agent re-run
+after wiring the widget onto 11 pages, confirming zero regressions.
