@@ -32,7 +32,6 @@
     <a href="dashboard-creator.html">Dashboard</a>
     <a href="directory.html">Directory</a>
   </div>
-  <div class="nav-drawer-actions" id="editActionDrawer"></div>
 </div>
 
 <div id="loadingState" class="wrap" style="padding:60px 0;"><div class="skeleton" style="height:220px;"></div></div>
@@ -56,6 +55,8 @@
       <div class="profile-meta-line">
         <span id="nicheLabel">Creator</span><span class="profile-meta-dot"></span><span id="cityLabel">—</span>
       </div>
+
+      <div id="editActionMain" style="margin-top:16px;"></div>
 
       <div class="divider" style="margin:24px 0;"></div>
 
@@ -257,17 +258,15 @@ function renderProfile() {
   renderPublicActions();
   renderConnectTile();
   // .nav-actions (the desktop header slot #editAction lives in) is
-  // hidden at <=900px site-wide -- on a phone the only way to reach
-  // "Edit profile" is this drawer button, so it must exist independent
-  // of the header slot, not just as a fallback copy of it.
+  // hidden at <=900px site-wide -- previously the only way to reach
+  // "Edit profile" on a phone was inside the nav drawer, which meant an
+  // extra tap to open the menu before even seeing the button. It now
+  // also renders directly in the page body (#editActionMain), visible
+  // immediately on any screen size with no menu involved.
   document.getElementById("editAction").innerHTML = IS_OWN ? `<button class="btn btn-outline btn-sm" id="editToggleBtn">Edit profile</button>` : "";
-  document.getElementById("editActionDrawer").innerHTML = IS_OWN ? `<button class="btn btn-white btn-block btn-lg" id="editToggleBtnDrawer">Edit profile</button>` : "";
+  document.getElementById("editActionMain").innerHTML = IS_OWN ? `<button class="btn btn-outline" id="editToggleBtnMain">Edit profile</button>` : "";
   document.getElementById("editToggleBtn")?.addEventListener("click", toggleEdit);
-  document.getElementById("editToggleBtnDrawer")?.addEventListener("click", () => {
-    document.querySelector(".nav-drawer")?.classList.remove("is-open");
-    document.body.classList.remove("drawer-open");
-    toggleEdit();
-  });
+  document.getElementById("editToggleBtnMain")?.addEventListener("click", toggleEdit);
 
   const arrow = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>`;
   const stats = [
@@ -424,7 +423,7 @@ function toggleEdit() {
     ["tabWork", "tabAudience", "tabRates"].forEach((id) => { if (id !== "tabAudience" && id !== "tabRates") document.getElementById(id).style.display = "block"; });
     document.getElementById("tabWork").style.display = "block";
     document.getElementById("editToggleBtn").textContent = "Edit profile";
-    if (document.getElementById("editToggleBtnDrawer")) document.getElementById("editToggleBtnDrawer").textContent = "Edit profile";
+    if (document.getElementById("editToggleBtnMain")) document.getElementById("editToggleBtnMain").textContent = "Edit profile";
   } else {
     const c = CREATOR || {};
     document.getElementById("fName").value = c.name || "";
@@ -452,7 +451,7 @@ function toggleEdit() {
     document.getElementById("tabAudience").style.display = "none";
     document.getElementById("tabRates").style.display = "none";
     document.getElementById("editToggleBtn").textContent = "Cancel";
-    if (document.getElementById("editToggleBtnDrawer")) document.getElementById("editToggleBtnDrawer").textContent = "Cancel";
+    if (document.getElementById("editToggleBtnMain")) document.getElementById("editToggleBtnMain").textContent = "Cancel";
   }
 }
 
