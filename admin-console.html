@@ -37,6 +37,7 @@
       <a href="#gallery" data-view="gallery">Gallery <span class="badge" id="countGallery" style="margin-left:auto;">0</span></a>
       <a href="#spotlight" data-view="spotlight">Spotlight <span class="badge" id="countSpotlight" style="margin-left:auto;">0</span></a>
       <a href="#messages" data-view="messages">Messages <span class="badge badge-accent" id="countMessages" style="margin-left:auto;display:none;">0</span></a>
+      <a href="#agents" data-view="agents">Virtual Office <span class="badge badge-accent" id="countAgentReview" style="margin-left:auto;display:none;">0</span></a>
     </nav>
     <div class="dash-sidebar-foot">
       <div class="eyebrow on-dark" style="margin-bottom:12px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Mediation on</div>
@@ -125,6 +126,36 @@
           </div>
         </section>
 
+        <section id="view-agents" style="display:none;">
+          <p class="body-sm" style="max-width:680px;margin-bottom:20px;color:var(--on-dark-soft);">Each agent runs independently and logs what it finds here — nothing touching pricing, contracts, payments, or a public commitment ever goes out on its own; it lands in the queue below for you instead.</p>
+
+          <div class="admin-card" style="margin-bottom:20px;" id="agentReviewCard">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+              <b style="color:#fff;font-size:15px;">Needs human review</b>
+              <span class="caption">Held for your approval — nothing here has been sent or published</span>
+            </div>
+            <div id="agentReviewList" style="margin-top:14px;display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+
+          <div class="grid grid-3" style="margin-bottom:20px;gap:16px;" id="agentStatusGrid"></div>
+
+          <div class="admin-card" id="qaReportCard">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+              <b style="color:#fff;font-size:15px;">QA / Bug Detection Agent — latest run</b>
+              <span class="caption" id="qaReportMeta"></span>
+            </div>
+            <div id="qaReportBody" style="margin-top:14px;"></div>
+          </div>
+
+          <div class="admin-card" style="margin-top:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+              <b style="color:#fff;font-size:15px;">All leads</b>
+              <span class="caption">Captured by the Lead/Visitor Communicator widget across the public site</span>
+            </div>
+            <div class="admin-table-wrap" style="margin-top:14px;"><table class="admin-table"><thead><tr><th>Name</th><th>Contact</th><th>Need</th><th>Source</th><th>Flags</th><th>Status</th></tr></thead><tbody id="leadsBody"></tbody></table></div>
+          </div>
+        </section>
+
         <div id="emptyState" class="state-block" style="display:none;">
           <div class="state-icon">◎</div>
           <h3 id="emptyTitle">Nothing matches that search</h3>
@@ -147,6 +178,7 @@
     <a href="#gallery" data-view="gallery">Gallery</a>
     <a href="#spotlight" data-view="spotlight">Spotlight</a>
     <a href="#messages" data-view="messages">Messages</a>
+    <a href="#agents" data-view="agents">Virtual Office</a>
   </div>
   <div class="nav-drawer-actions">
     <button id="logoutBtnMobile" class="btn btn-white btn-block btn-lg">Log out</button>
@@ -175,7 +207,7 @@
 <script src="js/nav.js"></script>
 <script>
 let SESSION = null, VIEW = "apps", QUERY = "";
-let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [], SPOTLIGHTS = [];
+let APPS = [], CREATORS = [], CAMPAIGNS = [], GALLERY = [], CONVERSATIONS = [], UNREAD_BY_CONVO = {}, TEAM_PICKS = [], SPOTLIGHTS = [], LEADS = [], AGENT_REPORTS = [];
 let ACTIVE_CONVO_ID = null, THREAD = [];
 const AGREED_DRAFTS = {};
 
@@ -205,13 +237,15 @@ function pillClass(status) {
   return "";
 }
 
+const ADMIN_VIEWS = ["apps", "creators", "campaigns", "gallery", "spotlight", "messages", "agents"];
+
 function setView(view) {
-  ["apps", "creators", "campaigns", "gallery", "spotlight", "messages"].forEach((v) => {
+  ADMIN_VIEWS.forEach((v) => {
     document.getElementById("view-" + v).style.display = v === view ? "block" : "none";
   });
   document.querySelectorAll("[data-view]").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
   document.getElementById("viewTitle").textContent = {
-    apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", spotlight: "Spotlight", messages: "Messages",
+    apps: "Applications — matches to finalise", creators: "Creators", campaigns: "Campaigns", gallery: "Gallery", spotlight: "Spotlight", messages: "Messages", agents: "Virtual Office",
   }[view];
   VIEW = view;
   renderAll();
@@ -464,8 +498,98 @@ function renderMessages() {
   }
 }
 
+// ===== Virtual Office: the multi-agent workforce's shared dashboard =====
+const AGENT_ROSTER = [
+  { name: "QA / Bug Detection Agent", status: "live", blurb: "Scans the real codebase and every page for broken links, missing alt text/meta, layout overflow and JS errors — severity-ranked." },
+  { name: "Lead / Visitor Communicator Agent", status: "live", blurb: "Answers visitor FAQs and qualifies leads on the public site — escalates anything pricing/contract-related to your review queue." },
+  { name: "Trend Research Agent", status: "planned", blurb: "Weekly SEO/UI/creator-economy trend reports and competitor-move alerts." },
+  { name: "SEO Agent", status: "planned", blurb: "On-page/technical SEO audits and a prioritized keyword/content action list." },
+  { name: "Design / Creative Agent", status: "planned", blurb: "Design briefs, UI/UX suggestions, and on-brand ad/social copy drafts." },
+  { name: "Marketing / Business Promotion Agent", status: "planned", blurb: "Cross-channel campaign plans and growth tactics, coordinated with SEO + Creative." },
+];
+
+function renderAgents() {
+  const pendingReview = LEADS.filter((l) => l.needs_human_review && l.status === "new");
+  const badge = document.getElementById("countAgentReview");
+  badge.style.display = pendingReview.length ? "inline-flex" : "none";
+  badge.textContent = pendingReview.length;
+  if (VIEW !== "agents") return;
+
+  // Needs-human-review queue -- every one of these was deliberately held
+  // back by an agent rather than acted on, per the coordination rules.
+  const reviewHost = document.getElementById("agentReviewList");
+  reviewHost.innerHTML = !pendingReview.length
+    ? `<p class="body-sm" style="color:var(--on-dark-soft);">Nothing needs review right now.</p>`
+    : pendingReview.map((l) => `
+      <div style="background:rgba(255,255,255,.04);border-radius:var(--r-md);padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;">
+          <b style="color:#fff;font-size:14px;">${escapeHtml(l.name)}${l.high_intent ? ` <span class="badge badge-accent" style="margin-left:6px;">High intent</span>` : ""}</b>
+          <span class="caption">${new Date(l.created_at).toLocaleString()} · ${escapeHtml(l.source_page || "")}</span>
+        </div>
+        <div class="body-sm" style="margin-top:8px;color:#fff;">${escapeHtml(l.need)}</div>
+        <div class="caption" style="margin-top:6px;">Contact: ${escapeHtml(l.contact)}</div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-sm admin-btn-out lead-mark-btn" data-id="${l.id}" data-status="contacted" style="flex:1;">Mark contacted</button>
+          <button class="btn btn-sm admin-btn-out lead-mark-btn" data-id="${l.id}" data-status="closed" style="flex:1;">Dismiss</button>
+        </div>
+      </div>`).join("");
+  reviewHost.querySelectorAll(".lead-mark-btn").forEach((btn) => btn.addEventListener("click", () => setLeadStatus(btn.dataset.id, btn.dataset.status)));
+
+  // Agent status cards -- 2 real/live agents plus the 4 not built yet,
+  // per "confirm each agent works before integrating the rest".
+  document.getElementById("agentStatusGrid").innerHTML = AGENT_ROSTER.map((a) => {
+    const latest = AGENT_REPORTS.find((r) => r.agent_name === a.name);
+    return `
+    <div class="admin-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
+        <b style="color:#fff;font-size:14.5px;">${escapeHtml(a.name)}</b>
+        <span class="badge ${a.status === "live" ? "badge-accent" : ""}">${a.status === "live" ? "Live" : "Planned"}</span>
+      </div>
+      <p class="caption" style="margin-top:10px;">${escapeHtml(a.blurb)}</p>
+      ${latest ? `<div class="caption" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--dark-border);color:#fff;">Last run ${new Date(latest.run_at).toLocaleDateString()}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  // QA agent's latest report, in full -- run agents/qa-agent/run.js and
+  // push the result here (see agents/qa-agent/README.md).
+  const qaReport = AGENT_REPORTS.find((r) => r.agent_name === "QA / Bug Detection Agent");
+  document.getElementById("qaReportMeta").textContent = qaReport ? new Date(qaReport.run_at).toLocaleString() : "No run logged yet";
+  document.getElementById("qaReportBody").innerHTML = !qaReport
+    ? `<p class="body-sm" style="color:var(--on-dark-soft);">Run agents/qa-agent/run.js and log the result to see it here.</p>`
+    : `
+      <p class="body-sm" style="color:#fff;">${escapeHtml(qaReport.summary)}</p>
+      <div class="grid grid-4" style="margin:14px 0;gap:10px;">
+        ${["Critical", "High", "Medium", "Low"].map((sev) => `<div class="admin-card" style="padding:14px;"><div class="caption">${sev}</div><div class="font-display" style="color:#fff;font-size:20px;margin-top:4px;">${qaReport.severity_counts?.[sev] ?? 0}</div></div>`).join("")}
+      </div>
+      <div class="admin-table-wrap" style="max-height:340px;overflow-y:auto;">
+        <table class="admin-table"><thead><tr><th>Severity</th><th>Category</th><th>File</th><th>Finding</th></tr></thead><tbody>
+          ${(qaReport.findings || []).map((f) => `<tr><td>${escapeHtml(f.severity)}</td><td>${escapeHtml(f.category)}</td><td>${escapeHtml(f.file)}${f.line ? ":" + f.line : ""}</td><td>${escapeHtml(f.description)}</td></tr>`).join("")}
+        </tbody></table>
+      </div>`;
+
+  // Full leads table.
+  document.getElementById("leadsBody").innerHTML = !LEADS.length
+    ? `<tr><td colspan="6" class="caption" style="text-align:center;padding:24px;">No leads captured yet.</td></tr>`
+    : LEADS.map((l) => `
+      <tr>
+        <td style="color:#fff;font-weight:600;">${escapeHtml(l.name)}</td>
+        <td class="caption" style="overflow-wrap:anywhere;">${escapeHtml(l.contact)}</td>
+        <td class="caption" style="max-width:260px;">${escapeHtml(l.need)}</td>
+        <td class="caption">${escapeHtml(l.source_page || "—")}</td>
+        <td>${l.high_intent ? `<span class="badge badge-accent" style="margin-right:4px;">High intent</span>` : ""}${l.needs_human_review ? `<span class="badge badge-warning">Needs review</span>` : ""}</td>
+        <td><span class="badge ${l.status === "new" ? "badge-accent" : l.status === "contacted" ? "badge-warning" : "badge-dark"}">${escapeHtml(l.status)}</span></td>
+      </tr>`).join("");
+}
+
+async function setLeadStatus(id, status) {
+  const { error } = await supabaseClient.from("leads").update({ status }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
+  await loadAll();
+  showToast(status === "contacted" ? "Marked contacted" : "Dismissed", "success");
+}
+
 function renderAll() {
-  renderApps(); renderCreators(); renderCampaigns(); renderGallery(); renderSpotlights(); renderMessages();
+  renderApps(); renderCreators(); renderCampaigns(); renderGallery(); renderSpotlights(); renderMessages(); renderAgents();
 }
 
 // ===== Creator of the Week / spotlight =====
@@ -535,7 +659,7 @@ document.getElementById("clearSearchBtn").addEventListener("click", () => { QUER
 
 async function loadAll() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes, spotlightsRes] = await Promise.all([
+  const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes, spotlightsRes, leadsRes, agentReportsRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
       .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
@@ -545,9 +669,11 @@ async function loadAll() {
     supabaseClient.from("campaign_team_picks").select("*, creators(id,name)").order("created_at", { ascending: true }),
     supabaseClient.from("application_feedback").select("content_format_fit, niche_fit, reach_fit, created_at").gte("created_at", sevenDaysAgo),
     supabaseClient.from("creator_spotlights").select("*, creators(name, category)").order("week_start", { ascending: false }),
+    supabaseClient.from("leads").select("*").order("created_at", { ascending: false }),
+    supabaseClient.from("agent_reports").select("*").order("run_at", { ascending: false }).limit(10),
   ]);
   APPS = appsRes.data || []; CREATORS = creatorsRes.data || []; CAMPAIGNS = campaignsRes.data || []; GALLERY = galleryRes.data || [];
-  TEAM_PICKS = teamPicksRes.data || []; SPOTLIGHTS = spotlightsRes.data || [];
+  TEAM_PICKS = teamPicksRes.data || []; SPOTLIGHTS = spotlightsRes.data || []; LEADS = leadsRes.data || []; AGENT_REPORTS = agentReportsRes.data || [];
   // 'invited' rows are a brand's outstanding invite, not yet accepted by
   // the creator -- nothing for admin to mediate until the creator responds.
   document.getElementById("kpiPending").textContent = APPS.filter((a) => a.status === "pending" || a.status === "shortlisted").length;
@@ -699,7 +825,7 @@ async function boot() {
     .subscribe();
 
   const initialView = (location.hash || "#apps").replace("#", "");
-  setView(["apps", "creators", "campaigns", "gallery", "spotlight", "messages"].includes(initialView) ? initialView : "apps");
+  setView(ADMIN_VIEWS.includes(initialView) ? initialView : "apps");
 }
 
 document.getElementById("logoutBtn").addEventListener("click", logOut);
