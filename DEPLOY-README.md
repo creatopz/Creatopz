@@ -371,3 +371,23 @@ and a stat-click tab switch, public-viewer view confirming the
 share tile and edit button both correctly stay hidden, and the
 existing edit-and-save flow end-to-end), full-site overflow sweep
 (320-1280px, every page) clean.
+
+## Multi-agent workforce (agents/ folder, migration_023) -- NOT wired into the site
+Backend/dev tooling only, deliberately kept off every live page for now --
+see `agents/README.md` for the full scope/coordination rules. Additive
+schema only (`agent_reports`, `leads` tables); no existing table/view was
+touched and no page's HTML/CSS was changed by this.
+
+- **QA / Bug Detection Agent** (`agents/qa-agent/run.js`): a real Node +
+  Playwright scanner you run on demand against the codebase/site --
+  broken links, missing alt text/meta, layout overflow, JS errors,
+  off-palette colors, leftover debug code. Severity-ranked, written to
+  `agents/qa-agent/reports/latest.{json,md}`. Run it with
+  `NODE_PATH=$(npm root -g) node agents/qa-agent/run.js`. Last real run
+  against this repo: 0 critical/high findings, 49 low-stakes ones.
+- A **Lead/Visitor Communicator widget** and an admin **Virtual Office**
+  dashboard were built and verified (functional tests + a real RLS check)
+  but then deliberately reverted out of every page and out of
+  admin-console.html at your request -- the code isn't linked from
+  anywhere live. The `leads`/`agent_reports` tables from migration_023
+  are still there (empty, harmless) if this gets revisited later.
