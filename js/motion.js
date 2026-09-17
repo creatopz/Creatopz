@@ -202,44 +202,6 @@ function staggerInGrid(gridSelector, itemSelector) {
   }, 1200);
 }
 
-// ---------- Custom cursor ----------
-// A small dot + trailing ring on desktop pointers, skipped entirely on
-// touch/coarse pointers and under prefers-reduced-motion. Off inside
-// the dashboard/admin shell -- a work tool, not the marketing site.
-function initCustomCursor() {
-  if (PREFERS_REDUCED_MOTION) return;
-  if (!window.matchMedia("(min-width:901px) and (hover:hover) and (pointer:fine)").matches) return;
-  if (document.querySelector(".dash-shell")) return;
-
-  const dot = document.createElement("div");
-  dot.id = "ctzCursorDot";
-  const ring = document.createElement("div");
-  ring.id = "ctzCursorRing";
-  document.body.append(dot, ring);
-  document.body.classList.add("custom-cursor");
-
-  let x = 0, y = 0, rx = 0, ry = 0;
-  window.addEventListener("mousemove", (e) => {
-    x = e.clientX; y = e.clientY;
-    dot.style.left = x + "px"; dot.style.top = y + "px";
-  });
-  (function loop() {
-    rx += (x - rx) * 0.18; ry += (y - ry) * 0.18;
-    ring.style.left = rx + "px"; ring.style.top = ry + "px";
-    requestAnimationFrame(loop);
-  })();
-
-  const hideOn = "input, textarea, select, [contenteditable]";
-  const growOn = "a, button, .btn, .card-hover, .creator-card, .campaign-card, .spotlight-card";
-  document.addEventListener("mouseover", (e) => {
-    if (e.target.closest(hideOn)) { dot.classList.add("is-hidden"); ring.classList.add("is-hidden"); return; }
-    dot.classList.remove("is-hidden"); ring.classList.remove("is-hidden");
-    const grown = e.target.closest(growOn);
-    ring.classList.toggle("is-hover", !!grown);
-    ring.classList.toggle("is-dark", !!(grown && grown.closest(".hero-window, .cta-panel, .section-dark, [style*='background:var(--ink)'], [style*='background: var(--ink)']")));
-  });
-}
-
 // ---------- Spotlight cards ----------
 // Cursor-follow glow inside existing card components -- adds
 // .spotlight-card and tracks --mx/--my per card, no markup needed.
@@ -368,7 +330,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initMagneticButtons();
   initLinkSweep();
   initCountUp();
-  initCustomCursor();
   initSpotlightCards();
   initWordReveal();
   initMaskReveal();
