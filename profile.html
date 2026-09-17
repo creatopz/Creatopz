@@ -264,7 +264,7 @@ function renderProfile() {
   // also renders directly in the page body (#editActionMain), visible
   // immediately on any screen size with no menu involved.
   document.getElementById("editAction").innerHTML = IS_OWN ? `<button class="btn btn-outline btn-sm" id="editToggleBtn">Edit profile</button>` : "";
-  document.getElementById("editActionMain").innerHTML = IS_OWN ? `<button class="btn btn-outline" id="editToggleBtnMain">Edit profile</button>` : "";
+  document.getElementById("editActionMain").innerHTML = IS_OWN ? `<button class="btn btn-accent" id="editToggleBtnMain">Edit profile</button>` : "";
   document.getElementById("editToggleBtn")?.addEventListener("click", toggleEdit);
   document.getElementById("editToggleBtnMain")?.addEventListener("click", toggleEdit);
 
@@ -452,6 +452,11 @@ function toggleEdit() {
     document.getElementById("tabRates").style.display = "none";
     document.getElementById("editToggleBtn").textContent = "Cancel";
     if (document.getElementById("editToggleBtnMain")) document.getElementById("editToggleBtnMain").textContent = "Cancel";
+    // The form lives further down the page than the button that opens
+    // it -- on a phone that change happens entirely off-screen, so
+    // without this a tap looks like it did nothing. Scroll to it so the
+    // switch is visible immediately.
+    document.getElementById("editForm").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
