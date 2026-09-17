@@ -571,8 +571,6 @@ table.table{ width:100%; border-collapse:collapse; min-width:560px; }
 .hero-live-label{ display:flex; align-items:center; gap:8px; color:#fff; font-weight:500; font-size:13.5px; }
 .hero-live-dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(231,71,60,.25); }
 .hero-live-sub{ font-size:12.5px; color:rgba(255,255,255,.45); margin-top:2px; }
-.hero-live-cta{ color:rgba(255,255,255,.85); font-size:13.5px; font-weight:600; }
-.hero-live-cta:hover{ color:#fff; }
 .hero-slider-heading-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
 .hero-slider-heading{ font-family:var(--font-display); font-size:18px; font-weight:500; color:#fff; }
 .hero-slider-track{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; padding-bottom:2px; margin:0 -2px; }
@@ -836,20 +834,6 @@ body{ animation:ctzPageIn .22s ease both; }
 }
 @keyframes beamRotate{ to{ --beam-angle:360deg; } }
 @media (prefers-reduced-motion: reduce){ .border-beam::after{ animation:none; opacity:.5; } }
-
-/* Custom cursor: a small dot + trailing ring, desktop pointer only --
-   initCustomCursor() adds body.custom-cursor and builds the two nodes.
-   Native cursor stays put over text inputs (you need the real caret)
-   and is restored entirely on touch/coarse pointers. */
-body.custom-cursor{ cursor:none; }
-body.custom-cursor input, body.custom-cursor textarea, body.custom-cursor select{ cursor:auto; }
-#ctzCursorDot, #ctzCursorRing{ position:fixed; top:0; left:0; pointer-events:none; z-index:9999; border-radius:50%; transform:translate(-50%,-50%); }
-#ctzCursorDot{ width:6px; height:6px; background:var(--accent); }
-#ctzCursorRing{ width:34px; height:34px; border:1px solid rgba(0,0,0,.3); transition:width .25s cubic-bezier(.16,1,.3,1), height .25s cubic-bezier(.16,1,.3,1), border-color .25s ease, background-color .25s ease, opacity .2s ease; }
-#ctzCursorRing.is-hover{ width:54px; height:54px; border-color:var(--accent); background:rgba(231,71,60,.06); }
-#ctzCursorRing.is-dark{ border-color:rgba(255,255,255,.5); }
-#ctzCursorRing.is-hidden, #ctzCursorDot.is-hidden{ opacity:0; }
-@media (max-width:900px), (hover:none){ body.custom-cursor{ cursor:auto; } #ctzCursorDot, #ctzCursorRing{ display:none; } }
 
 /* Spotlight cards: a soft cursor-follow glow inside a card. Applied
    automatically by initSpotlightCards() to .card-hover/.creator-card/
