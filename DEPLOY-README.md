@@ -58,9 +58,13 @@ from any page's navigation — leave it alone or delete it, your call.
   picks into a real invite from admin-console.html's Campaigns tab.
 - `creator-onboarding.html` / `brand-onboarding.html` — profile builder forms (with a live completion meter on the creator side)
 - `spotlight.html` — public, no login: Creator of the Week + past features, reads `creator_spotlights_public`
-- `briefs.html` — public, no login: open briefs with real rupee budgets shown, reads `campaigns_public`/`brands_public`
-- `earnings-stats.html` — public, no login: anonymized average earnings by niche, reads `niche_earnings_stats` (5-creator minimum enforced in the view)
 - `gallery.html`, `forgot-password.html`, `reset-password.html`, `terms.html`, `privacy.html`
+
+`for-brands.html`, `briefs.html` and `earnings-stats.html` were removed
+(page + every nav link to them, including js/auth.js's logged-out
+"For Brands" button and the bottom-nav's briefs icon) at request -- the
+`niche_earnings_stats` view and `campaigns_public`/`brands_public` (still
+used elsewhere) were left in place, unused by any page now.
 
 ## Security notes
 - A user can never set their own role to 'admin' (DB trigger). Only

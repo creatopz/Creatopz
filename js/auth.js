@@ -195,15 +195,11 @@ async function renderAuthNav(navSelector = "#authNav") {
   };
 
   if (!profile) {
-    // "For Brands" rides along here (not just in the nav-links list) so
-    // a brand visitor sees an entry point in the one spot every visitor
-    // looks -- same prominence class as "Log in", one step down from
-    // the primary "Join as Creator" CTA.
     if (nav) {
-      nav.innerHTML = `<a href="for-brands.html" class="btn btn-ghost btn-sm hide-xs">For Brands</a><a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
+      nav.innerHTML = `<a href="auth.html" class="btn btn-outline btn-sm">Log in</a><a href="auth.html?mode=signup" class="btn btn-primary btn-sm"><span class="hide-xs">Join as</span> Creator</a>`;
     }
     if (drawerActions) {
-      drawerActions.innerHTML = `<a href="for-brands.html" class="btn btn-outline on-dark btn-block btn-lg">For Brands</a><a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a><a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>`;
+      drawerActions.innerHTML = `<a href="auth.html" class="btn btn-outline on-dark btn-block btn-lg">Log in</a><a href="auth.html?mode=signup" class="btn btn-white btn-block btn-lg">Join Creatopz</a>`;
     }
     return;
   }
