@@ -9,51 +9,250 @@
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="css/theme.css">
 <style>
-  .auth-shell{ min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
-  .auth-shell > *{ min-width:0; }
-  .auth-aside{ background:var(--surface-2); color:var(--ink); padding:44px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; border-right:1px solid var(--border); }
-  .auth-aside::before{ content:""; position:absolute; inset:-20% -20% auto auto; width:60%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, var(--accent-soft), transparent 70%); }
-  .auth-main{ display:flex; align-items:center; justify-content:center; padding:44px; }
-  .auth-form-wrap{ width:100%; max-width:420px; }
-  @media (max-width:860px){
-    .auth-shell{ grid-template-columns:1fr; }
-    .auth-aside{ padding:32px 24px; min-height:auto; }
-    .auth-aside .auth-perks{ display:none; }
-    .auth-main{ padding:32px 20px 60px; }
-  }
+/* Layout only -- colors, buttons, inputs, chips, tabs and cards all
+   come from theme.css's own tokens/components (var(--ink)/(--accent)/
+   (--surface)/(--border)/(--muted)) so this page stays inside the
+   site's monochrome + single red accent palette. */
+
+.auth-shell{ width:100%; min-height:100svh; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr); padding:28px; gap:0; }
+.auth-shell>*{ min-width:0; }
+
+.auth-aside{
+  position:relative; overflow:hidden; min-height:calc(100svh - 56px); padding:32px 38px;
+  display:flex; flex-direction:column; justify-content:space-between;
+  background:var(--surface); border:1px solid var(--border); border-right:0;
+  border-radius:var(--r-xl) 0 0 var(--r-xl);
+}
+.auth-aside::before, .auth-aside::after{
+  content:""; position:absolute; pointer-events:none; border:1px solid var(--border); border-radius:50%; opacity:.6;
+}
+.auth-aside::before{ width:330px; height:330px; right:-150px; top:-150px; }
+.auth-aside::after{ width:210px; height:210px; left:-120px; bottom:-110px; }
+
+.auth-main{
+  min-height:calc(100svh - 56px); display:flex; align-items:center; justify-content:center;
+  padding:42px clamp(28px,5vw,72px); background:var(--surface); border:1px solid var(--border);
+  border-radius:0 var(--r-xl) var(--r-xl) 0;
+}
+.auth-form-wrap{ width:100%; max-width:440px; }
+
+.doodle-kicker{ display:flex; align-items:center; gap:9px; margin-bottom:18px; }
+.doodle-dot{ width:7px; height:7px; border:1.5px solid var(--ink); border-radius:50%; display:inline-block; flex-shrink:0; }
+
+.aside-copy{ position:relative; z-index:2; max-width:570px; }
+.aside-copy h1{ margin:0; max-width:590px; font-size:clamp(42px,5.5vw,76px); line-height:.94; letter-spacing:-.03em; font-weight:700; color:var(--ink); }
+.aside-copy h1 em{ font-style:normal; color:var(--accent); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:7px; text-decoration-color:var(--accent); }
+.aside-copy p{ max-width:390px; margin:22px 0 0; color:var(--muted); font-size:14px; line-height:1.65; }
+
+.doodle-stage{ position:relative; width:100%; height:270px; margin:18px 0 10px; color:var(--ink); }
+.doodle-stage svg{ width:100%; height:100%; overflow:visible; }
+.doodle-note{
+  position:absolute; left:17%; top:13px; transform:rotate(-5deg);
+  font-family:"Comic Sans MS","Bradley Hand",cursive; font-size:13px; color:var(--muted);
+}
+.doodle-note::after{
+  content:""; position:absolute; width:55px; height:25px; left:18px; top:19px;
+  border-bottom:1px solid var(--muted); border-radius:0 0 0 80%; transform:rotate(15deg);
+}
+
+.aside-bottom{
+  position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px;
+  padding-top:18px; border-top:1px dashed var(--border);
+}
+.tiny-hand{ font-family:"Comic Sans MS","Bradley Hand",cursive; font-size:12px; color:var(--muted); transform:rotate(-2deg); }
+
+.tabs{ display:flex; width:100%; margin-bottom:34px; }
+.tabs .tab{ flex:1; }
+
+.auth-form-wrap h2{ font-size:34px; line-height:1; letter-spacing:-.03em; }
+.auth-form-wrap::before{
+  content:""; display:block; width:31px; height:9px; margin:0 0 12px auto;
+  border-top:1px solid var(--ink); border-radius:50%; transform:rotate(-8deg); opacity:.5;
+}
+
+/* ---------- TABLET / SMALL LAPTOP ---------- */
+@media (max-width:1040px){
+  .auth-shell{ grid-template-columns:1fr; padding:18px; }
+  .auth-aside{ min-height:0; height:auto; padding:28px 30px 22px; border-right:1px solid var(--border); border-bottom:0; border-radius:var(--r-xl) var(--r-xl) 0 0; }
+  .auth-main{ min-height:0; padding:38px 30px 52px; border-radius:0 0 var(--r-xl) var(--r-xl); }
+  .aside-copy{ max-width:760px; margin:35px auto 0; width:100%; }
+  .aside-copy h1{ font-size:clamp(46px,7vw,68px); }
+  .aside-copy p{ max-width:520px; }
+  .doodle-stage{ max-width:650px; height:230px; margin:8px auto 0; }
+  .aside-bottom{ margin-top:10px; }
+  .auth-form-wrap{ max-width:520px; }
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width:640px){
+  .auth-shell{ width:100%; min-height:100svh; padding:0; display:flex; flex-direction:column; }
+  .auth-aside{ width:100%; flex:none; padding:20px 18px 10px; border-radius:0; border-left:0; border-right:0; border-top:0; }
+  .auth-aside::before{ width:190px; height:190px; right:-100px; top:-100px; }
+  .auth-aside::after{ display:none; }
+  .aside-copy{ margin:26px 0 0; max-width:none; }
+  .doodle-kicker{ margin-bottom:13px; }
+  .aside-copy h1{ max-width:340px; font-size:clamp(42px,13vw,58px); line-height:.9; }
+  .aside-copy p{ max-width:335px; margin-top:16px; font-size:12.5px; line-height:1.55; }
+  .doodle-stage{ height:150px; width:calc(100% + 8px); margin:2px -4px 0; }
+  .doodle-note{ left:9%; top:2px; font-size:11px; }
+  .aside-bottom{ margin-top:2px; padding-top:11px; }
+  .tiny-hand{ display:none; }
+
+  .auth-main{ width:100%; flex:1; min-height:0; padding:26px 18px 36px; border-radius:0; border-left:0; border-right:0; border-bottom:0; align-items:flex-start; }
+  .auth-form-wrap{ width:100%; max-width:none; }
+  .auth-form-wrap::before{ display:none; }
+  .tabs{ margin-bottom:27px; }
+  .auth-form-wrap h2{ font-size:29px; letter-spacing:-.03em; }
+  .input{ font-size:16px; } /* prevents iOS zoom on focus */
+  #stepRole{ grid-template-columns:1fr 1fr; gap:9px; }
+  #stepRole .card-pad{ padding:15px; }
+  #signupBack{ min-width:80px; width:auto; }
+  #doneScreen .btn{ width:100%; justify-content:center; text-align:center; }
+}
+
+/* ---------- VERY SMALL PHONES ---------- */
+@media (max-width:380px){
+  .auth-aside{ padding-left:15px; padding-right:15px; }
+  .auth-main{ padding-left:15px; padding-right:15px; }
+  .aside-copy h1{ font-size:40px; }
+  .aside-copy p{ font-size:12px; }
+  .doodle-stage{ height:132px; }
+  .auth-form-wrap h2{ font-size:27px; }
+}
+
+/* Respect devices that are physically short in landscape. */
+@media (max-height:650px) and (min-width:641px){
+  .auth-aside{ padding-top:22px; padding-bottom:16px; }
+  .aside-copy{ margin-top:18px; }
+  .doodle-stage{ height:180px; }
+}
 </style>
 </head>
 <body>
 
 <div class="auth-shell">
+
   <aside class="auth-aside">
-    <a href="index.html" class="brand" style="position:relative;"><img src="assets/logo.png" alt="">Creatopz<sup>™</sup></a>
-    <div style="position:relative;">
-      <h1 style="font-size:clamp(32px,4.4vw,48px);">One profile.<br>Every brief.</h1>
-      <div class="auth-perks" style="margin-top:30px;">
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>Vetted before you're listed</div>
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>Briefs land in your dashboard, daily</div>
-        <div style="display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);font-size:15px;color:var(--ink-soft);"><span style="color:var(--ink);">↳</span>No cold DMs, ever</div>
+    <a href="index.html" class="brand" style="position:relative;">
+      <img src="assets/logo.png" alt="">Creatopz<sup>™</sup>
+    </a>
+
+    <div class="aside-copy">
+      <div class="doodle-kicker">
+        <span class="doodle-dot"></span>
+        <span class="eyebrow">For creators + brands</span>
+      </div>
+
+      <h1>
+        Create.<br>
+        Connect.<br>
+        <em>Grow.</em>
+      </h1>
+
+      <p>One profile. Every brief. No cold DMs, ever.</p>
+
+      <div class="doodle-stage" aria-hidden="true">
+        <span class="doodle-note">next brief ↓</span>
+
+        <svg viewBox="0 0 620 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- ground -->
+          <path d="M44 231 C150 226 232 235 330 230 C430 225 514 232 582 227"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- little stars / sparkles -->
+          <path d="M88 75 l4 10 l10 4 l-10 4 l-4 10 l-4-10 l-10-4 l10-4z"
+                stroke="currentColor" stroke-width="1.5"/>
+          <path d="M529 64 l3 7 l7 3 l-7 3 l-3 7 l-3-7 l-7-3 l7-3z"
+                stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="472" cy="113" r="3" stroke="currentColor" stroke-width="1.5"/>
+
+          <!-- paper / brief -->
+          <path d="M250 73 L355 66 L369 167 L263 175 Z"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M269 95 L336 91 M272 112 L344 108 M275 130 L321 127"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M323 148 q13 -15 25 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+          <!-- creator body -->
+          <circle cx="188" cy="142" r="19" stroke="currentColor" stroke-width="2"/>
+          <path d="M175 139 q10 -17 25 -1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="182" cy="144" r="2" fill="currentColor"/>
+          <circle cx="194" cy="144" r="2" fill="currentColor"/>
+          <path d="M184 151 q6 5 11 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+
+          <path d="M174 162 Q157 180 161 205 L207 205 Q213 181 201 162"
+                stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M173 172 L143 193 L126 184" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M200 172 L224 190 L242 177" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- legs -->
+          <path d="M173 205 L158 227 L143 229" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M198 205 L216 225 L234 225" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- camera / creator tool -->
+          <path d="M109 179 h27 l7 8 v20 h-38 v-20z" stroke="currentColor" stroke-width="2"/>
+          <circle cx="122" cy="198" r="7" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M114 179 l5 -7 h10 l5 7" stroke="currentColor" stroke-width="2"/>
+
+          <!-- arrow from creator to brief -->
+          <path d="M227 145 C242 128 250 119 263 116"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                stroke-dasharray="4 6"/>
+          <path d="M256 111 l8 5 l-7 7" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- tiny brand / cursor character -->
+          <path d="M414 179 q18 -24 37 0 v28 h-37z"
+                stroke="currentColor" stroke-width="2"/>
+          <circle cx="432" cy="166" r="12" stroke="currentColor" stroke-width="2"/>
+          <path d="M427 165 h1 M436 165 h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M429 171 q4 3 8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M414 185 l-16 16 M451 185 l17 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M423 207 l-10 20 M442 207 l10 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- dotted path -->
+          <path d="M368 169 C392 157 398 154 417 151"
+                stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 7"
+                stroke-linecap="round"/>
+
+          <!-- handwritten labels -->
+          <text x="58" y="218" style="fill:var(--muted);" font-size="12"
+                font-family="Comic Sans MS, Bradley Hand, cursive">make</text>
+          <text x="365" y="219" style="fill:var(--muted);" font-size="12"
+                font-family="Comic Sans MS, Bradley Hand, cursive">match</text>
+          <text x="505" y="190" style="fill:var(--muted);" font-size="12"
+                font-family="Comic Sans MS, Bradley Hand, cursive">collab</text>
+        </svg>
       </div>
     </div>
-    <div class="eyebrow" style="position:relative;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Beta cohort forming · Jodhpur</div>
+
+    <div class="aside-bottom">
+      <div class="eyebrow">
+        <span class="doodle-dot" style="border-color:var(--accent);display:inline-block;margin-right:7px;"></span>
+        Beta cohort forming · Jodhpur
+      </div>
+      <div class="tiny-hand">good work → people.</div>
+    </div>
   </aside>
 
   <main class="auth-main">
     <div class="auth-form-wrap">
-      <div class="tabs" style="margin-bottom:30px;width:100%;">
-        <button class="tab" id="tabLogin" style="flex:1;">Log in</button>
-        <button class="tab" id="tabSignup" style="flex:1;">Sign up</button>
+
+      <div class="tabs">
+        <button class="tab" id="tabLogin">Log in</button>
+        <button class="tab" id="tabSignup">Sign up</button>
       </div>
 
       <!-- LOGIN -->
       <form id="loginForm">
         <h2 style="margin-bottom:6px;">Welcome back.</h2>
         <p class="body-sm" style="margin-bottom:26px;">Pick up where you left off.</p>
+
         <div class="field">
           <label for="loginEmail">Email</label>
           <input class="input" type="email" id="loginEmail" placeholder="you@studio.com" required autocomplete="email">
         </div>
+
         <div class="field">
           <label for="loginPass">Password</label>
           <div class="password-field">
@@ -61,10 +260,12 @@
             <button type="button" class="password-toggle" data-target="loginPass"></button>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;">
           <span class="error-text" id="loginError"></span>
           <a href="forgot-password.html" class="body-sm" style="font-weight:600;color:var(--accent-700);">Forgot password?</a>
         </div>
+
         <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginSubmit">Log in</button>
       </form>
 
@@ -75,17 +276,19 @@
           <div class="progress-track" style="flex:1;"><div class="progress-fill" id="stepFill2" style="width:0%;"></div></div>
           <div class="progress-track" style="flex:1;"><div class="progress-fill" id="stepFill3" style="width:0%;"></div></div>
         </div>
+
         <span class="eyebrow" id="stepLabel">Step 1 of 3</span>
         <h2 style="margin:10px 0 6px;" id="stepTitle">Which side are you on?</h2>
         <p class="body-sm" style="margin-bottom:26px;" id="stepHint">You can run both later — this just sets your home screen.</p>
 
         <div id="stepRole" class="grid grid-2" style="margin-bottom:26px;">
           <button type="button" class="card card-pad" data-role="creator" style="text-align:left;cursor:pointer;">
-            <div class="font-display" style="font-size:20px;">Creator</div>
+            <div class="font-display" style="font-size:20px;">Creator <span style="float:right;">↗</span></div>
             <div class="body-sm" style="margin-top:6px;">I make the content</div>
           </button>
+
           <button type="button" class="card card-pad" data-role="brand" style="text-align:left;cursor:pointer;">
-            <div class="font-display" style="font-size:20px;">Brand</div>
+            <div class="font-display" style="font-size:20px;">Brand <span style="float:right;">↗</span></div>
             <div class="body-sm" style="margin-top:6px;">I post the briefs</div>
           </button>
         </div>
@@ -95,24 +298,29 @@
             <label id="nameLabel" for="signupName">Your name</label>
             <input class="input" id="signupName" placeholder="e.g. Aanya Rathore" required>
           </div>
+
           <div class="field">
             <label for="signupEmail">Email</label>
             <input class="input" type="email" id="signupEmail" placeholder="you@studio.com" required autocomplete="email">
           </div>
+
           <div class="field">
             <label for="signupPass">Password</label>
             <div class="password-field">
               <input class="input" type="password" id="signupPass" placeholder="8+ characters" required minlength="8" autocomplete="new-password">
               <button type="button" class="password-toggle" data-target="signupPass"></button>
             </div>
+
             <div style="display:flex;gap:4px;margin-top:10px;">
               <div class="progress-track" style="flex:1;height:3px;" id="strengthBar0"></div>
               <div class="progress-track" style="flex:1;height:3px;" id="strengthBar1"></div>
               <div class="progress-track" style="flex:1;height:3px;" id="strengthBar2"></div>
               <div class="progress-track" style="flex:1;height:3px;" id="strengthBar3"></div>
             </div>
+
             <span class="hint" id="strengthLabel">Use 8+ characters, mixed case and a number.</span>
           </div>
+
           <div class="field" id="referralField" style="display:none;">
             <label for="signupReferral">Referral code <span class="hint">(optional)</span></label>
             <input class="input" id="signupReferral" placeholder="e.g. 8fa3c2d1" maxlength="8">
@@ -125,6 +333,7 @@
         </div>
 
         <div class="error-text" id="signupError" style="min-height:20px;margin:14px 0;"></div>
+
         <div style="display:flex;gap:12px;">
           <button type="button" class="btn btn-outline" id="signupBack" style="display:none;">Back</button>
           <button type="submit" class="btn btn-primary btn-block btn-lg" id="signupSubmit">Continue</button>
@@ -142,9 +351,13 @@
         </div>
       </div>
 
-      <div style="margin-top:30px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);">
-        By continuing you agree to the <a href="terms.html" style="color:var(--ink);font-weight:600;">Terms</a> and <a href="privacy.html" style="color:var(--ink);font-weight:600;">Privacy Policy</a>.
+      <div style="margin-top:30px;padding-top:20px;border-top:1px dashed var(--border);font-size:12px;color:var(--muted);">
+        By continuing you agree to the
+        <a href="terms.html" style="color:var(--ink);font-weight:600;">Terms</a>
+        and
+        <a href="privacy.html" style="color:var(--ink);font-weight:600;">Privacy Policy</a>.
       </div>
+
     </div>
   </main>
 </div>
@@ -259,7 +472,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
     const profile = await ensureProfileRow(data.user);
-    showDone(profile.role === "admin" ? "You're in." : "You're in.", "Jumping you back to where the briefs are.");
+    showDone("You're in.", "Jumping you back to where the briefs are.");
     setTimeout(() => { location.href = dashboardFor(profile.role); }, 1000);
   } catch (err) {
     errorEl.textContent = friendlyAuthError(err);
