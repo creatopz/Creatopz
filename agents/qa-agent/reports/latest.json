@@ -1,6 +1,6 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-18T17:54:08.908Z",
+  "run_at": "2026-09-18T18:03:36.960Z",
   "pages_scanned_dynamically": [
     "auth.html",
     "campaigns.html",
