@@ -164,8 +164,8 @@ async function requireAuth(requiredRole = null) {
       profile.role === "admin"
         ? "admin-console.html"
         : profile.role === "brand"
-        ? "dashboard-brand.html"
-        : "dashboard-creator.html";
+        ? "brand-profile.html"
+        : "profile.html";
     // Never redirect to the page we're already on — that would be an
     // infinite reload loop instead of a redirect.
     if (!window.location.pathname.endsWith(target)) {
@@ -208,8 +208,8 @@ async function renderAuthNav(navSelector = "#authNav") {
     profile.role === "admin"
       ? "admin-console.html"
       : profile.role === "brand"
-      ? "dashboard-brand.html"
-      : "dashboard-creator.html";
+      ? "brand-profile.html"
+      : "profile.html";
   const onDashboardAlready = window.location.pathname.endsWith(dashboardHref);
 
   if (nav) {
