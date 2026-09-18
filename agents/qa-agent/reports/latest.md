@@ -1,8 +1,8 @@
 # QA / Bug Detection Agent — report
 
-Run at: 2026-09-18T17:49:42.493Z
+Run at: 2026-09-18T17:54:08.908Z
 
-33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 15 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically.
+33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 12 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically.
 
 | Severity | Category | File | Finding | Reproduction |
 |---|---|---|---|---|
