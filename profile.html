@@ -42,29 +42,31 @@
       <div class="profile-eyebrow-row"><span>Profile</span><span>Creatopz media kit</span></div>
       <div class="divider" style="margin:12px 0 26px;"></div>
 
-      <div class="profile-top-row">
-        <div id="avatarHost" class="profile-photo avatar-fallback"></div>
-        <div class="profile-score-col">
-          <div class="profile-score-big" id="heroScoreValue">—</div>
-          <div class="profile-status-line"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;flex-shrink:0;"></span><span id="statusTag">Loading…</span></div>
-          <div class="profile-status-line" id="heroScoreNote" style="margin-top:2px;font-size:12px;"></div>
+      <div class="card card-pad profile-hero-card">
+        <div class="profile-top-row">
+          <div id="avatarHost" class="profile-photo avatar-fallback"></div>
+          <div class="profile-score-col">
+            <div class="profile-score-big" id="heroScoreValue">—</div>
+            <div class="profile-status-line"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;flex-shrink:0;"></span><span id="statusTag">Loading…</span></div>
+            <div class="profile-status-line" id="heroScoreNote" style="margin-top:2px;font-size:12px;"></div>
+          </div>
         </div>
+
+        <h1 class="profile-name" id="displayName">—</h1>
+        <div class="profile-meta-line">
+          <span id="nicheLabel">Creator</span><span class="profile-meta-dot"></span><span id="cityLabel">—</span>
+        </div>
+
+        <div id="editActionMain" style="margin-top:16px;"></div>
       </div>
 
-      <h1 class="profile-name" id="displayName">—</h1>
-      <div class="profile-meta-line">
-        <span id="nicheLabel">Creator</span><span class="profile-meta-dot"></span><span id="cityLabel">—</span>
+      <div class="card card-pad" style="margin-top:20px;">
+        <div class="profile-section-label">About</div>
+        <p class="profile-bio" id="bioText"></p>
+
+        <div class="profile-section-label" style="margin-top:24px;">Content formats</div>
+        <div class="profile-interests" id="interestsList"></div>
       </div>
-
-      <div id="editActionMain" style="margin-top:16px;"></div>
-
-      <div class="divider" style="margin:24px 0;"></div>
-
-      <div class="profile-section-label">About</div>
-      <p class="profile-bio" id="bioText"></p>
-
-      <div class="profile-section-label" style="margin-top:24px;">Content formats</div>
-      <div class="profile-interests" id="interestsList"></div>
 
       <div id="publicActions" class="profile-actions" style="display:none;"></div>
 

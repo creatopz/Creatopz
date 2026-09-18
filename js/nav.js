@@ -96,9 +96,6 @@ function initBottomNav() {
       <a href="directory.html" class="${activeClass("directory.html").trim()}" aria-label="Creators" title="Creators">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c1-3.2 3.2-5 5.5-5s4.5 1.8 5.5 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 13.3c2 .3 3.6 1.8 4.3 4.2"/></svg>
       </a>
-      <a href="briefs.html" class="${activeClass("briefs.html").trim()}" aria-label="Open briefs" title="Open briefs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="11" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><line x1="3.5" y1="13" x2="20.5" y2="13"/></svg>
-      </a>
     </div>
     <a href="https://wa.me/918005673683?text=Hi%20Creatopz%2C%20I%20have%20a%20question" target="_blank" rel="noopener" class="bottom-nav-chat" aria-label="Chat with us on WhatsApp" title="Chat with us">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.36 7.55L4 20l1.1-4.5A8.5 8.5 0 1 1 21 11.5z"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="14.5" x2="13" y2="14.5"/></svg>
