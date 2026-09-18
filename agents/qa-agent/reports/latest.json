@@ -1,35 +1,29 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-18T18:03:36.960Z",
-  "pages_scanned_dynamically": [
-    "auth.html",
-    "campaigns.html",
-    "directory.html",
-    "forgot-password.html",
-    "gallery.html",
-    "index.html",
-    "messages.html",
-    "privacy.html",
-    "profile.html",
-    "reset-password.html",
-    "spotlight.html",
-    "terms.html"
-  ],
+  "run_at": "2026-09-18T18:18:21.416Z",
+  "pages_scanned_dynamically": [],
   "pages_skipped_auth_gated": [
     "admin-console.html",
     "dashboard-brand.html",
     "dashboard-creator.html",
     "creator-onboarding.html",
-    "brand-onboarding.html",
-    "play.html"
+    "brand-onboarding.html"
   ],
   "severity_counts": {
     "Critical": 0,
     "High": 0,
-    "Medium": 0,
+    "Medium": 1,
     "Low": 33
   },
   "findings": [
+    {
+      "severity": "Medium",
+      "category": "Tooling",
+      "file": "agents/qa-agent/run.js",
+      "line": null,
+      "description": "Playwright isn't resolvable — dynamic browser checks were skipped. Run with NODE_PATH=$(npm root -g) node agents/qa-agent/run.js.",
+      "reproduction": "n/a"
+    },
     {
       "severity": "Low",
       "category": "Palette compliance",
@@ -295,5 +289,5 @@
       "reproduction": "play.html:446."
     }
   ],
-  "summary": "33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 12 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically."
+  "summary": "34 findings — 0 critical, 0 high, 1 medium, 33 low. Scanned 0 pages dynamically (5 auth-gated pages skipped by design) plus every .html/.js file statically."
 }

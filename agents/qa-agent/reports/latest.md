@@ -1,11 +1,12 @@
 # QA / Bug Detection Agent — report
 
-Run at: 2026-09-18T18:03:36.960Z
+Run at: 2026-09-18T18:18:21.416Z
 
-33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 12 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically.
+34 findings — 0 critical, 0 high, 1 medium, 33 low. Scanned 0 pages dynamically (5 auth-gated pages skipped by design) plus every .html/.js file statically.
 
 | Severity | Category | File | Finding | Reproduction |
 |---|---|---|---|---|
+| Medium | Tooling | agents/qa-agent/run.js | Playwright isn't resolvable — dynamic browser checks were skipped. Run with NODE_PATH=$(npm root -g) node agents/qa-agent/run.js. | n/a |
 | Low | Palette compliance | play.html:23 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:23. |
 | Low | Palette compliance | play.html:24 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:24. |
 | Low | Palette compliance | play.html:26 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:26. |

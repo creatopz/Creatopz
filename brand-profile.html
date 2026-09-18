@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Brand Profile — Creatopz™</title>
+<meta name="description" content="Brand profile on Creatopz — company info, live briefs and how to connect.">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="Creatopz logo">Creatopz<sup>™</sup></a>
+    <div class="nav-links">
+      <a href="dashboard-brand.html">Dashboard</a>
+      <a href="brand-profile.html">My profile</a>
+      <a href="directory.html">Directory</a>
+    </div>
+    <div class="nav-actions" id="editAction"></div>
+    <button class="nav-burger" data-nav-open aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </nav>
+</header>
+
+<div class="nav-drawer">
+  <div class="nav-drawer-top">
+    <span class="brand" style="color:#fff;"><img src="assets/logo.png" alt="" style="filter:invert(1) brightness(2);">Creatopz<sup>™</sup></span>
+    <button class="nav-drawer-close" data-nav-close aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
+  </div>
+  <div class="nav-drawer-links">
+    <a href="dashboard-brand.html">Dashboard</a>
+    <a href="directory.html">Directory</a>
+  </div>
+</div>
+
+<div id="loadingState" class="wrap" style="padding:60px 0;"><div class="skeleton" style="height:220px;"></div></div>
+
+<div id="profileContent" style="display:none;">
+  <section class="section" style="padding:44px 0 0;">
+    <div class="wrap profile-narrow">
+      <div class="profile-eyebrow-row"><span>Profile</span><span>Brand on Creatopz</span></div>
+      <div class="divider" style="margin:12px 0 26px;"></div>
+
+      <div class="card card-pad profile-hero-card">
+        <div class="profile-top-row">
+          <div id="logoHost" class="profile-photo avatar-fallback"></div>
+          <div class="profile-score-col">
+            <div class="profile-score-big" id="heroBriefsValue">—</div>
+            <div class="profile-status-line"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;flex-shrink:0;"></span><span id="statusTag">Loading…</span></div>
+          </div>
+        </div>
+
+        <h1 class="profile-name" id="displayName">—</h1>
+        <div class="profile-meta-line">
+          <span id="industryLabel">Brand</span><span class="profile-meta-dot"></span><span id="locationLabel">—</span>
+        </div>
+
+        <div id="editActionMain" style="margin-top:16px;"></div>
+      </div>
+
+      <div class="card card-pad" style="margin-top:20px;">
+        <div class="profile-section-label">About</div>
+        <p class="profile-bio" id="bioText"></p>
+
+        <div class="profile-section-label" style="margin-top:24px;">Connect</div>
+        <div class="profile-interests" id="linksList"></div>
+      </div>
+
+      <div class="profile-stats-row" id="metricsGrid"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:28px;">
+    <div class="wrap profile-narrow">
+      <h3 style="margin-bottom:18px;">Live briefs</h3>
+      <div id="briefsGrid" class="grid grid-2" style="gap:16px;"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:28px;">
+    <div class="wrap profile-narrow">
+      <!-- EDIT FORM (own profile only) -->
+      <form id="editForm" style="display:none;max-width:760px;">
+        <div class="field"><label>Company name *</label><input class="input" id="fName" required></div>
+        <div class="field"><label>Category / industry</label><input class="input" id="fIndustry"></div>
+        <div class="field"><label>Logo</label><input class="input" type="file" accept="image/*" id="fLogo"></div>
+        <div class="field"><label>Bio</label><textarea class="input" id="fBio" rows="3"></textarea></div>
+        <p class="caption" style="margin:4px 0 10px;">Shown to creators once you're connected — helps them recognise and check out your brand.</p>
+        <div class="field"><label for="fWebsite">Website</label><input class="input" type="url" id="fWebsite" placeholder="https://..."></div>
+        <div class="grid grid-2">
+          <div class="field"><label for="fInstagram">Instagram</label><input class="input" type="url" id="fInstagram" placeholder="https://instagram.com/..."></div>
+          <div class="field"><label for="fYoutube">YouTube</label><input class="input" type="url" id="fYoutube" placeholder="https://youtube.com/..."></div>
+          <div class="field"><label for="fFacebook">Facebook</label><input class="input" type="url" id="fFacebook" placeholder="https://facebook.com/..."></div>
+          <div class="field"><label for="fTwitter">Twitter / X</label><input class="input" type="url" id="fTwitter" placeholder="https://x.com/..."></div>
+        </div>
+        <div class="error-text" id="formError" style="min-height:20px;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+          <button type="submit" class="btn btn-accent" style="max-width:260px;flex:1;" id="saveProfileBtn">Done editing →</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer" style="padding:36px 0;">
+  <div class="wrap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <span>© 2026 Creatopz™. All rights reserved.</span><span>Jodhpur, Rajasthan</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let BRAND = null, IS_OWN = false, SESSION = null;
+
+function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
+
+function renderLinks() {
+  const b = BRAND || {};
+  const links = [
+    { key: "website", label: "Website", url: b.website },
+    { key: "instagram_url", label: "Instagram", url: b.instagram_url },
+    { key: "youtube_url", label: "YouTube", url: b.youtube_url },
+    { key: "facebook_url", label: "Facebook", url: b.facebook_url },
+    { key: "twitter_url", label: "Twitter / X", url: b.twitter_url },
+  ].filter((l) => l.url);
+  document.getElementById("linksList").innerHTML = links.length
+    ? links.map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`).join("")
+    : `<span style="color:var(--muted);">Not shared yet</span>`;
+}
+
+function renderProfile() {
+  const b = BRAND || {};
+  document.getElementById("pageTitle").textContent = (b.company_name || "Brand") + " — Creatopz™";
+  document.getElementById("statusTag").textContent = "Brand" + (b.industry ? " · " + b.industry : "");
+  document.getElementById("displayName").textContent = b.company_name || "Unnamed brand";
+  document.getElementById("industryLabel").textContent = b.industry || "Brand";
+  document.getElementById("locationLabel").textContent = b.location || "—";
+  document.getElementById("bioText").textContent = b.description || "No bio yet.";
+
+  const logoHost = document.getElementById("logoHost");
+  logoHost.innerHTML = b.logo_url ? `<img src="${escapeHtml(b.logo_url)}" alt="${escapeHtml(b.company_name || "")}">` : initials(b.company_name);
+
+  const liveCount = (BRIEFS || []).length;
+  document.getElementById("heroBriefsValue").textContent = String(liveCount);
+
+  renderLinks();
+
+  document.getElementById("editAction").innerHTML = IS_OWN ? `<button class="btn btn-outline btn-sm" id="editToggleBtn">Edit profile</button>` : "";
+  document.getElementById("editActionMain").innerHTML = IS_OWN ? `<button class="btn btn-accent" id="editToggleBtnMain">Edit profile</button>` : "";
+  document.getElementById("editToggleBtn")?.addEventListener("click", toggleEdit);
+  document.getElementById("editToggleBtnMain")?.addEventListener("click", toggleEdit);
+
+  document.getElementById("metricsGrid").innerHTML = `
+    <div class="profile-stat"><b>${liveCount}</b><span>Live briefs</span></div>
+    <div class="profile-stat"><b>${TOTAL_BRIEFS}</b><span>Total briefs posted</span></div>
+  `;
+
+  renderBriefs();
+}
+
+function renderBriefs() {
+  const grid = document.getElementById("briefsGrid");
+  if (!(BRIEFS || []).length) {
+    grid.innerHTML = `<div class="state-block" style="grid-column:1/-1;"><div class="state-icon">◎</div><h3>No live briefs right now</h3><p>Check back soon.</p></div>`;
+    return;
+  }
+  grid.innerHTML = BRIEFS.map((c) => `
+    <div class="campaign-card card-hover">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;">
+        <span class="badge badge-accent">${escapeHtml(c.niche || "General")}</span>
+        <span class="caption">${c.deadline ? "Closes " + new Date(c.deadline).toLocaleDateString() : "Open"}</span>
+      </div>
+      <h3 class="cp-title">${escapeHtml(c.title)}</h3>
+      <p class="cp-desc">${escapeHtml(c.brief || c.description || "")}</p>
+      <div class="cp-foot" style="border-top:none;padding-top:0;">
+        <a href="${SESSION ? "dashboard-creator.html#campaigns" : "auth.html?mode=signup"}" class="btn btn-outline btn-block">Apply via your dashboard →</a>
+      </div>
+    </div>`).join("");
+}
+
+function toggleEdit() {
+  const editing = document.getElementById("editForm").style.display === "block";
+  if (editing) {
+    document.getElementById("editForm").style.display = "none";
+    document.getElementById("editToggleBtn").textContent = "Edit profile";
+    if (document.getElementById("editToggleBtnMain")) document.getElementById("editToggleBtnMain").textContent = "Edit profile";
+  } else {
+    const b = BRAND || {};
+    document.getElementById("fName").value = b.company_name || "";
+    document.getElementById("fIndustry").value = b.industry || "";
+    document.getElementById("fBio").value = b.description || "";
+    document.getElementById("fWebsite").value = b.website || "";
+    document.getElementById("fInstagram").value = b.instagram_url || "";
+    document.getElementById("fYoutube").value = b.youtube_url || "";
+    document.getElementById("fFacebook").value = b.facebook_url || "";
+    document.getElementById("fTwitter").value = b.twitter_url || "";
+    document.getElementById("formError").textContent = "";
+    document.getElementById("editForm").style.display = "block";
+    document.getElementById("editToggleBtn").textContent = "Cancel";
+    if (document.getElementById("editToggleBtnMain")) document.getElementById("editToggleBtnMain").textContent = "Cancel";
+    document.getElementById("editForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+document.getElementById("cancelEditBtn").addEventListener("click", toggleEdit);
+
+document.getElementById("editForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("formError");
+  const val = (id) => document.getElementById(id).value.trim();
+  const name = val("fName");
+  errorEl.textContent = "";
+  if (!name) return (errorEl.textContent = "Company name is required.");
+
+  const btn = document.getElementById("saveProfileBtn");
+  setButtonLoading(btn, true, "Saving…");
+
+  let logoUrl = BRAND?.logo_url || null;
+  const file = document.getElementById("fLogo").files[0];
+  if (file) {
+    if (file.size > 5 * 1024 * 1024 || !file.type.startsWith("image/")) {
+      setButtonLoading(btn, false);
+      return (errorEl.textContent = "Logo must be an image under 5MB.");
+    }
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = BRAND.user_id + "/logo." + ext;
+    const { error: upErr } = await supabaseClient.storage.from("brand-logos").upload(path, file, { upsert: true });
+    if (upErr) { setButtonLoading(btn, false); return (errorEl.textContent = "Logo upload failed: " + upErr.message); }
+    const { data: pub } = supabaseClient.storage.from("brand-logos").getPublicUrl(path);
+    logoUrl = pub.publicUrl + "?t=" + Date.now();
+  }
+
+  const patch = {
+    company_name: name, industry: val("fIndustry") || null, description: val("fBio") || null, logo_url: logoUrl,
+    website: val("fWebsite") || null, instagram_url: val("fInstagram") || null, youtube_url: val("fYoutube") || null,
+    facebook_url: val("fFacebook") || null, twitter_url: val("fTwitter") || null,
+  };
+  const { data: updated, error } = await supabaseClient.from("brands").update(patch).eq("user_id", BRAND.user_id).select().single();
+  setButtonLoading(btn, false);
+  if (error) return (errorEl.textContent = friendlyAuthError(error));
+  BRAND = updated;
+  toggleEdit();
+  renderProfile();
+  showToast("Company profile saved", "success");
+});
+
+let BRIEFS = [], TOTAL_BRIEFS = 0;
+
+async function boot() {
+  const params = new URLSearchParams(location.search);
+  const idParam = params.get("id");
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  SESSION = sessionData?.session || null;
+
+  let ownBrand = null;
+  if (SESSION) {
+    const { data } = await supabaseClient.from("brands").select("*").eq("user_id", SESSION.user.id).maybeSingle();
+    ownBrand = data;
+  }
+
+  if (idParam) {
+    if (ownBrand && ownBrand.id === idParam) { BRAND = ownBrand; IS_OWN = true; }
+    else {
+      const { data } = await supabaseClient.from("brands_public").select("*").eq("id", idParam).maybeSingle();
+      BRAND = data; IS_OWN = false;
+      if (!data) {
+        document.getElementById("loadingState").innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>Brand not found</h3><p>This profile may have been removed or made private.</p></div>`;
+        return;
+      }
+    }
+  } else if (ownBrand) {
+    BRAND = ownBrand; IS_OWN = true;
+  } else if (SESSION) {
+    location.href = "profile.html";
+    return;
+  } else {
+    location.href = "auth.html";
+    return;
+  }
+
+  const { data: campaigns } = await supabaseClient.from("campaigns_public").select("*").eq("brand_id", BRAND.id).order("created_at", { ascending: false });
+  const all = campaigns || [];
+  BRIEFS = all.filter((c) => c.status === "open");
+  TOTAL_BRIEFS = all.length;
+
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("profileContent").style.display = "block";
+  renderProfile();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+</body>
+</html>

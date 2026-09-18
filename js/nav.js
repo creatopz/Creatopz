@@ -112,7 +112,7 @@ function initBottomNav() {
       const link = nav.querySelector(".bottom-nav-account");
       if (!link || !profile) return;
       const dashboardHref =
-        profile.role === "admin" ? "admin-console.html" : profile.role === "brand" ? "dashboard-brand.html" : "dashboard-creator.html";
+        profile.role === "admin" ? "admin-console.html" : profile.role === "brand" ? "dashboard-brand.html" : "profile.html";
       link.href = dashboardHref;
       if (here === dashboardHref) link.classList.add("is-active");
     });
