@@ -1,6 +1,6 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-18T18:18:21.416Z",
+  "run_at": "2026-09-18T18:19:41.202Z",
   "pages_scanned_dynamically": [],
   "pages_skipped_auth_gated": [
     "admin-console.html",

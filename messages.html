@@ -83,7 +83,7 @@ async function boot() {
   if (!SESSION) { location.href = "auth.html"; return; }
   const { data: profile } = await supabaseClient.from("profiles").select("role").eq("id", SESSION.user.id).single();
   if (profile?.role === "admin") { location.href = "admin-console.html"; return; }
-  document.getElementById("backLink").href = profile?.role === "brand" ? "dashboard-brand.html" : "profile.html";
+  document.getElementById("backLink").href = profile?.role === "brand" ? "brand-profile.html" : "profile.html";
 
   let { data: convo } = await supabaseClient.from("conversations").select("*").eq("participant_id", SESSION.user.id).maybeSingle();
   if (!convo) {
