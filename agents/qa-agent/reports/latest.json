@@ -1,6 +1,6 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-18T17:40:03.011Z",
+  "run_at": "2026-09-18T17:49:42.493Z",
   "pages_scanned_dynamically": [
     "auth.html",
     "briefs.html",
@@ -29,153 +29,17 @@
   "severity_counts": {
     "Critical": 0,
     "High": 0,
-    "Medium": 12,
-    "Low": 37
+    "Medium": 0,
+    "Low": 33
   },
   "findings": [
     {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "admin-console.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "brand-onboarding.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "creator-onboarding.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "dashboard-brand.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "dashboard-creator.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "forgot-password.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "messages.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "play.html",
-      "line": null,
-      "description": "Missing or empty <title> tag.",
-      "reproduction": "View page source; no <title>…</title> with content in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "play.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "privacy.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "reset-password.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Medium",
-      "category": "SEO/meta",
-      "file": "terms.html",
-      "line": null,
-      "description": "Missing <meta name=\"description\"> tag.",
-      "reproduction": "View page source; no description meta tag in <head>."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "admin-console.html",
-      "line": 276,
-      "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:276."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "admin-console.html",
-      "line": 330,
-      "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:330."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "admin-console.html",
-      "line": 333,
-      "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:333."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "admin-console.html",
-      "line": 441,
-      "description": "Hardcoded color #ff6f61 isn't in the approved monochrome+red palette.",
-      "reproduction": "admin-console.html:441."
-    },
-    {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 21,
+      "line": 23,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:21."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 22,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:22."
+      "reproduction": "play.html:23."
     },
     {
       "severity": "Low",
@@ -189,41 +53,9 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 53,
+      "line": 26,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:53."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 53,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:53."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 54,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:54."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 54,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:54."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 55,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:55."
+      "reproduction": "play.html:26."
     },
     {
       "severity": "Low",
@@ -277,73 +109,105 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 67,
+      "line": 57,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:67."
+      "reproduction": "play.html:57."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 71,
+      "line": 58,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:71."
+      "reproduction": "play.html:58."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 79,
+      "line": 58,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:79."
+      "reproduction": "play.html:58."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 86,
+      "line": 59,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:86."
+      "reproduction": "play.html:59."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 91,
+      "line": 59,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:59."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 69,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:69."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 73,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:73."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 81,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:81."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 88,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:88."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 93,
       "description": "Hardcoded color #f3f2f2 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:91."
+      "reproduction": "play.html:93."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 100,
+      "line": 102,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:100."
+      "reproduction": "play.html:102."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 111,
+      "line": 113,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:111."
+      "reproduction": "play.html:113."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 123,
+      "line": 125,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:123."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 131,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:131."
+      "reproduction": "play.html:125."
     },
     {
       "severity": "Low",
@@ -357,17 +221,17 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 133,
+      "line": 135,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:135."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 135,
       "description": "Hardcoded color #e62e00 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:133."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 170,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:170."
+      "reproduction": "play.html:135."
     },
     {
       "severity": "Low",
@@ -381,50 +245,58 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 314,
+      "line": 174,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:314."
+      "reproduction": "play.html:174."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 356,
+      "line": 316,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:356."
+      "reproduction": "play.html:316."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 370,
+      "line": 358,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:370."
+      "reproduction": "play.html:358."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 371,
+      "line": 372,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:371."
+      "reproduction": "play.html:372."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 431,
+      "line": 373,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:431."
+      "reproduction": "play.html:373."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 444,
+      "line": 433,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:444."
+      "reproduction": "play.html:433."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 446,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:446."
     }
   ],
-  "summary": "49 findings — 0 critical, 0 high, 12 medium, 37 low. Scanned 15 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically."
+  "summary": "33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 15 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically."
 }
