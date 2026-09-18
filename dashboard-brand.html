@@ -39,21 +39,40 @@
       </div>
 
       <div id="dashContent" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
-          <div>
-            <span class="eyebrow" id="heroTag">Brand account</span>
-            <h1 style="margin-top:8px;">Your briefs, and who wants <span style="color:var(--accent);">them</span>.</h1>
-            <p class="body-sm" style="margin-top:6px;max-width:520px;">Post a brief, watch applications land, shortlist the creators you want. Creatopz handles the intro.</p>
+        <div data-reveal style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
+          <div style="display:flex;gap:16px;align-items:flex-end;">
+            <div id="brandLogoHost" class="avatar-fallback" style="width:52px;height:52px;font-size:18px;background:var(--accent);color:#fff;flex-shrink:0;"></div>
+            <div>
+              <span class="eyebrow" id="heroTag">Brand account</span>
+              <h1 style="margin-top:8px;">Your briefs, and who wants <span style="color:var(--accent);">them</span>.</h1>
+              <p class="body-sm" style="margin-top:6px;max-width:520px;">Post a brief, watch applications land, shortlist the creators you want. Creatopz handles the intro.</p>
+            </div>
           </div>
           <button id="postCampaignBtn" class="btn btn-accent btn-lg">Post a campaign +</button>
         </div>
 
         <section id="view-overview">
-          <div class="grid grid-4" style="margin-bottom:32px;">
-            <div class="stat-card"><div class="stat-value" id="kpiLive">0</div><div class="stat-label">Live campaigns</div></div>
-            <div class="stat-card"><div class="stat-value" id="kpiApps">0</div><div class="stat-label">Applications</div></div>
-            <div class="stat-card"><div class="stat-value" id="kpiShortlisted">0</div><div class="stat-label">Shortlisted</div></div>
-            <div class="stat-card"><div class="stat-value" id="kpiOpen">0</div><div class="stat-label">Still to review</div></div>
+          <div class="grid" style="margin-bottom:32px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+              <div class="stat-value" id="kpiLive">0</div><div class="stat-label">Live campaigns</div>
+            </div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+              <div class="stat-value" id="kpiApps">0</div><div class="stat-label">Applications</div>
+            </div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <div class="stat-value" id="kpiShortlisted">0</div><div class="stat-label">Shortlisted</div>
+            </div>
+            <div class="stat-card card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+              <div class="stat-value" id="kpiOpen">0</div><div class="stat-label">Still to review</div>
+            </div>
+            <div class="stat-card stat-card-accent card-hover" data-reveal data-reveal-group="stats">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+              <div class="stat-value" id="kpiCompleted">0</div><div class="stat-label">Collabs completed</div>
+            </div>
           </div>
           <h3 style="margin-bottom:14px;">Recent campaigns</h3>
           <div class="grid grid-3" id="recentCampaigns"></div>
@@ -279,7 +298,7 @@
 // a creator's own category. A value here that doesn't exist in that
 // vocabulary just never matches, silently.
 const NICHES = ["Fashion & Style", "Beauty", "Skincare", "Makeup", "Haircare", "Food", "Travel", "Fitness", "Tech", "Comedy", "Lifestyle", "Parenting", "Home & Decor", "Finance", "Gaming", "Other"];
-let BRAND = null, CAMPAIGNS = [], APPLICANTS = [], SELECTED_CAMPAIGN_ID = null, C_NICHE = "Beauty";
+let BRAND = null, CAMPAIGNS = [], APPLICANTS = [], ALL_APPLICANTS = [], SELECTED_CAMPAIGN_ID = null, C_NICHE = "Beauty";
 
 function pillClassFor(status) {
   if (status === "open") return "badge-accent";
@@ -360,11 +379,27 @@ async function loadCampaigns() {
   return CAMPAIGNS;
 }
 
+// Global KPI tiles read from ALL_APPLICANTS (every campaign this brand
+// owns, aggregated) -- not APPLICANTS, which is scoped to whichever one
+// campaign is selected in the Applicants tab. Using the scoped list here
+// used to make "Applications"/"Shortlisted" silently mean "for the first
+// open campaign" once a brand had more than one, and there was no way to
+// see a completed collab reflected anywhere on Overview at all.
+async function loadAllApplicantsGlobal() {
+  if (!CAMPAIGNS.length) { ALL_APPLICANTS = []; renderGlobalKpis(); return; }
+  const results = await Promise.all(CAMPAIGNS.map((c) => supabaseClient.rpc("get_campaign_applicants", { p_campaign_id: c.id })));
+  ALL_APPLICANTS = results.flatMap((r) => r.data || []);
+  renderGlobalKpis();
+}
+function renderGlobalKpis() {
+  document.getElementById("kpiApps").textContent = ALL_APPLICANTS.length;
+  document.getElementById("kpiShortlisted").textContent = ALL_APPLICANTS.filter((a) => a.status === "shortlisted").length;
+  document.getElementById("kpiOpen").textContent = ALL_APPLICANTS.filter((a) => a.status === "pending").length;
+  document.getElementById("kpiCompleted").textContent = ALL_APPLICANTS.filter((a) => a.status === "completed").length;
+}
+
 function renderApplicants() {
   const host = document.getElementById("applicantsHost");
-  document.getElementById("kpiApps").textContent = APPLICANTS.length;
-  document.getElementById("kpiShortlisted").textContent = APPLICANTS.filter((a) => a.status === "shortlisted").length;
-  document.getElementById("kpiOpen").textContent = APPLICANTS.filter((a) => a.status === "pending").length;
   if (!APPLICANTS.length) {
     host.innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No applicants for this brief yet</h3></div>`;
     return;
@@ -382,8 +417,10 @@ function renderApplicants() {
         <td><div style="display:flex;gap:8px;flex-wrap:wrap;">
           ${a.status === "completed"
             ? RATED_APPLICATION_IDS.has(a.application_id)
-              ? `<button class="btn btn-sm btn-outline" disabled>Rated ✓</button>`
+              ? `<span class="badge badge-accent">Rated ✓</span>`
               : `<button class="btn btn-sm btn-accent rate-btn" data-id="${a.application_id}" data-creator="${escapeHtml(a.creator_name || "Creator")}">Rate this collab</button>`
+            : a.status === "accepted" || a.status === "invited"
+            ? `<span class="badge badge-accent">${a.status === "accepted" ? "Matched ✓ — collab in progress" : "Invited — awaiting response"}</span>`
             : `<button class="btn btn-sm ${a.status === "shortlisted" ? "btn-accent" : "btn-outline"} shortlist-btn" data-id="${a.application_id}">${a.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist"}</button>
                <button class="btn btn-sm btn-ghost pass-btn" data-id="${a.application_id}">${a.status === "rejected" ? "Passed" : "Pass"}</button>`}
         </div></td>
@@ -399,6 +436,7 @@ async function decide(applicationId, status) {
   const { error } = await supabaseClient.from("campaign_applications").update({ status }).eq("id", applicationId);
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadApplicants(SELECTED_CAMPAIGN_ID);
+  await loadAllApplicantsGlobal();
   showToast(status === "shortlisted" ? "Shortlisted — Creatopz will set up the intro" : "Applicant passed", "success");
 }
 
@@ -436,12 +474,17 @@ document.getElementById("feedbackForm").addEventListener("submit", async (e) => 
   if (statusError) { errorEl.textContent = friendlyAuthError(statusError); return; }
   closeModal("feedbackModal");
   await loadApplicants(SELECTED_CAMPAIGN_ID);
+  await loadAllApplicantsGlobal();
   showToast("Feedback sent — applicant passed", "success");
 });
 
 // ===== Rate & complete =====
 let PENDING_RATE_APP_ID = null;
-const RATED_APPLICATION_IDS = new Set();
+let RATED_APPLICATION_IDS = new Set();
+async function loadRatedApplicationIds() {
+  const { data } = await supabaseClient.from("creator_ratings").select("application_id").eq("brand_id", BRAND.id);
+  RATED_APPLICATION_IDS = new Set((data || []).map((r) => r.application_id));
+}
 function openRateModal(applicationId, creatorName) {
   PENDING_RATE_APP_ID = applicationId;
   document.getElementById("rateModalTitle").textContent = "Rate " + creatorName;
@@ -859,8 +902,18 @@ async function boot() {
   document.getElementById("dashContent").style.display = "block";
   document.getElementById("heroTag").textContent = "Brand account" + (brand?.company_name ? " · " + brand.company_name : "");
 
+  const logoHost = document.getElementById("brandLogoHost");
+  const brandInitials = (brand?.company_name || "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  if (brand?.logo_url) {
+    logoHost.outerHTML = `<img src="${escapeHtml(brand.logo_url)}" alt="" class="avatar" style="width:52px;height:52px;flex-shrink:0;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'width:52px;height:52px;font-size:18px;background:var(--accent);color:#fff;flex-shrink:0;',textContent:'${brandInitials}'}))">`;
+  } else {
+    logoHost.textContent = brandInitials;
+  }
+
   if (brand) {
     const campaigns = await loadCampaigns();
+    await loadAllApplicantsGlobal();
+    await loadRatedApplicationIds();
     const firstOpen = campaigns.find((c) => c.status === "open") || campaigns[0];
     if (firstOpen) { SELECTED_CAMPAIGN_ID = firstOpen.id; await loadApplicants(firstOpen.id); }
     else renderApplicants();
