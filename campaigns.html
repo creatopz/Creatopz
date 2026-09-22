@@ -9,7 +9,12 @@
 <meta property="og:description" content="Real briefs from real brands — apply directly.">
 <meta property="og:image" content="og-image.png">
 <link rel="canonical" href="https://www.creatopz.in/campaigns.html">
-<link rel="icon" href="assets/logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e7473c">
 <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
@@ -52,22 +57,36 @@
   </div>
 </div>
 
-<section class="section" style="padding-bottom:0;">
-  <div class="wrap">
-    <span class="eyebrow">Open briefs</span>
+<section class="section" style="padding:56px 0 40px;position:relative;overflow:hidden;">
+  <div aria-hidden="true" style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--accent);opacity:.08;"></div>
+  <div class="wrap" style="position:relative;">
+    <span class="eyebrow"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Open briefs</span>
     <h1 style="margin-top:14px;">Real campaigns, ready for applications.</h1>
-    <p class="lede" style="max-width:520px;margin-top:14px;">Real briefs from real brands — apply directly, no cold DMs.</p>
+    <p class="lede" style="max-width:520px;margin:16px 0 0;">Real briefs from real brands — apply directly, no cold DMs.</p>
+    <div style="margin-top:28px;max-width:460px;position:relative;">
+      <input id="campaignSearch" type="text" placeholder="Search brand, title or niche…" class="input" style="border-radius:var(--r-pill);padding:14px 20px;">
+    </div>
+  </div>
+</section>
+
+<section class="section-tint" style="padding:18px 0;border-bottom:1px solid var(--border);">
+  <div class="wrap" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+    <div class="chip-select" id="campaignChips"></div>
+    <select id="campaignSort" class="input" style="width:auto;padding:9px 32px 9px 16px;border-radius:var(--r-pill);">
+      <option value="newest">Sort: Newest</option>
+      <option value="closing">Sort: Closing soon</option>
+    </select>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <div class="grid grid-3" id="campaignGrid"></div>
-    <div class="state-block" id="campaignEmptyState" style="display:none;">
-      <div class="state-icon">◎</div>
-      <h3>No open campaigns yet</h3>
-      <p>Check back soon — new briefs go up regularly.</p>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px;">
+      <h3><span id="campaignResultCount">0</span> open campaigns</h3>
+      <span class="body-sm" id="campaignActiveLabel">All niches</span>
     </div>
+    <div id="campaignState"></div>
+    <div class="grid grid-3" id="campaignGrid"></div>
   </div>
 </section>
 
@@ -106,7 +125,7 @@
 <script src="js/campaigns.js"></script>
 <script>
   renderAuthNav("#authNav");
-  fetchOpenCampaigns();
+  loadCampaigns();
   initApplyModal();
 </script>
 </body>
