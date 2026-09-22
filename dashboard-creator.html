@@ -459,11 +459,12 @@ async function boot() {
   const name = creator?.name || profile.full_name || "there";
   document.getElementById("creatorFirstName").textContent = name.split(" ")[0];
   const avatarHost = document.getElementById("avatarHost");
-  const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   if (creator?.profile_image) {
-    avatarHost.outerHTML = `<img src="${escapeHtml(creator.profile_image)}" alt="" class="avatar" style="width:52px;height:52px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'width:52px;height:52px;font-size:18px;background:var(--accent);color:#fff;',textContent:'${initials}'}))">`;
+    avatarHost.outerHTML = `<img src="${escapeHtml(creator.profile_image)}" alt="" class="avatar" style="width:52px;height:52px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(creator?.id || name)}','avatar-fallback','width:52px;height:52px;')">`;
   } else {
-    avatarHost.textContent = initials;
+    avatarHost.style.background = "none";
+    avatarHost.style.overflow = "hidden";
+    avatarHost.innerHTML = doodleAvatarSVG(creator?.id || name);
   }
   document.getElementById("heroTag").textContent = (creator?.is_verified ? "Verified creator" : "Creator") + (creator?.category ? " · " + creator.category : "");
   document.getElementById("heroSubline").textContent = BRIEFS.length ? `${BRIEFS.length} open brief${BRIEFS.length === 1 ? "" : "s"} on Creatopz right now.` : "No open briefs right now — check back soon.";

@@ -298,6 +298,57 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+// ---------- Doodle avatar (creator hasn't uploaded a photo) ----------
+// A small cluster-of-blobs mark, in the same visual language as the
+// Creatopz logo itself, deterministically seeded off the creator's own
+// id/name -- stable across reloads, unique per person, and a lot less
+// "blank-looking" than a bare initials circle. The background is always
+// a full-bleed rect, not a circle, so it fills whatever shape the
+// container's own CSS clips it to (circular avatar, 4:5 card photo, ...).
+function seedFromString(str) {
+  let h = 0;
+  const s = String(str || "");
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) || 1;
+}
+function seededRandom(seed) {
+  let s = seed;
+  return function () {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+function doodleAvatarSVG(seed) {
+  const rand = seededRandom(seedFromString(seed));
+  const count = 5 + Math.floor(rand() * 3);
+  const blobs = [];
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 + rand() * 0.8;
+    const dist = 3 + rand() * 6;
+    blobs.push({ cx: 20 + Math.cos(angle) * dist, cy: 20 + Math.sin(angle) * dist, r: 1.6 + rand() * 2.6 });
+  }
+  const accentIndex = Math.floor(rand() * blobs.length);
+  const circles = blobs.map((b, i) =>
+    `<circle cx="${b.cx.toFixed(1)}" cy="${b.cy.toFixed(1)}" r="${b.r.toFixed(1)}" style="fill:${i === accentIndex ? "var(--accent)" : "var(--ink)"};" />`
+  ).join("");
+  return `<svg viewBox="0 0 40 40" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;" aria-hidden="true"><rect width="40" height="40" style="fill:var(--surface-2);" />${circles}</svg>`;
+}
+// className/styleExtra should match whatever the real <img> would have
+// carried (e.g. "cc-photo avatar-fallback", "font-size:44px;") so the
+// doodle drops into the exact same slot.
+function doodleAvatarHTML(seed, className, styleExtra) {
+  return `<div class="${className}" style="overflow:hidden;${styleExtra || ""}">${doodleAvatarSVG(seed)}</div>`;
+}
+// For onerror="" handlers on an <img> that already tried a real photo
+// and failed to load -- swaps the broken <img> for the same doodle.
+function replaceWithDoodleAvatar(imgEl, seed, className, styleExtra) {
+  const div = document.createElement("div");
+  div.className = className;
+  div.style.cssText = "overflow:hidden;" + (styleExtra || "");
+  div.innerHTML = doodleAvatarSVG(seed);
+  imgEl.replaceWith(div);
+}
+
 // Guards against a stray "javascript:"/"data:" value sneaking into an
 // href from a free-text field (Instagram URL, brand website, ...) --
 // only http(s) URLs make it through; a bare domain like "site.com" gets

@@ -238,8 +238,6 @@ function renderRateCardRows() {
 }
 document.getElementById("addRateRowBtn").addEventListener("click", () => { EDIT_RATE_CARD.push({ type: "", rate: "" }); renderRateCardRows(); });
 
-function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase(); }
-
 function renderProfile() {
   const c = CREATOR || {};
   const pageTitle = (c.name || "Creator") + " — Creatopz™";
@@ -256,7 +254,7 @@ function renderProfile() {
   document.getElementById("bioText").textContent = c.bio || "No bio yet.";
 
   const avatarHost = document.getElementById("avatarHost");
-  avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}">` : initials(c.name);
+  avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}">` : doodleAvatarSVG(c.id);
 
   const scoreEl = document.getElementById("heroScoreValue");
   scoreEl.textContent = c.creatopz_score ? Number(c.creatopz_score).toFixed(1) : "New";

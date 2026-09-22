@@ -93,13 +93,11 @@
 <script src="js/motion.js"></script>
 <script src="js/nav.js"></script>
 <script>
-function initials(name) {
-  return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-}
 function spotlightCard(s, big) {
+  const fallbackStyle = big ? "height:280px;" : "";
   const photo = s.profile_image
-    ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="${big ? "height:280px;" : ""}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;${big ? "height:280px;" : ""}',textContent:'${initials(s.name)}'}))">`
-    : `<div class="cc-photo avatar-fallback" style="font-size:44px;${big ? "height:280px;" : ""}">${initials(s.name)}</div>`;
+    ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="${fallbackStyle}" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','${fallbackStyle}')">`
+    : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", fallbackStyle);
   return `
     <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
       ${photo}
