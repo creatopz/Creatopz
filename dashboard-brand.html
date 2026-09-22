@@ -427,6 +427,8 @@ function renderApplicants() {
               : `<button class="btn btn-sm btn-accent rate-btn" data-id="${a.application_id}" data-creator="${escapeHtml(a.creator_name || "Creator")}">Rate this collab</button>`
             : a.status === "accepted" || a.status === "invited"
             ? `<span class="badge badge-accent">${a.status === "accepted" ? "Matched ✓ — collab in progress" : "Invited — awaiting response"}</span>`
+            : a.status === "withdrawn"
+            ? `<span class="badge">Declined invite</span>`
             : `<button class="btn btn-sm ${a.status === "shortlisted" ? "btn-accent" : "btn-outline"} shortlist-btn" data-id="${a.application_id}">${a.status === "shortlisted" ? "Shortlisted ✓" : "Shortlist"}</button>
                <button class="btn btn-sm btn-ghost pass-btn" data-id="${a.application_id}">${a.status === "rejected" ? "Passed" : "Pass"}</button>`}
         </div></td>
@@ -441,6 +443,7 @@ function renderApplicants() {
 async function decide(applicationId, status) {
   const { error } = await supabaseClient.from("campaign_applications").update({ status }).eq("id", applicationId);
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
+  if (status === "shortlisted") await notifyApplicant(applicationId, "application_shortlisted", "You've been shortlisted", "A brand shortlisted your application — Creatopz will set up the intro next.");
   await loadApplicants(SELECTED_CAMPAIGN_ID);
   await loadAllApplicantsGlobal();
   showToast(status === "shortlisted" ? "Shortlisted — Creatopz will set up the intro" : "Applicant passed", "success");
@@ -478,11 +481,23 @@ document.getElementById("feedbackForm").addEventListener("submit", async (e) => 
   const { error: statusError } = await supabaseClient.from("campaign_applications").update({ status: "rejected" }).eq("id", PENDING_FEEDBACK_APP_ID);
   setButtonLoading(btn, false);
   if (statusError) { errorEl.textContent = friendlyAuthError(statusError); return; }
+  await notifyApplicant(PENDING_FEEDBACK_APP_ID, "application_rejected", "Update on your application", "Feedback is waiting for you on this application — check your dashboard.");
   closeModal("feedbackModal");
   await loadApplicants(SELECTED_CAMPAIGN_ID);
   await loadAllApplicantsGlobal();
   showToast("Feedback sent — applicant passed", "success");
 });
+
+// campaign_applications has no server-side trigger to tell the creator
+// their status changed -- without this call, dashboard-creator.html's
+// Notifications tab never gets anything. RLS on notifications already
+// lets any authed user insert for any recipient (schema.sql), so this
+// is purely a missing client-side call, not a permissions gap.
+async function notifyApplicant(applicationId, type, title, message) {
+  const applicant = APPLICANTS.find((a) => a.application_id === applicationId);
+  if (!applicant?.creator_user_id) return;
+  await supabaseClient.from("notifications").insert({ user_id: applicant.creator_user_id, type, title, message });
+}
 
 // ===== Rate & complete =====
 let PENDING_RATE_APP_ID = null;
@@ -516,6 +531,7 @@ document.getElementById("rateForm").addEventListener("submit", async (e) => {
   setButtonLoading(btn, false);
   if (error) { errorEl.textContent = friendlyAuthError(error); return; }
   RATED_APPLICATION_IDS.add(PENDING_RATE_APP_ID);
+  await notifyApplicant(PENDING_RATE_APP_ID, "creator_rated", "You've been rated", "A brand rated your collab — check your Creatopz Score.");
   closeModal("rateModal");
   renderApplicants();
   showToast("Rating saved — thanks!", "success");

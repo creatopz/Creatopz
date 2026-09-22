@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">Brand Profile — Creatopz™</title>
-<meta name="description" content="Brand profile on Creatopz — company info, live briefs and how to connect.">
+<meta name="description" id="metaDescription" content="Brand profile on Creatopz — company info, live briefs and how to connect.">
+<meta property="og:title" id="ogTitle" content="Brand Profile — Creatopz™">
+<meta property="og:description" id="ogDescription" content="Brand profile on Creatopz — company info, live briefs and how to connect.">
+<meta property="og:image" content="og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
 <link rel="shortcut icon" href="/favicon.ico">
@@ -142,7 +145,12 @@ function renderLinks() {
 
 function renderProfile() {
   const b = BRAND || {};
-  document.getElementById("pageTitle").textContent = (b.company_name || "Brand") + " — Creatopz™";
+  const pageTitle = (b.company_name || "Brand") + " — Creatopz™";
+  const pageDesc = b.description || `${b.company_name || "This brand"}'s profile on Creatopz — company info, live briefs and how to connect.`;
+  document.getElementById("pageTitle").textContent = pageTitle;
+  document.getElementById("metaDescription").setAttribute("content", pageDesc);
+  document.getElementById("ogTitle").setAttribute("content", pageTitle);
+  document.getElementById("ogDescription").setAttribute("content", pageDesc);
   document.getElementById("statusTag").textContent = "Brand" + (b.industry ? " · " + b.industry : "");
   document.getElementById("displayName").textContent = b.company_name || "Unnamed brand";
   document.getElementById("industryLabel").textContent = b.industry || "Brand";

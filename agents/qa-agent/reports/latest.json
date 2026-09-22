@@ -1,45 +1,36 @@
 {
   "agent": "QA / Bug Detection Agent",
-  "run_at": "2026-09-22T09:03:03.868Z",
-  "pages_scanned_dynamically": [],
+  "run_at": "2026-09-22T09:35:07.756Z",
+  "pages_scanned_dynamically": [
+    "auth.html",
+    "brand-profile.html",
+    "campaigns.html",
+    "directory.html",
+    "forgot-password.html",
+    "gallery.html",
+    "index.html",
+    "messages.html",
+    "privacy.html",
+    "profile.html",
+    "reset-password.html",
+    "spotlight.html",
+    "terms.html"
+  ],
   "pages_skipped_auth_gated": [
     "admin-console.html",
     "dashboard-brand.html",
     "dashboard-creator.html",
     "creator-onboarding.html",
-    "brand-onboarding.html"
+    "brand-onboarding.html",
+    "play.html"
   ],
   "severity_counts": {
     "Critical": 0,
     "High": 0,
-    "Medium": 1,
+    "Medium": 0,
     "Low": 33
   },
   "findings": [
-    {
-      "severity": "Medium",
-      "category": "Tooling",
-      "file": "agents/qa-agent/run.js",
-      "line": null,
-      "description": "Playwright isn't resolvable — dynamic browser checks were skipped. Run with NODE_PATH=$(npm root -g) node agents/qa-agent/run.js.",
-      "reproduction": "n/a"
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 29,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:29."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 30,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:30."
-    },
     {
       "severity": "Low",
       "category": "Palette compliance",
@@ -52,57 +43,17 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 61,
+      "line": 33,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:61."
+      "reproduction": "play.html:33."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 61,
+      "line": 35,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:61."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 62,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:62."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 62,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:62."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 63,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:63."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 63,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:63."
-    },
-    {
-      "severity": "Low",
-      "category": "Palette compliance",
-      "file": "play.html",
-      "line": 63,
-      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:63."
+      "reproduction": "play.html:35."
     },
     {
       "severity": "Low",
@@ -140,154 +91,210 @@
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 75,
+      "line": 66,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:75."
+      "reproduction": "play.html:66."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 79,
+      "line": 66,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:79."
+      "reproduction": "play.html:66."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 87,
+      "line": 66,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:87."
+      "reproduction": "play.html:66."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 94,
+      "line": 67,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:94."
+      "reproduction": "play.html:67."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 99,
+      "line": 67,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:67."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 68,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:68."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 68,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:68."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 78,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:78."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 82,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:82."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 90,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:90."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 97,
+      "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
+      "reproduction": "play.html:97."
+    },
+    {
+      "severity": "Low",
+      "category": "Palette compliance",
+      "file": "play.html",
+      "line": 102,
       "description": "Hardcoded color #f3f2f2 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:99."
+      "reproduction": "play.html:102."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 108,
+      "line": 111,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:108."
+      "reproduction": "play.html:111."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 119,
+      "line": 122,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:119."
+      "reproduction": "play.html:122."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 131,
+      "line": 134,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:131."
+      "reproduction": "play.html:134."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 139,
+      "line": 142,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:139."
+      "reproduction": "play.html:142."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 141,
+      "line": 144,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:141."
+      "reproduction": "play.html:144."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 141,
+      "line": 144,
       "description": "Hardcoded color #e62e00 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:141."
+      "reproduction": "play.html:144."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 178,
+      "line": 181,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:178."
+      "reproduction": "play.html:181."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 180,
+      "line": 183,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:180."
+      "reproduction": "play.html:183."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 322,
+      "line": 325,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:322."
+      "reproduction": "play.html:325."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 364,
+      "line": 367,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:364."
+      "reproduction": "play.html:367."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 378,
+      "line": 381,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:378."
+      "reproduction": "play.html:381."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 379,
+      "line": 382,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:379."
+      "reproduction": "play.html:382."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 439,
+      "line": 442,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:439."
+      "reproduction": "play.html:442."
     },
     {
       "severity": "Low",
       "category": "Palette compliance",
       "file": "play.html",
-      "line": 452,
+      "line": 455,
       "description": "Hardcoded color #ff3300 isn't in the approved monochrome+red palette.",
-      "reproduction": "play.html:452."
+      "reproduction": "play.html:455."
     }
   ],
-  "summary": "34 findings — 0 critical, 0 high, 1 medium, 33 low. Scanned 0 pages dynamically (5 auth-gated pages skipped by design) plus every .html/.js file statically."
+  "summary": "33 findings — 0 critical, 0 high, 0 medium, 33 low. Scanned 13 pages dynamically (6 auth-gated pages skipped by design) plus every .html/.js file statically."
 }
