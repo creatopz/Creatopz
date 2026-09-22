@@ -90,6 +90,16 @@
   </div>
 </section>
 
+<section class="section section-tint">
+  <div class="wrap">
+    <span class="eyebrow"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;"></span>Track record</span>
+    <h3 style="margin-top:14px;margin-bottom:6px;">Past campaigns</h3>
+    <p class="body-sm" style="margin-bottom:26px;max-width:520px;">Briefs brands have already run and closed on Creatopz.</p>
+    <div id="pastCampaignState"></div>
+    <div class="grid grid-3" id="pastCampaignGrid"></div>
+  </div>
+</section>
+
 <div class="modal-backdrop" id="applyOverlay">
   <div class="modal">
     <div class="modal-head">
@@ -126,6 +136,7 @@
 <script>
   renderAuthNav("#authNav");
   loadCampaigns();
+  loadPastCampaigns();
   initApplyModal();
 </script>
 </body>

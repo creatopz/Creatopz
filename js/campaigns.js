@@ -185,6 +185,64 @@ function attachCampaignHandlers() {
   });
 }
 
+// Real closed/completed campaigns only -- no seeded or placeholder rows.
+// Stays empty (with the empty-state below) until brands actually close
+// campaigns on the platform.
+async function loadPastCampaigns() {
+  const stateHost = document.getElementById("pastCampaignState");
+  const grid = document.getElementById("pastCampaignGrid");
+  const { data, error } = await supabaseClient
+    .from("campaigns_public_history")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  if (error) { console.error(error); return; }
+  const rows = data || [];
+  if (!rows.length) {
+    grid.innerHTML = "";
+    stateHost.innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No past campaigns yet</h3><p>Closed briefs will show up here once brands wrap their first campaigns.</p></div>`;
+    return;
+  }
+
+  const brandIds = [...new Set(rows.map((c) => c.brand_id).filter(Boolean))];
+  let brandsById = {};
+  if (brandIds.length) {
+    const { data: brandRows } = await supabaseClient.from("brands_public").select("id, company_name, logo_url").in("id", brandIds);
+    brandsById = Object.fromEntries((brandRows || []).map((b) => [b.id, b]));
+  }
+
+  stateHost.innerHTML = "";
+  grid.innerHTML = rows.map((c) => renderPastCampaignCard({ ...c, brand: brandsById[c.brand_id] || null })).join("");
+  if (typeof staggerInGrid === "function") staggerInGrid("#pastCampaignGrid", ".campaign-card");
+}
+
+function renderPastCampaignCard(c) {
+  return `
+    <div class="campaign-card card-hover">
+      <div class="cp-brand">
+        <div class="avatar-fallback" style="width:44px;height:44px;border-radius:var(--r-md);overflow:hidden;font-size:16px;flex-shrink:0;">
+          ${c.brand?.logo_url ? `<img src="${escapeHtml(c.brand.logo_url)}" alt="${escapeHtml(c.brand.company_name || "")}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml((c.brand?.company_name || "?")[0])}
+        </div>
+        <div style="min-width:0;">
+          <p class="caption" style="text-transform:uppercase;letter-spacing:.04em;">${escapeHtml(c.brand?.company_name || "Brand")}</p>
+          <h3 class="cp-title">${escapeHtml(c.title)}</h3>
+        </div>
+      </div>
+      <p class="cp-desc">${escapeHtml(c.brief || c.description || "")}</p>
+      <div class="cp-tags">
+        <span class="badge">${escapeHtml(c.niche || "General")}</span>
+      </div>
+      <div class="cp-foot">
+        <div>
+          <span class="badge badge-dark">Closed</span>
+          <div class="caption" style="margin-top:6px;">${formatDeadline(c.created_at)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("campaignSearch")?.addEventListener("input", (e) => { campaignState.query = e.target.value; renderCampaigns(); });
   document.getElementById("campaignSort")?.addEventListener("change", (e) => { campaignState.sort = e.target.value; renderCampaigns(); });
