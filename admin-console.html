@@ -294,6 +294,8 @@ function renderApps() {
         : ""}
       ${a.status === "invited"
         ? `<div class="caption" style="margin-top:16px;">Brand invited this creator — waiting on their response, nothing for admin to do yet.</div>`
+        : a.status === "withdrawn"
+        ? `<div class="caption" style="margin-top:16px;">Creator declined this invite — nothing for admin to do.</div>`
         : a.status === "completed"
         ? `<div class="caption" style="margin-top:16px;">Marked completed — the brand can now rate this collab.</div>`
         : a.status === "accepted"
@@ -667,7 +669,7 @@ async function loadAll() {
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
   const [appsRes, creatorsRes, campaignsRes, galleryRes, teamPicksRes, feedbackRes, spotlightsRes, leadsRes, agentReportsRes] = await Promise.all([
     supabaseClient.from("campaign_applications")
-      .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
+      .select("id, status, message, created_at, agreed_budget, admin_notes, deliverables, creators(id,user_id,name,username,bio,category,followers,engagement_rate,instagram_url,rate_min,rate_max,rate_card,locations,is_verified), campaigns(id,title,niche,budget_min,budget_max,brands(company_name))")
       .order("created_at", { ascending: false }),
     supabaseClient.from("creators").select("*").order("created_at", { ascending: false }),
     supabaseClient.from("campaigns").select("*, brands(company_name)").order("created_at", { ascending: false }),
@@ -748,8 +750,29 @@ async function decideApplication(id, status) {
   if (status === "accepted" && AGREED_DRAFTS[id]) patch.agreed_budget = Number(AGREED_DRAFTS[id]);
   const { error } = await supabaseClient.from("campaign_applications").update(patch).eq("id", id);
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
+  await notifyApplicationStatus(id, status);
   await loadAll();
   showToast(status === "accepted" ? "Match finalised — intro sent" : status === "completed" ? "Marked completed — brand can rate this collab now" : "Application declined", "success");
+}
+
+// A status change on campaign_applications has no server-side trigger to
+// tell the creator it happened -- without this, dashboard-creator.html's
+// Notifications tab would stay empty forever no matter what happens to
+// their applications. RLS on notifications already allows any authed
+// user to insert for any recipient (see schema.sql), so this is purely
+// a missing client-side call, not a permissions gap.
+async function notifyApplicationStatus(applicationId, status) {
+  const app = APPS.find((a) => a.id === applicationId);
+  const userId = app?.creators?.user_id;
+  if (!userId) return;
+  const campaignTitle = app?.campaigns?.title || "your campaign";
+  const copy = {
+    accepted: { type: "application_accepted", title: "You've been matched! 🎉", message: `You're confirmed for "${campaignTitle}" — check your dashboard for next steps.` },
+    completed: { type: "application_completed", title: "Collab marked completed", message: `"${campaignTitle}" has been marked completed — the brand can now rate the collab.` },
+    rejected: { type: "application_rejected", title: "Update on your application", message: `Your application for "${campaignTitle}" wasn't taken forward this time.` },
+  }[status];
+  if (!copy) return;
+  await supabaseClient.from("notifications").insert({ user_id: userId, ...copy });
 }
 async function toggleVerified(id, next) {
   const { error } = await supabaseClient.from("creators").update({ is_verified: next }).eq("id", id);

@@ -118,7 +118,10 @@
 
         <!-- ===== NOTIFICATIONS ===== -->
         <section id="view-notifications" style="display:none;">
-          <h2 style="margin-bottom:20px;">Notifications</h2>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap;">
+            <h2>Notifications</h2>
+            <button class="btn btn-outline btn-sm" id="markAllReadBtn" style="display:none;">Mark all as read</button>
+          </div>
           <div class="panel" id="notesList"></div>
         </section>
       </div>
@@ -159,6 +162,7 @@ function pillFor(status) {
   const map = {
     accepted: { label: "booked", cls: "badge-accent" },
     shortlisted: { label: "shortlisted", cls: "badge-dark" },
+    completed: { label: "completed", cls: "badge-dark" },
     rejected: { label: "declined", cls: "" },
     withdrawn: { label: "withdrawn", cls: "" },
     pending: { label: "in review", cls: "" },
@@ -348,21 +352,40 @@ function renderBriefs() {
 function renderNotes() {
   const host = document.getElementById("notesList");
   const badge = document.getElementById("notifBadge");
+  const markAllBtn = document.getElementById("markAllReadBtn");
   const unread = NOTES.filter((n) => !n.read).length;
   badge.style.display = unread ? "inline-flex" : "none";
   badge.textContent = unread;
+  markAllBtn.style.display = unread ? "inline-flex" : "none";
   if (!NOTES.length) {
     host.innerHTML = `<div class="state-block"><div class="state-icon">◎</div><h3>No notifications yet</h3></div>`;
     return;
   }
   host.innerHTML = NOTES.map((n) => `
-    <div style="display:flex;gap:14px;padding:18px 22px;border-bottom:1px solid var(--border);">
+    <div class="notif-row" data-id="${n.id}" style="display:flex;gap:14px;padding:18px 22px;border-bottom:1px solid var(--border);${n.read ? "" : "cursor:pointer;"}">
       <span style="width:9px;height:9px;border-radius:50%;background:${n.read ? "var(--border-strong)" : "var(--accent)"};margin-top:6px;flex-shrink:0;"></span>
       <div style="flex:1;min-width:0;"><b style="font-size:14.5px;">${escapeHtml(n.title || n.type || "Update")}</b><p class="body-sm" style="margin-top:4px;">${escapeHtml(n.message || "")}</p></div>
       <span class="caption" style="white-space:nowrap;">${new Date(n.created_at).toLocaleDateString()}</span>
     </div>
   `).join("");
+  host.querySelectorAll(".notif-row").forEach((row) => row.addEventListener("click", () => markNoteRead(row.dataset.id)));
 }
+
+async function markNoteRead(id) {
+  const note = NOTES.find((n) => n.id === id);
+  if (!note || note.read) return;
+  note.read = true;
+  renderNotes();
+  await supabaseClient.from("notifications").update({ read: true }).eq("id", id);
+}
+
+document.getElementById("markAllReadBtn").addEventListener("click", async () => {
+  const unreadIds = NOTES.filter((n) => !n.read).map((n) => n.id);
+  if (!unreadIds.length) return;
+  NOTES.forEach((n) => (n.read = true));
+  renderNotes();
+  await supabaseClient.from("notifications").update({ read: true }).in("id", unreadIds);
+});
 
 async function applyToBrief(campaignId, btn) {
   if (!CREATOR) return;
