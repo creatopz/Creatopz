@@ -1,42 +1,42 @@
 # QA / Bug Detection Agent — report
 
-Run at: 2026-09-18T19:16:09.290Z
+Run at: 2026-09-22T08:58:40.584Z
 
 34 findings — 0 critical, 0 high, 1 medium, 33 low. Scanned 0 pages dynamically (5 auth-gated pages skipped by design) plus every .html/.js file statically.
 
 | Severity | Category | File | Finding | Reproduction |
 |---|---|---|---|---|
 | Medium | Tooling | agents/qa-agent/run.js | Playwright isn't resolvable — dynamic browser checks were skipped. Run with NODE_PATH=$(npm root -g) node agents/qa-agent/run.js. | n/a |
-| Low | Palette compliance | play.html:23 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:23. |
-| Low | Palette compliance | play.html:24 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:24. |
-| Low | Palette compliance | play.html:26 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:26. |
-| Low | Palette compliance | play.html:55 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:55. |
-| Low | Palette compliance | play.html:55 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:55. |
-| Low | Palette compliance | play.html:56 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:56. |
-| Low | Palette compliance | play.html:56 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:56. |
-| Low | Palette compliance | play.html:57 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:57. |
-| Low | Palette compliance | play.html:57 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:57. |
-| Low | Palette compliance | play.html:57 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:57. |
-| Low | Palette compliance | play.html:58 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:58. |
-| Low | Palette compliance | play.html:58 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:58. |
-| Low | Palette compliance | play.html:59 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:59. |
-| Low | Palette compliance | play.html:59 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:59. |
-| Low | Palette compliance | play.html:69 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:69. |
-| Low | Palette compliance | play.html:73 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:73. |
-| Low | Palette compliance | play.html:81 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:81. |
-| Low | Palette compliance | play.html:88 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:88. |
-| Low | Palette compliance | play.html:93 | Hardcoded color #f3f2f2 isn't in the approved monochrome+red palette. | play.html:93. |
-| Low | Palette compliance | play.html:102 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:102. |
-| Low | Palette compliance | play.html:113 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:113. |
-| Low | Palette compliance | play.html:125 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:125. |
-| Low | Palette compliance | play.html:133 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:133. |
-| Low | Palette compliance | play.html:135 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:135. |
-| Low | Palette compliance | play.html:135 | Hardcoded color #e62e00 isn't in the approved monochrome+red palette. | play.html:135. |
-| Low | Palette compliance | play.html:172 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:172. |
-| Low | Palette compliance | play.html:174 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:174. |
-| Low | Palette compliance | play.html:316 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:316. |
-| Low | Palette compliance | play.html:358 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:358. |
-| Low | Palette compliance | play.html:372 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:372. |
-| Low | Palette compliance | play.html:373 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:373. |
-| Low | Palette compliance | play.html:433 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:433. |
-| Low | Palette compliance | play.html:446 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:446. |
+| Low | Palette compliance | play.html:29 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:29. |
+| Low | Palette compliance | play.html:30 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:30. |
+| Low | Palette compliance | play.html:32 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:32. |
+| Low | Palette compliance | play.html:61 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:61. |
+| Low | Palette compliance | play.html:61 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:61. |
+| Low | Palette compliance | play.html:62 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:62. |
+| Low | Palette compliance | play.html:62 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:62. |
+| Low | Palette compliance | play.html:63 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:63. |
+| Low | Palette compliance | play.html:63 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:63. |
+| Low | Palette compliance | play.html:63 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:63. |
+| Low | Palette compliance | play.html:64 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:64. |
+| Low | Palette compliance | play.html:64 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:64. |
+| Low | Palette compliance | play.html:65 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:65. |
+| Low | Palette compliance | play.html:65 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:65. |
+| Low | Palette compliance | play.html:75 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:75. |
+| Low | Palette compliance | play.html:79 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:79. |
+| Low | Palette compliance | play.html:87 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:87. |
+| Low | Palette compliance | play.html:94 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:94. |
+| Low | Palette compliance | play.html:99 | Hardcoded color #f3f2f2 isn't in the approved monochrome+red palette. | play.html:99. |
+| Low | Palette compliance | play.html:108 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:108. |
+| Low | Palette compliance | play.html:119 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:119. |
+| Low | Palette compliance | play.html:131 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:131. |
+| Low | Palette compliance | play.html:139 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:139. |
+| Low | Palette compliance | play.html:141 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:141. |
+| Low | Palette compliance | play.html:141 | Hardcoded color #e62e00 isn't in the approved monochrome+red palette. | play.html:141. |
+| Low | Palette compliance | play.html:178 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:178. |
+| Low | Palette compliance | play.html:180 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:180. |
+| Low | Palette compliance | play.html:322 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:322. |
+| Low | Palette compliance | play.html:364 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:364. |
+| Low | Palette compliance | play.html:378 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:378. |
+| Low | Palette compliance | play.html:379 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:379. |
+| Low | Palette compliance | play.html:439 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:439. |
+| Low | Palette compliance | play.html:452 | Hardcoded color #ff3300 isn't in the approved monochrome+red palette. | play.html:452. |
