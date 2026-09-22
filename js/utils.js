@@ -298,6 +298,175 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+// ---------- Doodle avatar (creator hasn't uploaded a photo) ----------
+// A small original cartoon-sketch face -- bold outline, solid filled
+// hair silhouette, big cartoon eyes with a highlight dot, eyebrows, ears
+// -- deterministically seeded off the creator's own id/name so it's
+// stable across reloads and unique per person. Background is always a
+// full-bleed rect, not a circle, so it fills whatever shape the
+// container's own CSS clips it to (circular avatar, 4:5 card photo, ...).
+function seedFromString(str) {
+  let h = 0;
+  const s = String(str || "");
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) || 1;
+}
+function seededRandom(seed) {
+  let s = seed;
+  return function () {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+// Six original filled-hair silhouettes (not derived from any reference
+// image) built from the head's own center/radius so they scale with
+// whatever headR a given seed rolled. Picked by seed alone -- niche
+// factors into the seed via doodleAvatarSVG's combined hash, so the same
+// creator's look shifts if their category ever changes, but no niche is
+// hard-mapped to a specific style (avoids "everyone in X niche has Y
+// hair"-type stereotyping).
+const HAIR_STYLES = ["crop", "bangs", "long", "curly", "swept", "spiky"];
+// A smooth filled "cap" over the crown -- the shared base every style
+// except curly/spiky builds on. frontDip is how far down the center the
+// front hairline sits (bigger = more forehead covered); side is how far
+// out past the ears it reaches.
+function capPath(hx, hy, hr, frontDip, side) {
+  const p = (dx, dy) => `${(hx + dx * hr).toFixed(1)},${(hy + dy * hr).toFixed(1)}`;
+  return `M${p(-side, -0.05)} Q${p(-0.85, -1.0)} ${p(-0.35, -1.12)} Q${p(0, -1.18)} ${p(0.35, -1.12)} Q${p(0.85, -1.0)} ${p(side, -0.05)} Q${p(side * 0.55, frontDip)} ${p(0, frontDip)} Q${p(-side * 0.55, frontDip)} ${p(-side, -0.05)} Z`;
+}
+function hairMarkup(style, hx, hy, hr, rand) {
+  const fill = `style="fill:var(--ink);"`;
+  if (style === "crop") {
+    return `<path d="${capPath(hx, hy, hr, -0.25, 0.98)}" ${fill} />`;
+  }
+  if (style === "bangs") {
+    return `<path d="${capPath(hx, hy, hr, -0.5, 1.0)}" ${fill} />`;
+  }
+  if (style === "long") {
+    const cap = capPath(hx, hy, hr, -0.35, 0.98);
+    const strand = (dir) => {
+      const p = (dx, dy) => `${(hx + dir * dx * hr).toFixed(1)},${(hy + dy * hr).toFixed(1)}`;
+      return `M${p(0.55, -0.5)} Q${p(1.15, 0.3)} ${p(0.8, 1.15)} Q${p(0.55, 1.3)} ${p(0.4, 1.0)} Q${p(0.7, 0.3)} ${p(0.55, -0.5)} Z`;
+    };
+    return `<path d="${cap}" ${fill} /><path d="${strand(-1)}" ${fill} /><path d="${strand(1)}" ${fill} />`;
+  }
+  if (style === "curly") {
+    let circles = "";
+    for (let i = 0; i < 6; i++) {
+      const t = i / 5;
+      const cx = hx - hr * 0.75 + hr * 1.5 * t;
+      const cy = hy - hr * 0.95 - Math.sin(t * Math.PI) * hr * 0.18;
+      circles += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(hr * 0.32 + rand() * hr * 0.06).toFixed(1)}" ${fill} />`;
+    }
+    return circles;
+  }
+  if (style === "swept") {
+    const p = (dx, dy) => `${(hx + dx * hr).toFixed(1)},${(hy + dy * hr).toFixed(1)}`;
+    return `<path d="M${p(-0.9, -0.1)} Q${p(-0.7, -1.05)} ${p(-0.1, -1.15)} Q${p(0.55, -1.1)} ${p(1.05, -0.35)} Q${p(0.75, -0.15)} ${p(0.5, -0.4)} Q${p(0.1, -0.5)} ${p(-0.35, -0.15)} Q${p(-0.7, 0.15)} ${p(-0.9, -0.1)} Z" ${fill} />`;
+  }
+  // "spiky" -- short filled triangular spikes along the crown.
+  let d = "";
+  for (let i = 0; i < 5; i++) {
+    const t = i / 4;
+    const bx = hx - hr * 0.65 + hr * 1.3 * t;
+    const tipY = hy - hr * (0.95 + rand() * 0.25);
+    d += `M${(bx - hr * 0.14).toFixed(1)},${(hy - hr * 0.55).toFixed(1)} L${bx.toFixed(1)},${tipY.toFixed(1)} L${(bx + hr * 0.14).toFixed(1)},${(hy - hr * 0.55).toFixed(1)} Z `;
+  }
+  return `<path d="${d}" ${fill} />`;
+}
+
+function doodleAvatarSVG(seed, niche) {
+  // niche folds into the hash so the hairstyle pick is "keyed by niche +
+  // seed" as asked, without hard-mapping any specific niche to a specific
+  // style -- same creator, same look; a different niche reshuffles it.
+  const rand = seededRandom(seedFromString(String(seed) + "|" + String(niche || "")));
+
+  const headR = 9 + rand() * 1.3;
+  const headCx = 20;
+  const headCy = 21;
+
+  const hairStyle = HAIR_STYLES[Math.floor(rand() * HAIR_STYLES.length)];
+  const hair = hairMarkup(hairStyle, headCx, headCy, headR, rand);
+  const wearsGlasses = rand() < 0.3;
+
+  // Ears: small filled bumps at mid-head height.
+  const earY = headCy + (rand() - 0.5) * 1.5;
+  const earR = headR * 0.22;
+  const ears = `<circle cx="${(headCx - headR * 0.98).toFixed(1)}" cy="${earY.toFixed(1)}" r="${earR.toFixed(1)}" style="fill:var(--surface-2);stroke:var(--ink);stroke-width:1.8;" />
+    <circle cx="${(headCx + headR * 0.98).toFixed(1)}" cy="${earY.toFixed(1)}" r="${earR.toFixed(1)}" style="fill:var(--surface-2);stroke:var(--ink);stroke-width:1.8;" />`;
+
+  // Eyes: bigger cartoon ovals with a small punched-out highlight dot.
+  const eyeSpacing = 4 + rand() * 1.4;
+  const eyeY = headCy - 0.5 + (rand() - 0.5) * 1.5;
+  const eyeRx = 1.5 + rand() * 0.5;
+  const eyeRy = eyeRx * 1.25;
+  const leftEyeX = headCx - eyeSpacing / 2;
+  const rightEyeX = headCx + eyeSpacing / 2;
+  const eyes = [leftEyeX, rightEyeX].map((ex) =>
+    `<ellipse cx="${ex.toFixed(1)}" cy="${eyeY.toFixed(1)}" rx="${eyeRx.toFixed(1)}" ry="${eyeRy.toFixed(1)}" style="fill:var(--ink);" />
+     <circle cx="${(ex + eyeRx * 0.35).toFixed(1)}" cy="${(eyeY - eyeRy * 0.35).toFixed(1)}" r="${(eyeRx * 0.28).toFixed(1)}" style="fill:var(--surface-2);" />`
+  ).join("");
+
+  // Eyebrows: short thick strokes above each eye.
+  const browTilt = (rand() - 0.5) * 1.2;
+  const eyebrows = [leftEyeX, rightEyeX].map((ex, i) => {
+    const dir = i === 0 ? -1 : 1;
+    const y = eyeY - eyeRy - 1.4;
+    return `<path d="M${(ex - dir * 1.6).toFixed(1)},${(y + browTilt * dir).toFixed(1)} L${(ex + dir * 1.6).toFixed(1)},${(y - browTilt * dir).toFixed(1)}" style="stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;" />`;
+  }).join("");
+
+  // Mouth: a simple curve -- weighted toward a smile (friendlier for a
+  // creator marketplace), occasionally neutral or a small smirk.
+  const mouthMood = rand();
+  const mouthY = headCy + 4.3 + (rand() - 0.5) * 1.2;
+  const mouthHalfWidth = 2.6 + rand() * 1.2;
+  const mouthCurve = mouthMood < 0.65 ? 2 + rand() * 1.8 : mouthMood < 0.85 ? 0 : -(1.2 + rand());
+  const mouthPath = `M${(headCx - mouthHalfWidth).toFixed(1)},${mouthY.toFixed(1)} Q${headCx.toFixed(1)},${(mouthY + mouthCurve).toFixed(1)} ${(headCx + mouthHalfWidth).toFixed(1)},${mouthY.toFixed(1)}`;
+
+  // One accent-colored spark in a fixed canvas corner -- the single pop
+  // of red the rest of the site reserves for one emphasized detail per
+  // element. A corner (not an angle off the head) means it never lands
+  // on top of a hairstyle, whatever shape that style takes.
+  const sparkCorners = [{ x: 5, y: 5 }, { x: 35, y: 5 }, { x: 5, y: 35 }, { x: 35, y: 35 }];
+  const spark = sparkCorners[Math.floor(rand() * sparkCorners.length)];
+  const sparkSize = 1.3 + rand() * 0.8;
+
+  const glasses = wearsGlasses
+    ? `<circle cx="${leftEyeX.toFixed(1)}" cy="${eyeY.toFixed(1)}" r="${(eyeRx + 1.5).toFixed(1)}" style="fill:none;stroke:var(--ink);stroke-width:1.3;" />
+       <circle cx="${rightEyeX.toFixed(1)}" cy="${eyeY.toFixed(1)}" r="${(eyeRx + 1.5).toFixed(1)}" style="fill:none;stroke:var(--ink);stroke-width:1.3;" />
+       <path d="M${(leftEyeX + eyeRx + 1.5).toFixed(1)},${eyeY.toFixed(1)} L${(rightEyeX - eyeRx - 1.5).toFixed(1)},${eyeY.toFixed(1)}" style="stroke:var(--ink);stroke-width:1.3;" />`
+    : "";
+
+  return `<svg viewBox="0 0 40 40" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;" aria-hidden="true">
+    <rect width="40" height="40" style="fill:var(--surface-2);" />
+    ${ears}
+    <circle cx="${headCx.toFixed(1)}" cy="${headCy.toFixed(1)}" r="${headR.toFixed(1)}" style="fill:var(--surface-2);stroke:var(--ink);stroke-width:2.1;" />
+    ${eyes}
+    ${eyebrows}
+    ${glasses}
+    <path d="${mouthPath}" style="fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;" />
+    ${hair}
+    <path d="M${(spark.x - sparkSize).toFixed(1)},${spark.y.toFixed(1)} L${(spark.x + sparkSize).toFixed(1)},${spark.y.toFixed(1)} M${spark.x.toFixed(1)},${(spark.y - sparkSize).toFixed(1)} L${spark.x.toFixed(1)},${(spark.y + sparkSize).toFixed(1)}" style="stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;" />
+  </svg>`;
+}
+// className/styleExtra should match whatever the real <img> would have
+// carried (e.g. "cc-photo avatar-fallback", "font-size:44px;") so the
+// doodle drops into the exact same slot. niche is optional (e.g. a
+// creator's category) and only ever affects which hairstyle gets picked,
+// never gates a whole avatar on it.
+function doodleAvatarHTML(seed, className, styleExtra, niche) {
+  return `<div class="${className}" style="overflow:hidden;${styleExtra || ""}">${doodleAvatarSVG(seed, niche)}</div>`;
+}
+// For onerror="" handlers on an <img> that already tried a real photo
+// and failed to load -- swaps the broken <img> for the same doodle.
+function replaceWithDoodleAvatar(imgEl, seed, className, styleExtra, niche) {
+  const div = document.createElement("div");
+  div.className = className;
+  div.style.cssText = "overflow:hidden;" + (styleExtra || "");
+  div.innerHTML = doodleAvatarSVG(seed, niche);
+  imgEl.replaceWith(div);
+}
+
 // Guards against a stray "javascript:"/"data:" value sneaking into an
 // href from a free-text field (Instagram URL, brand website, ...) --
 // only http(s) URLs make it through; a bare domain like "site.com" gets
