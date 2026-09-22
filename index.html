@@ -337,10 +337,6 @@
     animateCountUp(campaignsEl, campaignsRes.count ?? 0);
   }
 
-  function initials(name) {
-    return (name || "?").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-  }
-
   async function loadRecentWork() {
     const { data, error } = await supabaseClient
       .from("gallery_posts")
@@ -389,8 +385,8 @@
     }
     const s = data[0];
     const photo = s.profile_image
-      ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'cc-photo avatar-fallback',style:'font-size:44px;height:260px;',textContent:'${initials(s.name)}'}))">`
-      : `<div class="cc-photo avatar-fallback" style="font-size:44px;height:260px;">${initials(s.name)}</div>`;
+      ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','height:260px;','${escapeHtml(s.category)}')">`
+      : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", "height:260px;", s.category);
     document.getElementById("homeSpotlight").innerHTML = `
       <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" data-reveal style="text-decoration:none;color:inherit;max-width:360px;">
         ${photo}
@@ -449,8 +445,8 @@
 
     track.innerHTML = data.map((c) => {
       const photo = c.profile_image
-        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'avatar-fallback',style:'font-size:30px;',textContent:'${initials(c.name)}'}))">`
-        : `<div class="avatar-fallback" style="font-size:30px;">${initials(c.name)}</div>`;
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback',null,'${escapeHtml(c.category)}')">`
+        : doodleAvatarHTML(c.id, "avatar-fallback", null, c.category);
       return `
         <a href="profile.html?id=${encodeURIComponent(c.id)}" class="hero-slide">
           <div class="hero-slide-photo-wrap">
