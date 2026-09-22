@@ -298,6 +298,89 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+// ---------- Doodle avatar (creator hasn't uploaded a photo) ----------
+// A tiny abstract face -- hand-drawn-style head outline, dot eyes, a
+// curved mouth, one accent-colored spark for character -- in the same
+// line-doodle language as the auth.html illustration, deterministically
+// seeded off the creator's own id/name so it's stable across reloads and
+// unique per person. Background is always a full-bleed rect, not a
+// circle, so it fills whatever shape the container's own CSS clips it to
+// (circular avatar, 4:5 card photo, ...).
+function seedFromString(str) {
+  let h = 0;
+  const s = String(str || "");
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) || 1;
+}
+function seededRandom(seed) {
+  let s = seed;
+  return function () {
+    s = (s * 9301 + 49297) % 233280;
+    return s / 233280;
+  };
+}
+function doodleAvatarSVG(seed) {
+  const rand = seededRandom(seedFromString(seed));
+
+  // Head: an off-center, slightly organic blob rather than a perfect
+  // circle -- two overlapping circles read as one hand-drawn outline.
+  const headR = 11 + rand() * 1.5;
+  const headCx = 20 + (rand() - 0.5) * 1.5;
+  const headCy = 20 + (rand() - 0.5) * 1.5;
+  const bumpAngle = rand() * Math.PI * 2;
+  const bumpR = headR * (0.55 + rand() * 0.15);
+  const bumpCx = headCx + Math.cos(bumpAngle) * headR * 0.55;
+  const bumpCy = headCy + Math.sin(bumpAngle) * headR * 0.35;
+
+  // Eyes: dots, seeded spacing/size/asymmetry for a hand-drawn feel.
+  const eyeSpacing = 3.6 + rand() * 1.8;
+  const eyeY = headCy - 1.5 + (rand() - 0.5) * 2;
+  const eyeR = 1 + rand() * 0.6;
+  const eyeTiltL = (rand() - 0.5) * 1.2;
+  const eyeTiltR = (rand() - 0.5) * 1.2;
+
+  // Mouth: a simple curve -- weighted toward a smile (friendlier for a
+  // creator marketplace), occasionally neutral or a small smirk.
+  const mouthMood = rand();
+  const mouthY = headCy + 4 + (rand() - 0.5) * 1.5;
+  const mouthHalfWidth = 3 + rand() * 1.5;
+  const mouthCurve = mouthMood < 0.65 ? 2.5 + rand() * 2 : mouthMood < 0.85 ? 0 : -(1.5 + rand());
+  const mouthPath = `M${(headCx - mouthHalfWidth).toFixed(1)},${mouthY.toFixed(1)} Q${headCx.toFixed(1)},${(mouthY + mouthCurve).toFixed(1)} ${(headCx + mouthHalfWidth).toFixed(1)},${mouthY.toFixed(1)}`;
+
+  // One accent-colored spark near the head -- the single pop of red the
+  // rest of the site reserves for one emphasized detail per element.
+  const sparkAngle = rand() * Math.PI * 2;
+  const sparkDist = headR + 2.5;
+  const sparkCx = headCx + Math.cos(sparkAngle) * sparkDist;
+  const sparkCy = headCy + Math.sin(sparkAngle) * sparkDist;
+  const sparkSize = 1.3 + rand() * 0.8;
+
+  return `<svg viewBox="0 0 40 40" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="display:block;" aria-hidden="true">
+    <rect width="40" height="40" style="fill:var(--surface-2);" />
+    <circle cx="${headCx.toFixed(1)}" cy="${headCy.toFixed(1)}" r="${headR.toFixed(1)}" style="fill:none;stroke:var(--ink);stroke-width:1.6;" />
+    <circle cx="${bumpCx.toFixed(1)}" cy="${bumpCy.toFixed(1)}" r="${bumpR.toFixed(1)}" style="fill:none;stroke:var(--ink);stroke-width:1.6;" />
+    <circle cx="${(headCx - eyeSpacing / 2 + eyeTiltL).toFixed(1)}" cy="${eyeY.toFixed(1)}" r="${eyeR.toFixed(1)}" style="fill:var(--ink);" />
+    <circle cx="${(headCx + eyeSpacing / 2 + eyeTiltR).toFixed(1)}" cy="${eyeY.toFixed(1)}" r="${eyeR.toFixed(1)}" style="fill:var(--ink);" />
+    <path d="${mouthPath}" style="fill:none;stroke:var(--ink);stroke-width:1.4;stroke-linecap:round;" />
+    <path d="M${(sparkCx - sparkSize).toFixed(1)},${sparkCy.toFixed(1)} L${(sparkCx + sparkSize).toFixed(1)},${sparkCy.toFixed(1)} M${sparkCx.toFixed(1)},${(sparkCy - sparkSize).toFixed(1)} L${sparkCx.toFixed(1)},${(sparkCy + sparkSize).toFixed(1)}" style="stroke:var(--accent);stroke-width:1.4;stroke-linecap:round;" />
+  </svg>`;
+}
+// className/styleExtra should match whatever the real <img> would have
+// carried (e.g. "cc-photo avatar-fallback", "font-size:44px;") so the
+// doodle drops into the exact same slot.
+function doodleAvatarHTML(seed, className, styleExtra) {
+  return `<div class="${className}" style="overflow:hidden;${styleExtra || ""}">${doodleAvatarSVG(seed)}</div>`;
+}
+// For onerror="" handlers on an <img> that already tried a real photo
+// and failed to load -- swaps the broken <img> for the same doodle.
+function replaceWithDoodleAvatar(imgEl, seed, className, styleExtra) {
+  const div = document.createElement("div");
+  div.className = className;
+  div.style.cssText = "overflow:hidden;" + (styleExtra || "");
+  div.innerHTML = doodleAvatarSVG(seed);
+  imgEl.replaceWith(div);
+}
+
 // Guards against a stray "javascript:"/"data:" value sneaking into an
 // href from a free-text field (Instagram URL, brand website, ...) --
 // only http(s) URLs make it through; a bare domain like "site.com" gets

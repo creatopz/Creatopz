@@ -323,8 +323,8 @@ function renderCreators() {
   document.getElementById("creatorsBody").innerHTML = filtered.map((c) => `
     <tr>
       <td><a href="profile.html?id=${encodeURIComponent(c.id)}" style="display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;">${c.profile_image
-        ? `<img src="${escapeHtml(c.profile_image)}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
-        : `<span class="avatar-fallback" style="width:32px;height:32px;background:#fff;color:#000;font-size:12px;">${(c.name || "?").split(" ").map((w) => w[0]).join("")}</span>`}${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback','width:32px;height:32px;flex-shrink:0;')">`
+        : doodleAvatarHTML(c.id, "avatar-fallback", "width:32px;height:32px;flex-shrink:0;")}${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
       <td style="overflow-wrap:anywhere;">${(() => {
         const href = safeExternalUrl(c.instagram_url);
         if (!href) return `<span class="caption">Not connected</span>`;
@@ -383,7 +383,10 @@ function renderCampaigns() {
     <article class="admin-card">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
         <span class="eyebrow on-dark">${escapeHtml(c.brands?.company_name || "Brand")}</span>
-        <span class="badge ${pillClass(c.status)}">${escapeHtml(c.status)}</span>
+        <div style="display:flex;gap:6px;">
+          ${c.is_public_listed === false ? `<span class="badge">Hidden from public</span>` : ""}
+          <span class="badge ${pillClass(c.status)}">${escapeHtml(c.status)}</span>
+        </div>
       </div>
       <h3 style="color:#fff;font-size:20px;margin:14px 0 12px;">${escapeHtml(c.title)}</h3>
       <div style="padding:12px 0;border-top:1px solid var(--dark-border);border-bottom:1px solid var(--dark-border);font-size:14px;">
@@ -407,7 +410,8 @@ function renderCampaigns() {
         : `<div style="display:flex;gap:8px;margin-top:14px;">
              <button class="btn admin-btn-out btn-sm toggle-campaign-btn" data-id="${c.id}" data-status="${c.status}" style="flex:1;">${c.status === "closed" ? "Reopen" : "Close"}</button>
              ${c.status === "open" ? `<button class="btn btn-accent btn-sm notify-creators-btn" data-id="${c.id}" style="flex:1;">Notify on WhatsApp</button>` : ""}
-           </div>`}
+           </div>
+           <button class="btn admin-btn-out btn-sm toggle-listed-btn" data-id="${c.id}" data-listed="${c.is_public_listed !== false}" style="width:100%;margin-top:8px;">${c.is_public_listed === false ? "Show on public campaigns page" : "Hide from public campaigns page"}</button>`}
       ${rosterHtml}
     </article>`;
   }).join("");
@@ -418,6 +422,7 @@ function renderCampaigns() {
   }));
   document.querySelectorAll(".decline-campaign-btn").forEach((btn) => btn.addEventListener("click", () => decideCampaign(btn.dataset.id, "closed")));
   document.querySelectorAll(".toggle-campaign-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignStatus(btn.dataset.id, btn.dataset.status === "closed" ? "open" : "closed")));
+  document.querySelectorAll(".toggle-listed-btn").forEach((btn) => btn.addEventListener("click", () => toggleCampaignListed(btn.dataset.id, btn.dataset.listed === "true")));
   document.querySelectorAll(".approve-pick-btn").forEach((btn) => btn.addEventListener("click", () => approveTeamPick(btn.dataset.campaign, btn.dataset.creator)));
   document.querySelectorAll(".notify-creators-btn").forEach((btn) => btn.addEventListener("click", () => openNotifyModal(btn.dataset.id)));
 }
@@ -797,6 +802,16 @@ async function toggleCampaignStatus(id, next) {
   if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
   await loadAll();
   showToast(next === "closed" ? "Campaign closed" : "Campaign reopened", "success");
+}
+// Independent of status -- lets admin pull a campaign off campaigns.html's
+// live/past grids (campaigns_public / campaigns_public_history, both
+// gated on is_public_listed) without closing it or touching anything the
+// brand/creators see in their own dashboards.
+async function toggleCampaignListed(id, currentlyListed) {
+  const { error } = await supabaseClient.from("campaigns").update({ is_public_listed: !currentlyListed }).eq("id", id);
+  if (error) return showToast("Couldn't update: " + friendlyAuthError(error), "error");
+  await loadAll();
+  showToast(currentlyListed ? "Hidden from the public campaigns page" : "Now showing on the public campaigns page", "success");
 }
 async function approveTeamPick(campaignId, creatorId) {
   const rows = TEAM_PICKS.filter((p) => p.campaign_id === campaignId && p.creator_id === creatorId && p.status === "planned");
