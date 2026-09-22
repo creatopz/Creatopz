@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">Creator Profile — Creatopz™</title>
-<meta name="description" content="Creator media kit on Creatopz — portfolio, audience and engagement stats.">
+<meta name="description" id="metaDescription" content="Creator media kit on Creatopz — portfolio, audience and engagement stats.">
+<meta property="og:title" id="ogTitle" content="Creator Profile — Creatopz™">
+<meta property="og:description" id="ogDescription" content="Creator media kit on Creatopz — portfolio, audience and engagement stats.">
+<meta property="og:image" content="og-image.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
 <link rel="shortcut icon" href="/favicon.ico">
@@ -239,7 +242,12 @@ function initials(name) { return (name || "?").split(" ").filter(Boolean).map((w
 
 function renderProfile() {
   const c = CREATOR || {};
-  document.getElementById("pageTitle").textContent = (c.name || "Creator") + " — Creatopz™";
+  const pageTitle = (c.name || "Creator") + " — Creatopz™";
+  const pageDesc = c.bio || `${c.name || "This creator"}'s media kit on Creatopz — portfolio, audience and engagement stats.`;
+  document.getElementById("pageTitle").textContent = pageTitle;
+  document.getElementById("metaDescription").setAttribute("content", pageDesc);
+  document.getElementById("ogTitle").setAttribute("content", pageTitle);
+  document.getElementById("ogDescription").setAttribute("content", pageDesc);
   document.getElementById("statusTag").textContent =
     (c.is_verified ? "Verified" : "Unverified") + ((c.availability === "available" || !c.availability) ? " · open to briefs" : "");
   document.getElementById("displayName").textContent = c.name || "Unnamed creator";

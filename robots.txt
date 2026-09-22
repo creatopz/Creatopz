@@ -1,17 +1,24 @@
 User-agent: *
 Allow: /
 Allow: /index.html
-Allow: /creators.html
+Allow: /directory.html
 Allow: /campaigns.html
+Allow: /gallery.html
+Allow: /spotlight.html
+Allow: /profile.html
+Allow: /brand-profile.html
+Allow: /play.html
+Allow: /privacy.html
+Allow: /terms.html
 
-Disallow: /admin.html
-Disallow: /login.html
-Disallow: /signup.html
+Disallow: /admin-console.html
+Disallow: /auth.html
 Disallow: /forgot-password.html
 Disallow: /reset-password.html
 Disallow: /creator-onboarding.html
-Disallow: /creator-dashboard.html
 Disallow: /brand-onboarding.html
-Disallow: /brand-dashboard.html
+Disallow: /dashboard-creator.html
+Disallow: /dashboard-brand.html
+Disallow: /messages.html
 
-Sitemap: https://creatopz.in/sitemap.xml
+Sitemap: https://www.creatopz.in/sitemap.xml
