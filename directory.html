@@ -194,8 +194,8 @@ function render() {
     <a href="profile.html?id=${encodeURIComponent(c.id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
       <div class="cc-photo-wrap">
         ${c.image
-          ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.name)}" class="cc-photo" loading="lazy" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','cc-photo avatar-fallback')">`
-          : doodleAvatarHTML(c.id, "cc-photo avatar-fallback")}
+          ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.name)}" class="cc-photo" loading="lazy" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','cc-photo avatar-fallback',null,'${escapeHtml(c.niche)}')">`
+          : doodleAvatarHTML(c.id, "cc-photo avatar-fallback", null, c.niche)}
         ${c.verified ? `<span class="cc-verified" title="Verified">✓</span>` : ""}
         <span class="cc-niche-tag">${escapeHtml(c.niche)}</span>
       </div>

@@ -385,8 +385,8 @@
     }
     const s = data[0];
     const photo = s.profile_image
-      ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','height:260px;')">`
-      : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", "height:260px;");
+      ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="height:260px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','height:260px;','${escapeHtml(s.category)}')">`
+      : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", "height:260px;", s.category);
     document.getElementById("homeSpotlight").innerHTML = `
       <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" data-reveal style="text-decoration:none;color:inherit;max-width:360px;">
         ${photo}
@@ -445,8 +445,8 @@
 
     track.innerHTML = data.map((c) => {
       const photo = c.profile_image
-        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback')">`
-        : doodleAvatarHTML(c.id, "avatar-fallback");
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback',null,'${escapeHtml(c.category)}')">`
+        : doodleAvatarHTML(c.id, "avatar-fallback", null, c.category);
       return `
         <a href="profile.html?id=${encodeURIComponent(c.id)}" class="hero-slide">
           <div class="hero-slide-photo-wrap">

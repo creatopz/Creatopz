@@ -254,7 +254,7 @@ function renderProfile() {
   document.getElementById("bioText").textContent = c.bio || "No bio yet.";
 
   const avatarHost = document.getElementById("avatarHost");
-  avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}">` : doodleAvatarSVG(c.id);
+  avatarHost.innerHTML = c.profile_image ? `<img src="${escapeHtml(c.profile_image)}" alt="${escapeHtml(c.name || "")}">` : doodleAvatarSVG(c.id, c.category);
 
   const scoreEl = document.getElementById("heroScoreValue");
   scoreEl.textContent = c.creatopz_score ? Number(c.creatopz_score).toFixed(1) : "New";

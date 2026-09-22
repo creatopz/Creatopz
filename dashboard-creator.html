@@ -460,11 +460,11 @@ async function boot() {
   document.getElementById("creatorFirstName").textContent = name.split(" ")[0];
   const avatarHost = document.getElementById("avatarHost");
   if (creator?.profile_image) {
-    avatarHost.outerHTML = `<img src="${escapeHtml(creator.profile_image)}" alt="" class="avatar" style="width:52px;height:52px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(creator?.id || name)}','avatar-fallback','width:52px;height:52px;')">`;
+    avatarHost.outerHTML = `<img src="${escapeHtml(creator.profile_image)}" alt="" class="avatar" style="width:52px;height:52px;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(creator?.id || name)}','avatar-fallback','width:52px;height:52px;','${escapeHtml(creator?.category)}')">`;
   } else {
     avatarHost.style.background = "none";
     avatarHost.style.overflow = "hidden";
-    avatarHost.innerHTML = doodleAvatarSVG(creator?.id || name);
+    avatarHost.innerHTML = doodleAvatarSVG(creator?.id || name, creator?.category);
   }
   document.getElementById("heroTag").textContent = (creator?.is_verified ? "Verified creator" : "Creator") + (creator?.category ? " · " + creator.category : "");
   document.getElementById("heroSubline").textContent = BRIEFS.length ? `${BRIEFS.length} open brief${BRIEFS.length === 1 ? "" : "s"} on Creatopz right now.` : "No open briefs right now — check back soon.";

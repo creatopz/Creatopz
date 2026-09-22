@@ -323,8 +323,8 @@ function renderCreators() {
   document.getElementById("creatorsBody").innerHTML = filtered.map((c) => `
     <tr>
       <td><a href="profile.html?id=${encodeURIComponent(c.id)}" style="display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;">${c.profile_image
-        ? `<img src="${escapeHtml(c.profile_image)}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback','width:32px;height:32px;flex-shrink:0;')">`
-        : doodleAvatarHTML(c.id, "avatar-fallback", "width:32px;height:32px;flex-shrink:0;")}${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
+        ? `<img src="${escapeHtml(c.profile_image)}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(c.id)}','avatar-fallback','width:32px;height:32px;flex-shrink:0;','${escapeHtml(c.category)}')">`
+        : doodleAvatarHTML(c.id, "avatar-fallback", "width:32px;height:32px;flex-shrink:0;", c.category)}${escapeHtml(c.name || "Unnamed")}</a><div class="caption" style="margin-left:42px;">${escapeHtml((c.locations && c.locations[0]) || "—")}</div></td>
       <td style="overflow-wrap:anywhere;">${(() => {
         const href = safeExternalUrl(c.instagram_url);
         if (!href) return `<span class="caption">Not connected</span>`;

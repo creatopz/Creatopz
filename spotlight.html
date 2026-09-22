@@ -96,8 +96,8 @@
 function spotlightCard(s, big) {
   const fallbackStyle = big ? "height:280px;" : "";
   const photo = s.profile_image
-    ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="${fallbackStyle}" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','${fallbackStyle}')">`
-    : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", fallbackStyle);
+    ? `<img src="${escapeHtml(s.profile_image)}" alt="${escapeHtml(s.name)}" class="cc-photo" loading="lazy" style="${fallbackStyle}" onerror="replaceWithDoodleAvatar(this,'${escapeHtml(s.creator_id)}','cc-photo avatar-fallback','${fallbackStyle}','${escapeHtml(s.category)}')">`
+    : doodleAvatarHTML(s.creator_id, "cc-photo avatar-fallback", fallbackStyle, s.category);
   return `
     <a href="profile.html?id=${encodeURIComponent(s.creator_id)}" class="creator-card card-hover" style="text-decoration:none;color:inherit;">
       ${photo}
